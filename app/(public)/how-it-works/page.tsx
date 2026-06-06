@@ -12,11 +12,11 @@ const JOURNEY: { icon: IconName; title: string; body: string }[] = [
   { icon: "pin", title: "3. Unlock the address", body: "Once the agent approves, the exact address, map route and safety tips unlock. You meet on-site and read your OTP to verify the meeting." },
   { icon: "lock", title: "4. Pay into escrow", body: "Pay securely - your rent is held by AwaAgent, never handed to a stranger. Funds stay locked until you confirm handover." },
   { icon: "key", title: "5. Confirm your keys", body: "When you physically receive your keys, confirm in the app. Escrow releases the split to the landlord, agent and platform automatically." },
-  { icon: "shieldCheck", title: "Protected the whole way", body: "Anything goes wrong? Raise a dispute and funds freeze instantly while our team reviews - with a 100% refund on proven fraud." },
+  { icon: "shieldCheck", title: "Protected the whole way", body: "Anything goes wrong? Raise a dispute and funds stay frozen while our team reviews the case." },
 ];
 
 const ROLES: { icon: IconName; title: string; body: string }[] = [
-  { icon: "home", title: "Tenants rent safely", body: "Escrow protection, transparent pricing and verified inspections mean you never lose a deposit to a fake agent again." },
+  { icon: "home", title: "Tenants rent safely", body: "Escrow protection, upfront pricing and verified inspections reduce fake-agent risk before you pay." },
   { icon: "user", title: "Agents earn fairly", body: "Commission follows verified contribution - the agent who brings the tenant and completes the inspection is paid. Plus passive impression earnings." },
   { icon: "building", title: "Landlords stay in control", body: "Authorize the agents who represent you, set a primary agent and per-property limits, and track every payout in your rent ledger." },
 ];

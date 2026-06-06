@@ -182,7 +182,7 @@ function ExploreContent() {
               <p style={{ color: "rgba(255,255,255,.8)", fontSize: 14.5 }}>Every listing shows the total upfront price. Every agent is verified.</p>
             </div>
             <div className="row gap-6">
-              {[["100%", "Fraud refund"], ["38", "Verified agents"], ["2.5%", "Escrow fee"]].map(([v, l]) => (
+              {[["Ibadan", "Launch city"], ["KYC", "Agent checks"], ["0", "Viewing fees"]].map(([v, l]) => (
                 <div key={l} className="col" style={{ gap: 0 }}>
                   <span style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 22 }}>{v}</span>
                   <span style={{ fontSize: 12, color: "rgba(255,255,255,.65)" }}>{l}</span>

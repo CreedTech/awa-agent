@@ -10,9 +10,9 @@ const STEPS: { icon: IconName; title: string; body: string }[] = [
 ];
 
 const FEES = [
-  { label: "Refund on proven fraud", value: "100%" },
-  { label: "Escrow service fee", value: "2.5%" },
-  { label: "Dispute window", value: "24 hours" },
+  { label: "Fraud reports", value: "Reviewed" },
+  { label: "Payments", value: "Held in escrow" },
+  { label: "Viewing fees", value: "Not allowed" },
 ];
 
 export function EscrowExplainer({ open, onClose }: { open: boolean; onClose: () => void }) {

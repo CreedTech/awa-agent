@@ -31,10 +31,10 @@ const BENEFITS = [
 ] as const;
 
 const STATS = [
-  { value: "₦86.5M", label: "Protected in escrow" },
-  { value: "38", label: "KYC-verified agents" },
-  { value: "100%", label: "Refund on proven fraud" },
-  { value: "2.5%", label: "Flat escrow fee" },
+  { value: "Ibadan", label: "Launch city" },
+  { value: "KYC", label: "Required for agents" },
+  { value: "Escrow", label: "Required for payments" },
+  { value: "0", label: "Viewing fees allowed" },
 ];
 
 const FAQ = [
