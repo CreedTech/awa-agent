@@ -41,7 +41,7 @@ export function FileDrop({ label, accept, multiple = true, onFiles }: FileDropPr
         <div className="row wrap gap-2">
           {names.map((n, i) => (
             <span key={`${n}-${i}`} className="tag tag-ok">
-              <Icon name="check" size={12} strokeWidth={2.4} /> {n.length > 24 ? n.slice(0, 22) + "…" : n}
+              <Icon name="check" size={12} strokeWidth={2.4} /> {n.length > 24 ? n.slice(0, 22) + "..." : n}
             </span>
           ))}
         </div>

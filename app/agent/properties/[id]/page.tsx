@@ -48,7 +48,7 @@ export default function AgentPropertyDetailPage() {
   const togglePause = () => {
     const next = paused ? "LIVE" : "PAUSED";
     setPropertyStatus(property.id, next);
-    toast(next === "PAUSED" ? "Listing paused — hidden from tenants" : "Listing is live again");
+    toast(next === "PAUSED" ? "Listing paused - hidden from tenants" : "Listing is live again");
   };
 
   return (

@@ -42,7 +42,7 @@ export default function PayoutsPage() {
       </div>
 
       <div className="card card-pad row gap-2" style={{ marginTop: 14, background: "var(--navy-050)", border: "none", fontSize: 13, color: "var(--navy-700)" }}>
-        <Icon name="info" size={16} /> Year-2 renewals pay base rent only — no agent commission is deducted.
+        <Icon name="info" size={16} /> Year-2 renewals pay base rent only - no agent commission is deducted.
       </div>
     </>
   );

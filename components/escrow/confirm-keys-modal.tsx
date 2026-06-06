@@ -37,7 +37,7 @@ export function ConfirmKeysModal({ open, onOpenChange, onConfirm }: ConfirmKeysM
         <DialogHeader>
           <DialogTitle>Confirm key handover</DialogTitle>
           <DialogDescription>
-            This releases your escrow to the landlord and agent. It can&apos;t be undone — only confirm
+            This releases your escrow to the landlord and agent. It can&apos;t be undone - only confirm
             once you actually hold the keys.
           </DialogDescription>
         </DialogHeader>

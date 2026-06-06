@@ -11,7 +11,7 @@ interface StatCardProps {
   className?: string;
 }
 
-/** Dashboard stat tile (GMV, properties, payouts, …). */
+/** Dashboard stat tile (GMV, properties, payouts, ...). */
 export function StatCard({ label, value, icon, hint, trend, className }: StatCardProps) {
   return (
     <div className={cn("stat-card", className)}>

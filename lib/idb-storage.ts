@@ -1,5 +1,5 @@
 /* ============================================================
-   AwaAgent — IndexedDB storage adapter for Zustand `persist`.
+   AwaAgent - IndexedDB storage adapter for Zustand `persist`.
    Keeps all mutable app state across reloads (real-life behaviour),
    not just an in-memory demo. Safe on the server (no IndexedDB):
    reads return null so SSR falls back to the seeded state.

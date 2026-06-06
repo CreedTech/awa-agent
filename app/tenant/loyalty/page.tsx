@@ -15,7 +15,7 @@ const EARN: { icon: IconName; label: string; pts: string }[] = [
 ];
 
 const REDEEM: { icon: IconName; label: string; cost: number; hint: string }[] = [
-  { icon: "bolt", label: "Priority inspection slot", cost: 80, hint: "Skip the queue on your next booking" },
+  { icon: "clock", label: "Priority inspection slot", cost: 80, hint: "Skip the queue on your next booking" },
   { icon: "cash", label: "₦2,500 off service fee", cost: 150, hint: "Discount on your next escrow fee" },
   { icon: "crown", label: "1 month Premium", cost: 300, hint: "Unlock Premium perks free" },
 ];
@@ -27,7 +27,7 @@ export default function LoyaltyPage() {
 
   return (
     <div className="page page-narrow">
-      <PageHeader title="Loyalty" subtitle="Earn points for renting safely — redeem them for perks." />
+      <PageHeader title="Loyalty" subtitle="Earn points for renting safely - redeem them for perks." />
 
       <div className="card" style={{ background: "linear-gradient(120deg, var(--gold-600), var(--gold-500))", color: "var(--navy-900)", border: "none", padding: "22px 24px", marginBottom: 18 }}>
         <span style={{ fontSize: 13, fontWeight: 600, opacity: 0.8 }}>Your balance</span>

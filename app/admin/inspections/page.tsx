@@ -42,7 +42,7 @@ export default function AdminInspectionsPage() {
                 <td>{i.tenant}</td>
                 <td style={{ color: "var(--muted)" }}>{i.date} · {i.time}</td>
                 <td>{i.otpVerified ? <Icon name="check" size={16} strokeWidth={2.4} color="var(--ok)" /> : <span style={{ color: "var(--muted)", fontSize: 12.5 }}>pending</span>}</td>
-                <td>{i.gpsOk === null ? <span style={{ color: "var(--muted)", fontSize: 12.5 }}>—</span> : i.gpsOk ? <span className="tag tag-ok">OK</span> : <span className="tag tag-danger">Failed</span>}</td>
+                <td>{i.gpsOk === null ? <span style={{ color: "var(--muted)", fontSize: 12.5 }}>-</span> : i.gpsOk ? <span className="tag tag-ok">OK</span> : <span className="tag tag-danger">Failed</span>}</td>
                 <td><StatusBadge variant={STATUS[i.status]}>{i.status.replace("_", " ")}</StatusBadge></td>
               </tr>
             ))}

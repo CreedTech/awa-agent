@@ -62,9 +62,9 @@ export default function RentLedgerPage() {
                 <td style={{ color: "var(--muted)" }}>{r.type}</td>
                 <td><Naira value={r.amount} size={13.5} /></td>
                 <td>{r.due}</td>
-                <td>{r.paid ?? "—"}</td>
+                <td>{r.paid ?? "-"}</td>
                 <td><StatusBadge variant={STATUS_VARIANT[r.status]}>{r.status.replace("_", " ")}</StatusBadge></td>
-                <td className="mono" style={{ fontSize: 12 }}>{r.escrow ?? "—"}</td>
+                <td className="mono" style={{ fontSize: 12 }}>{r.escrow ?? "-"}</td>
               </tr>
             ))}
           </tbody>

@@ -12,7 +12,7 @@ export default function AdminAuditLogsPage() {
     <>
       <div className="search" style={{ maxWidth: 320, marginBottom: 16 }}>
         <Icon name="search" size={17} />
-        <input placeholder="Search audit logs…" value={q} onChange={(e) => setQ(e.target.value)} aria-label="Search audit logs" />
+        <input placeholder="Search audit logs..." value={q} onChange={(e) => setQ(e.target.value)} aria-label="Search audit logs" />
       </div>
 
       <div className="table-wrap">

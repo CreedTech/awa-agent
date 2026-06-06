@@ -22,7 +22,7 @@ interface ConfirmDialogProps {
   children?: React.ReactNode;
 }
 
-/** Two-step confirmation used for irreversible actions (approve/reject/freeze…). */
+/** Two-step confirmation used for irreversible actions (approve/reject/freeze...). */
 export function ConfirmDialog({
   open,
   onOpenChange,

@@ -45,7 +45,7 @@ export default function AgentInspectionsPage() {
 
       <h3 style={{ fontSize: 16, marginBottom: 12 }}>Today&apos;s queue</h3>
       <div className="col gap-3" style={{ marginBottom: 26 }}>
-        {pending.length === 0 && <p style={{ color: "var(--muted)", fontSize: 14 }}>No pending inspections. 🎉</p>}
+        {pending.length === 0 && <p style={{ color: "var(--muted)", fontSize: 14 }}>No pending inspections right now.</p>}
         {pending.map((q) => {
           const prop = propertyById(q.propertyId);
           return (
@@ -91,11 +91,11 @@ export default function AgentInspectionsPage() {
           <div className="col gap-4" style={{ padding: "10px 20px 26px", textAlign: "center" }}>
             <p style={{ color: "var(--muted)", fontSize: 14 }}>Ask <strong style={{ color: "var(--ink)" }}>{active.tenant}</strong> to read their 6-digit code.</p>
             <OtpInput value={code} onChange={(v) => { setCode(v); setError(false); }} />
-            {error && <span className="row gap-2 center" style={{ color: "var(--danger)", fontSize: 13, fontWeight: 600 }}><Icon name="alert" size={14} /> Code doesn&apos;t match — try again.</span>}
+            {error && <span className="row gap-2 center" style={{ color: "var(--danger)", fontSize: 13, fontWeight: 600 }}><Icon name="alert" size={14} /> Code doesn&apos;t match - try again.</span>}
             {gps !== "idle" && (
               <div className="row gap-2 center" style={{ fontSize: 13.5, color: gps === "ok" ? "var(--ok)" : "var(--muted)" }}>
-                {gps === "checking" && <><div className="spinner" style={{ width: 18, height: 18, borderWidth: 2 }} /> Checking GPS…</>}
-                {gps === "ok" && <><Icon name="gps" size={16} /> GPS confirmed — you&apos;re on-site</>}
+                {gps === "checking" && <><div className="spinner" style={{ width: 18, height: 18, borderWidth: 2 }} /> Checking GPS...</>}
+                {gps === "ok" && <><Icon name="gps" size={16} /> GPS confirmed - you&apos;re on-site</>}
               </div>
             )}
             <button className="btn btn-gold btn-block btn-lg" disabled={code.length < 6 || gps === "checking"} onClick={verify}>

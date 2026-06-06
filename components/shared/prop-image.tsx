@@ -21,7 +21,7 @@ export function PropImage({ src, label, className, sizes = "100vw", priority }: 
   const [err, setErr] = useState(false);
 
   if (src && !err) {
-    // User-uploaded photos are data:/blob: URLs — render them with a plain
+    // User-uploaded photos are data:/blob: URLs - render them with a plain
     // <img> (next/image optimization doesn't apply to inline sources).
     const isLocal = src.startsWith("data:") || src.startsWith("blob:");
     return (

@@ -47,7 +47,7 @@ export function DisputeSheet({ open, onClose, onSubmit }: DisputeSheetProps) {
         </Field>
 
         <Field label="Describe what happened" error={errors.description?.message}>
-          <textarea className="input" rows={4} placeholder="Give as much detail as you can…" {...register("description")} />
+          <textarea className="input" rows={4} placeholder="Give as much detail as you can..." {...register("description")} />
         </Field>
 
         <div className="field">

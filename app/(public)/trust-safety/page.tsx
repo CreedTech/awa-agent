@@ -55,7 +55,7 @@ export default function TrustSafetyPage() {
         <h2 className="page-title" style={{ marginBottom: 16 }}>Watch out for these</h2>
         <div className="col gap-3">
           {WARNINGS.map((w) => (
-            <div key={w.title} className="card card-pad row gap-3" style={{ alignItems: "flex-start", borderLeft: "4px solid var(--danger)" }}>
+            <div key={w.title} className="card card-pad row gap-3" style={{ alignItems: "flex-start" }}>
               <Icon name="alert" size={20} color="var(--danger)" />
               <div className="col gap-2">
                 <strong style={{ fontSize: 15 }}>{w.title}</strong>

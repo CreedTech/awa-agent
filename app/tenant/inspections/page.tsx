@@ -23,7 +23,7 @@ export default function TenantInspectionsPage() {
         <EmptyState
           icon="calendar"
           title="No inspections booked"
-          description="Find a home you like and request an inspection — you'll get a 6-digit code to meet the agent safely."
+          description="Find a home you like and request an inspection - you'll get a 6-digit code to meet the agent safely."
           action={{ label: "Explore homes", href: "/explore" }}
         />
       ) : (

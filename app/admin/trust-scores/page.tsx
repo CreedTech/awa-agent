@@ -12,7 +12,7 @@ export default function AdminTrustScoresPage() {
   return (
     <>
       <p style={{ color: "var(--muted)", fontSize: 14.5, marginBottom: 18 }}>
-        Trust scores (0–100) are derived from completed deals, dispute rate, KYC tier, GPS accuracy and OTP success — and set each agent&apos;s commission rate.
+        Trust scores (0–100) are derived from completed deals, dispute rate, KYC tier, GPS accuracy and OTP success - and set each agent&apos;s commission rate.
       </p>
 
       <div className="table-wrap">

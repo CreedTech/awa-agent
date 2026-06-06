@@ -85,7 +85,7 @@ export function GpsCapture({ value, onCapture }: GpsCaptureProps) {
   return (
     <button className="card card-pad col center" style={{ width: "100%", gap: 10, padding: "28px", border: "1.5px dashed var(--line-2)" }} onClick={capture} disabled={state === "capturing"}>
       {state === "capturing" ? <div className="spinner" /> : <Icon name="gps" size={30} color="var(--navy-600)" />}
-      <strong style={{ fontSize: 14.5 }}>{state === "capturing" ? "Getting your location…" : "Capture property location"}</strong>
+      <strong style={{ fontSize: 14.5 }}>{state === "capturing" ? "Getting your location..." : "Capture property location"}</strong>
       <span style={{ fontSize: 12.5, color: "var(--muted)", textAlign: "center" }}>
         Stand at the property and capture its GPS coordinates. Fake locations can lead to a ban.
       </span>

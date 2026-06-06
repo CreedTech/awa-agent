@@ -81,7 +81,7 @@ export function PaySheet({ property, open, onClose }: PaySheetProps) {
         {stage === "loading" && (
           <div className="col center" style={{ gap: 16, padding: "30px 0" }}>
             <div className="spinner" />
-            <strong>Securing your payment…</strong>
+            <strong>Securing your payment...</strong>
             <span style={{ color: "var(--muted)", fontSize: 13.5 }}>Contacting Paystack and locking funds in escrow.</span>
           </div>
         )}

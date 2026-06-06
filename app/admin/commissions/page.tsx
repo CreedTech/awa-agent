@@ -46,7 +46,7 @@ export default function AdminCommissionsPage() {
         open={confirmRef !== null}
         onOpenChange={(o) => !o && setConfirmRef(null)}
         title="Override this commission?"
-        description="The standard attribution will be flagged as admin-overridden. Use this only to settle a commission dispute — it's recorded in the audit log."
+        description="The standard attribution will be flagged as admin-overridden. Use this only to settle a commission dispute - it's recorded in the audit log."
         confirmLabel="Apply override"
         tone="warn"
         onConfirm={() => {

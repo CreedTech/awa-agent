@@ -51,7 +51,7 @@ export default function EscrowDetailPage() {
         <div style={{ marginTop: 8 }}><EscrowBadge status={txn.status} /></div>
         <p style={{ color: "var(--muted)", fontSize: 13.5, marginTop: 10 }}>
           {txn.status === "FUNDS_LOCKED" && "Your money is safe. Confirm your keys to release it, or raise a dispute if something's wrong."}
-          {txn.status === "SETTLED" && "Completed — funds were released to the landlord and agent."}
+          {txn.status === "SETTLED" && "Completed - funds were released to the landlord and agent."}
           {isDisputed && "Frozen while our team reviews your dispute. We'll update you within 24 hours."}
           {txn.status === "FROZEN" && "Frozen by our team pending review."}
           {txn.status === "REFUNDED" && "Refunded to your account."}
@@ -64,12 +64,12 @@ export default function EscrowDetailPage() {
           <div className="card card-pad">
             <h3 style={{ fontSize: 16, marginBottom: 12 }}>Transaction</h3>
             {[
-              ["Property", prop?.title ?? "—"],
+              ["Property", prop?.title ?? "-"],
               ["Agent", txn.agentName],
-              ["Landlord", txn.landlordName ?? "—"],
+              ["Landlord", txn.landlordName ?? "-"],
               ["Escrow reference", txn.id],
               ["Paystack reference", txn.paystackRef],
-              ["Locked on", txn.lockedOn ?? "—"],
+              ["Locked on", txn.lockedOn ?? "-"],
             ].map(([k, v]) => (
               <div key={k} className="brk-row" style={{ padding: "10px 0" }}>
                 <span style={{ fontSize: 13.5, color: "var(--muted)" }}>{k}</span>
@@ -123,7 +123,7 @@ export default function EscrowDetailPage() {
           )}
           {isDisputed && (
             <div className="card card-pad row gap-2" style={{ background: "var(--danger-bg)", color: "var(--danger)", fontSize: 13.5 }}>
-              <Icon name="clock" size={16} /> Dispute under review — funds are frozen.
+              <Icon name="clock" size={16} /> Dispute under review - funds are frozen.
             </div>
           )}
         </div>
@@ -132,12 +132,12 @@ export default function EscrowDetailPage() {
       <ConfirmKeysModal
         open={confirming}
         onOpenChange={setConfirming}
-        onConfirm={() => { confirmKeys(txn.id); toast.success("Keys confirmed — escrow released"); }}
+        onConfirm={() => { confirmKeys(txn.id); toast.success("Keys confirmed - escrow released"); }}
       />
       <DisputeSheet
         open={disputing}
         onClose={() => setDisputing(false)}
-        onSubmit={(reason) => { raiseDispute(txn.id, reason); toast("Dispute opened — funds frozen"); }}
+        onSubmit={(reason) => { raiseDispute(txn.id, reason); toast("Dispute opened - funds frozen"); }}
       />
     </div>
   );

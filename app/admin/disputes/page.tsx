@@ -52,7 +52,7 @@ export default function AdminDisputesPage() {
                 <td><StatusBadge variant={STATUS[d.status]}>{d.status}</StatusBadge></td>
                 <td>
                   {d.status === "RESOLVED" ? (
-                    <span style={{ fontSize: 12.5, color: "var(--ok)" }}>{d.resolution} ✓</span>
+                    <span className="row gap-2" style={{ fontSize: 12.5, color: "var(--ok)" }}><Icon name="check" size={13} strokeWidth={2.4} /> {d.resolution}</span>
                   ) : (
                     <button className="btn btn-primary btn-sm" onClick={() => setResolving(d)}>Resolve</button>
                   )}
@@ -75,7 +75,7 @@ export default function AdminDisputesPage() {
                 key={o.key}
                 className="card card-pad row gap-3"
                 style={{ textAlign: "left", alignItems: "center" }}
-                onClick={() => { resolveDispute(resolving.id, o.key); toast.success(`Dispute resolved — ${o.label}`); setResolving(null); }}
+                onClick={() => { resolveDispute(resolving.id, o.key); toast.success(`Dispute resolved - ${o.label}`); setResolving(null); }}
               >
                 <span className="grid place-items-center" style={{ width: 40, height: 40, borderRadius: 11, background: "var(--navy-050)", color: "var(--navy-700)", flexShrink: 0 }}><Icon name={o.icon} size={19} /></span>
                 <div className="col grow" style={{ gap: 1 }}><strong style={{ fontSize: 14.5 }}>{o.label}</strong><span style={{ fontSize: 12.5, color: "var(--muted)" }}>{o.desc}</span></div>

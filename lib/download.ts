@@ -1,5 +1,5 @@
 /* ============================================================
-   AwaAgent — client-side file generation & download
+   AwaAgent - client-side file generation & download
    Real downloads (CSV + PDF), no backend required.
    ============================================================ */
 
@@ -65,9 +65,9 @@ export async function downloadReceiptPdf(txn: EscrowTransaction, property?: Prop
     ["Paystack reference", txn.paystackRef],
     ["Tenant", txn.tenantName],
     ["Agent", txn.agentName],
-    ["Landlord", txn.landlordName ?? "—"],
-    ["Locked on", txn.lockedOn ?? "—"],
-    ["Settled on", txn.settledOn ?? txn.refundedOn ?? "—"],
+    ["Landlord", txn.landlordName ?? "-"],
+    ["Locked on", txn.lockedOn ?? "-"],
+    ["Settled on", txn.settledOn ?? txn.refundedOn ?? "-"],
   ];
 
   y += 28;

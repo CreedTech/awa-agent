@@ -8,7 +8,7 @@ export default function AgentCommissionsPage() {
   return (
     <>
       <p style={{ color: "var(--muted)", fontSize: 14.5, marginBottom: 18 }}>
-        Every closed deal shows exactly who contributed and who gets paid — so commission is always fair and transparent.
+        Every closed deal shows exactly who contributed and who gets paid - so commission is always fair and transparent.
       </p>
       {COMMISSIONS.length === 0 ? (
         <EmptyState icon="coins" title="No commissions yet" description="Close your first verified deal to see the attribution breakdown here." />

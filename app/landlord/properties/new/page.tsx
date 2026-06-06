@@ -33,7 +33,7 @@ export default function LandlordAddPropertyPage() {
       </button>
       <div className="card card-pad col gap-5">
         <h2 style={{ fontSize: 20 }}>Add a property</h2>
-        <Field label="Listing title"><input className="input" placeholder="3 Bedroom Flat — Jericho" value={title} onChange={(e) => setTitle(e.target.value)} /></Field>
+        <Field label="Listing title"><input className="input" placeholder="3 Bedroom Flat - Jericho" value={title} onChange={(e) => setTitle(e.target.value)} /></Field>
         <div className="field">
           <span className="label">Type</span>
           <div className="row wrap gap-2">{PROPERTY_TYPES.map((t) => <button key={t} className={cn("chip", type === t && "is-active")} onClick={() => setType(t)}>{t}</button>)}</div>

@@ -78,7 +78,7 @@ export default function InspectionDetailPage() {
                 <div className="step-body">
                   <strong style={{ fontSize: 14.5 }}>{label}</strong>
                   <p style={{ color: "var(--muted)", fontSize: 12.5, marginTop: 2 }}>
-                    {["Inspection requested & confirmed", "Agent approves — address unlocks", "Meet on-site & read your OTP", "Inspection done — pay securely"][i]}
+                    {["Inspection requested & confirmed", "Agent approves - address unlocks", "Meet on-site & read your OTP", "Inspection done - pay securely"][i]}
                   </p>
                 </div>
               </div>
@@ -112,7 +112,7 @@ export default function InspectionDetailPage() {
             <div className="card card-pad col gap-2">
               {inspection.status !== "COMPLETED" && inspection.status !== "APPROVED" && (
                 <>
-                  <button className="btn btn-gold btn-block" onClick={() => { approveInspection(inspection.id); toast.success("Agent approved — address unlocked"); }}>
+                  <button className="btn btn-gold btn-block" onClick={() => { approveInspection(inspection.id); toast.success("Agent approved - address unlocked"); }}>
                     <Icon name="shieldCheck" size={17} /> Agent approves (demo)
                   </button>
                   <button className="btn btn-danger btn-block btn-sm" onClick={() => { cancelInspection(inspection.id); toast("Inspection cancelled"); }}>

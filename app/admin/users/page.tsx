@@ -29,7 +29,7 @@ export default function AdminUsersPage() {
     <>
       <div className="search" style={{ maxWidth: 320, marginBottom: 16 }}>
         <Icon name="search" size={17} />
-        <input placeholder="Search by name or role…" value={q} onChange={(e) => setQ(e.target.value)} aria-label="Search users" />
+        <input placeholder="Search by name or role..." value={q} onChange={(e) => setQ(e.target.value)} aria-label="Search users" />
       </div>
 
       <div className="table-wrap">

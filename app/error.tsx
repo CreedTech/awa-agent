@@ -35,7 +35,7 @@ export default function Error({ error, reset }: { error: Error & { digest?: stri
       </span>
       <h1 style={{ fontSize: 26 }}>Something went wrong</h1>
       <p style={{ color: "var(--muted)", fontSize: 15, maxWidth: 380 }}>
-        An unexpected error occurred. You can try again — your data is safe.
+        An unexpected error occurred. You can try again - your data is safe.
       </p>
       <button className="btn btn-primary" onClick={reset}>
         <Icon name="refresh" size={17} /> Try again

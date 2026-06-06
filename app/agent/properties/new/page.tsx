@@ -106,7 +106,7 @@ export default function AddPropertyPage() {
           <>
             <h2 style={{ fontSize: 20 }}>Property basics</h2>
             <Field label="Listing title" error={errors.title}>
-              <input className="input" placeholder="2 Bedroom Flat — Bodija" value={title} onChange={(e) => setTitle(e.target.value)} />
+              <input className="input" placeholder="2 Bedroom Flat - Bodija" value={title} onChange={(e) => setTitle(e.target.value)} />
             </Field>
             <div className="field">
               <span className="label">Type</span>
@@ -242,13 +242,13 @@ export default function AddPropertyPage() {
           <>
             <h2 style={{ fontSize: 20 }}>Review & submit</h2>
             {[
-              ["Title", title || "—"],
+              ["Title", title || "-"],
               ["Type", `${type} · ${beds} bed · ${baths} bath`],
               ["Base rent", `₦${baseRent.toLocaleString()}`],
               ["Tenant all-in", `₦${breakdown.total.toLocaleString()}`],
               ["Photos", `${photos.length} added`],
-              ["Area", `${area} · Near ${landmark || "—"}`],
-              ["GPS", location ? `${location.lat.toFixed(4)}, ${location.lng.toFixed(4)}` : "—"],
+              ["Area", `${area} · Near ${landmark || "-"}`],
+              ["GPS", location ? `${location.lat.toFixed(4)}, ${location.lng.toFixed(4)}` : "-"],
               ["Landlord", landlordMode === "existing" ? "Authorized landlord" : "Authorization requested"],
               ["Inspections", `${maxPerDay}/day · ${workingDays.length} days`],
             ].map(([k, v]) => (

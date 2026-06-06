@@ -76,7 +76,7 @@ export default function AgentEarningsPage() {
             <div key={p.id} className="card card-pad row between" style={{ alignItems: "center" }}>
               <div className="row gap-3">
                 <span className="grid place-items-center" style={{ width: 40, height: 40, borderRadius: 11, background: p.type === "Commission split" ? "var(--navy-050)" : "var(--gold-050)", color: p.type === "Commission split" ? "var(--navy-700)" : "var(--gold-700)" }}>
-                  <Icon name={p.type === "Commission split" ? "coins" : "spark"} size={18} />
+                  <Icon name={p.type === "Commission split" ? "coins" : "trend"} size={18} />
                 </span>
                 <div className="col" style={{ gap: 2 }}>
                   <strong style={{ fontSize: 14 }}>{p.prop}</strong>
@@ -126,7 +126,7 @@ export default function AgentEarningsPage() {
       <BottomSheet open={whyNotPaid} onClose={() => setWhyNotPaid(false)} title="Why was I not paid?" maxWidth={460}>
         <div className="col gap-3" style={{ padding: "8px 20px 24px" }}>
           {[
-            ["Renewals", "Year-2 renewals pay base rent only — no commission unless you provided a new verified service."],
+            ["Renewals", "Year-2 renewals pay base rent only - no commission unless you provided a new verified service."],
             ["Loyalty credits", "If a tenant renewed using loyalty rewards, the original agent isn't auto-paid."],
             ["Expired attribution", "Commission attribution expires if the deal closes long after your inspection."],
             ["Admin override", "In a dispute, an admin can reassign or withhold a payout."],

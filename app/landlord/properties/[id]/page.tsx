@@ -42,7 +42,7 @@ export default function LandlordPropertyDetailPage() {
       <div className="stats-grid">
         <StatCard label="Views" value={prop.views} icon="eye" />
         <StatCard label="Inspections" value={prop.inspections} icon="calendar" />
-        <StatCard label="Days to let" value={prop.daysToLet ?? "—"} icon="clock" />
+        <StatCard label="Days to let" value={prop.daysToLet ?? "-"} icon="clock" />
         <StatCard label="Tenant" value={prop.tenant ?? "Vacant"} icon="user" />
       </div>
 

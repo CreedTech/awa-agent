@@ -41,7 +41,7 @@ export default function EscrowWalletPage() {
       </div>
 
       {escrow.length === 0 ? (
-        <EmptyState icon="wallet" title="No escrow transactions yet" description="When you pay for a rental, your funds appear here — locked safely until handover." action={{ label: "Explore homes", href: "/explore" }} />
+        <EmptyState icon="wallet" title="No escrow transactions yet" description="When you pay for a rental, your funds appear here - locked safely until handover." action={{ label: "Explore homes", href: "/explore" }} />
       ) : (
         <div className="col gap-3">
           {escrow.map((e) => {
