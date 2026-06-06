@@ -178,11 +178,11 @@ function ExploreContent() {
         <div className="card" style={{ background: "linear-gradient(120deg, var(--navy-800), var(--navy-700))", color: "#fff", border: "none", padding: "24px 26px" }}>
           <div className="row between wrap gap-4">
             <div className="col gap-2">
-              <h1 style={{ color: "#fff", fontSize: 26 }}>Escrow-protected homes in Ibadan</h1>
+              <h1 style={{ color: "#fff", fontSize: 26 }}>Escrow-protected rental marketplace</h1>
               <p style={{ color: "rgba(255,255,255,.8)", fontSize: 14.5 }}>Every listing shows the total upfront price. Every agent is verified.</p>
             </div>
             <div className="row gap-6">
-              {[["Ibadan", "Launch city"], ["KYC", "Agent checks"], ["0", "Viewing fees"]].map(([v, l]) => (
+              {[["Verified", "Homes"], ["Escrow", "Payments"], ["No fees", "Viewings"]].map(([v, l]) => (
                 <div key={l} className="col" style={{ gap: 0 }}>
                   <span style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 22 }}>{v}</span>
                   <span style={{ fontSize: 12, color: "rgba(255,255,255,.65)" }}>{l}</span>

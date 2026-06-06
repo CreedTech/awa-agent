@@ -31,10 +31,10 @@ const BENEFITS = [
 ] as const;
 
 const STATS = [
-  { value: "Ibadan", label: "Launch city" },
-  { value: "KYC", label: "Required for agents" },
-  { value: "Escrow", label: "Required for payments" },
-  { value: "0", label: "Viewing fees allowed" },
+  { value: "Verified", label: "Homes and agents" },
+  { value: "Escrow", label: "Rent held until keys" },
+  { value: "OTP", label: "Safer inspections" },
+  { value: "No fees", label: "For viewings" },
 ];
 
 const FAQ = [
