@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Avatar } from "@/components/shared/avatar";
 import { TrustBadge } from "@/components/shared/trust-badge";
@@ -38,12 +39,12 @@ export default function AgentProfilePage() {
 
       <div className="card" style={{ marginTop: 4 }}>
         {[
-          { icon: "cash", label: "Payout account", hint: "GTBank · ••••92" },
-          { icon: "shield", label: "KYC status", hint: "Verified" },
-          { icon: "bell", label: "Notifications", hint: "Email & in-app" },
-          { icon: "settings", label: "Inspection settings", hint: "Manage availability" },
+          { icon: "cash", label: "Payout account", hint: "GTBank · ••••92", href: "/agent/earnings" },
+          { icon: "shield", label: "KYC status", hint: "Verified", href: "/agent/kyc" },
+          { icon: "bell", label: "Notifications", hint: "Email & in-app", href: "/agent/dashboard" },
+          { icon: "settings", label: "Inspection settings", hint: "Manage availability", href: "/agent/inspection-settings" },
         ].map((it, i, arr) => (
-          <button key={it.label} className="row between" style={{ width: "100%", padding: "14px 16px", borderBottom: i < arr.length - 1 ? "1px solid var(--line)" : "none" }}>
+          <Link key={it.label} href={it.href} className="row between" style={{ width: "100%", padding: "14px 16px", borderBottom: i < arr.length - 1 ? "1px solid var(--line)" : "none" }}>
             <span className="row gap-3">
               <Icon name={it.icon as never} size={18} color="var(--navy-600)" />
               <span className="col" style={{ alignItems: "flex-start", gap: 1 }}>
@@ -52,7 +53,7 @@ export default function AgentProfilePage() {
               </span>
             </span>
             <Icon name="chevR" size={16} color="var(--faint)" />
-          </button>
+          </Link>
         ))}
       </div>
 

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Avatar } from "@/components/shared/avatar";
 import { Icon } from "@/components/ui/icon";
@@ -31,14 +32,14 @@ export default function LandlordProfilePage() {
 
       <div className="card" style={{ marginTop: 4 }}>
         {[
-          { icon: "cash", label: "Payout account", hint: LANDLORD_ME.bank },
-          { icon: "shield", label: "KYC & ownership", hint: "Verified" },
-          { icon: "bell", label: "Notifications", hint: "Email & in-app" },
+          { icon: "cash", label: "Payout account", hint: LANDLORD_ME.bank, href: "/landlord/payouts" },
+          { icon: "shield", label: "KYC & ownership", hint: "Verified", href: "/landlord/kyc" },
+          { icon: "bell", label: "Notifications", hint: "Email & in-app", href: "/landlord/dashboard" },
         ].map((it, i, arr) => (
-          <button key={it.label} className="row between" style={{ width: "100%", padding: "14px 16px", borderBottom: i < arr.length - 1 ? "1px solid var(--line)" : "none" }}>
+          <Link key={it.label} href={it.href} className="row between" style={{ width: "100%", padding: "14px 16px", borderBottom: i < arr.length - 1 ? "1px solid var(--line)" : "none" }}>
             <span className="row gap-3"><Icon name={it.icon as never} size={18} color="var(--navy-600)" /><span className="col" style={{ alignItems: "flex-start", gap: 1 }}><strong style={{ fontSize: 14 }}>{it.label}</strong><span style={{ fontSize: 12, color: "var(--muted)" }}>{it.hint}</span></span></span>
             <Icon name="chevR" size={16} color="var(--faint)" />
-          </button>
+          </Link>
         ))}
       </div>
 

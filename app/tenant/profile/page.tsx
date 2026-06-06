@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Avatar } from "@/components/shared/avatar";
 import { Icon } from "@/components/ui/icon";
@@ -8,10 +9,10 @@ import { TRUST_EVENTS, TENANT_ME } from "@/lib/mock-data";
 import { useAuthStore } from "@/store/auth-store";
 import type { IconName } from "@/lib/icons";
 
-const SETTINGS: { group: string; items: { icon: IconName; label: string; hint: string }[] }[] = [
-  { group: "Security", items: [{ icon: "lock", label: "Password & 2FA", hint: "Last changed 2 months ago" }, { icon: "shieldCheck", label: "NIN verification", hint: "Verified" }] },
-  { group: "Preferences", items: [{ icon: "bell", label: "Notifications", hint: "Email & in-app" }, { icon: "explore", label: "Search preferences", hint: "Ibadan · 2 bed" }] },
-  { group: "Support", items: [{ icon: "chat", label: "Help centre", hint: "Get answers fast" }, { icon: "shield", label: "Trust & Safety", hint: "How we protect you" }] },
+const SETTINGS: { group: string; items: { icon: IconName; label: string; hint: string; href: string }[] }[] = [
+  { group: "Security", items: [{ icon: "lock", label: "Password & 2FA", hint: "Reset your password", href: "/auth/forgot-password" }, { icon: "shieldCheck", label: "NIN verification", hint: "Verified", href: "/trust-safety" }] },
+  { group: "Preferences", items: [{ icon: "bell", label: "Notifications", hint: "Email & in-app", href: "/tenant/dashboard" }, { icon: "explore", label: "Search preferences", hint: "Ibadan · 2 bed", href: "/explore" }] },
+  { group: "Support", items: [{ icon: "chat", label: "Help centre", hint: "Get answers fast", href: "/trust-safety" }, { icon: "shield", label: "Trust & Safety", hint: "How we protect you", href: "/trust-safety" }] },
 ];
 
 export default function TenantProfilePage() {
@@ -62,7 +63,7 @@ export default function TenantProfilePage() {
           <span className="label" style={{ display: "block", marginBottom: 8 }}>{s.group}</span>
           <div className="card">
             {s.items.map((it, idx) => (
-              <button key={it.label} className="row between" style={{ width: "100%", padding: "14px 16px", borderBottom: idx < s.items.length - 1 ? "1px solid var(--line)" : "none" }}>
+              <Link key={it.label} href={it.href} className="row between" style={{ width: "100%", padding: "14px 16px", borderBottom: idx < s.items.length - 1 ? "1px solid var(--line)" : "none" }}>
                 <span className="row gap-3">
                   <Icon name={it.icon} size={18} color="var(--navy-600)" />
                   <span className="col" style={{ alignItems: "flex-start", gap: 1 }}>
@@ -71,7 +72,7 @@ export default function TenantProfilePage() {
                   </span>
                 </span>
                 <Icon name="chevR" size={16} color="var(--faint)" />
-              </button>
+              </Link>
             ))}
           </div>
         </div>
