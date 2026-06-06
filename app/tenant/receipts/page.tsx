@@ -7,6 +7,7 @@ import { Icon } from "@/components/ui/icon";
 import { useAppStore } from "@/store/app-store";
 import { useShallow } from "zustand/react/shallow";
 import { propertyById } from "@/lib/mock-data";
+import { downloadReceiptPdf } from "@/lib/download";
 import { toast } from "sonner";
 
 const TENANT = "Bisi Akande";
@@ -40,7 +41,17 @@ export default function ReceiptsPage() {
                 </div>
                 <div className="row gap-3">
                   <Naira value={r.amount} size={16} />
-                  <button className="btn btn-ghost btn-sm" onClick={() => toast("Receipt downloaded (demo)")}>
+                  <button
+                    className="btn btn-ghost btn-sm"
+                    onClick={async () => {
+                      try {
+                        await downloadReceiptPdf(r, prop);
+                        toast.success("Receipt downloaded");
+                      } catch {
+                        toast.error("Couldn't generate the receipt");
+                      }
+                    }}
+                  >
                     <Icon name="receipt" size={15} /> PDF
                   </button>
                 </div>
