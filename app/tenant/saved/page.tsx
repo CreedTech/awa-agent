@@ -16,8 +16,8 @@ export default function SavedPage() {
         <EmptyState icon="bookmark" title="Save homes you like" description="Tap the bookmark on any listing and it'll show up here." action={{ label: "Explore homes", href: "/explore" }} />
       ) : (
         <div className="prop-grid">
-          {saved.map((p) => (
-            <PropertyCard key={p.id} property={p} />
+          {saved.map((p, i) => (
+            <PropertyCard key={p.id} property={p} priority={i === 0} />
           ))}
         </div>
       )}

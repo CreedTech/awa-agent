@@ -52,7 +52,7 @@ export default function PropertyDetailPage() {
         {/* Gallery */}
         <div className="gallery" style={{ marginBottom: 22 }}>
           {property.images.slice(0, 5).map((src, i) => (
-            <PropImage key={i} src={src} label={property.imageLabels[i]} className="h-full w-full" sizes="(max-width:720px) 100vw, 60vw" priority={i === 0} />
+            <PropImage key={i} src={src} label={property.imageLabels[i]} className="h-full w-full" sizes="(max-width:720px) 100vw, 60vw" priority={i < 2} />
           ))}
         </div>
 

@@ -11,7 +11,7 @@ import { agentById } from "@/lib/mock-data";
 import { calculateRentBreakdown } from "@/lib/utils";
 import type { Property } from "@/lib/types";
 
-export function PropertyCard({ property }: { property: Property }) {
+export function PropertyCard({ property, priority }: { property: Property; priority?: boolean }) {
   const saved = useAppStore((s) => s.savedIds.includes(property.id));
   const toggleSaved = useAppStore((s) => s.toggleSaved);
   const agent = agentById(property.agentId);
@@ -21,7 +21,7 @@ export function PropertyCard({ property }: { property: Property }) {
     <article className="prop-card" style={{ position: "relative" }}>
       <Link href={`/properties/${property.id}`} aria-label={property.title}>
         <div className="prop-photo">
-          <PropImage src={property.images[0]} label={property.imageLabels[0]} className="h-full w-full" sizes="(max-width:720px) 100vw, 340px" />
+          <PropImage src={property.images[0]} label={property.imageLabels[0]} className="h-full w-full" sizes="(max-width:720px) 100vw, 340px" priority={priority} />
           <div className="row gap-2" style={{ position: "absolute", top: 12, left: 12 }}>
             {property.available ? (
               <StatusBadge variant="ok">

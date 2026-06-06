@@ -40,7 +40,8 @@ export function PropImage({ src, label, className, sizes = "100vw", priority }: 
             alt={label ?? "Property photo"}
             fill
             sizes={sizes}
-            priority={priority}
+            loading={priority ? "eager" : "lazy"}
+            fetchPriority={priority ? "high" : undefined}
             onError={() => setErr(true)}
             className="object-cover"
           />

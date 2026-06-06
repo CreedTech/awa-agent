@@ -174,8 +174,8 @@ export default function HomePage() {
           </Link>
         </div>
         <div className="prop-grid">
-          {featured.map((p) => (
-            <PropertyCard key={p.id} property={p} />
+          {featured.map((p, i) => (
+            <PropertyCard key={p.id} property={p} priority={i === 0} />
           ))}
         </div>
       </section>
