@@ -5,7 +5,7 @@
    the collections are hydrated from the backend.
 
    Naming: actions are imperative verbs that describe a real state
-   transition in the product (bookInspection, confirmKeys, …).
+   transition in the product (bookInspection, confirmKeys, ...).
    ============================================================ */
 
 "use client";
@@ -111,6 +111,9 @@ interface AppState {
   reauthorizeAgent: (propertyId: string, agentId: string) => void;
   setMaxAgents: (propertyId: string, max: number) => void;
   setLandlordPropertyStatus: (propertyId: string, status: LandlordProperty["status"]) => void;
+
+  /** A new signup submits KYC; surfaces it in the admin queue. */
+  submitKycRecord: (record: { name: string; role: KycRecord["role"]; phone: string; nin: string }) => void;
 
   /* ---- admin actions ---- */
   approveKyc: (id: string) => void;
@@ -295,7 +298,7 @@ export const useAppStore = create<AppState>()(
           kind: "redeem",
         });
       });
-      get().pushNotification({ kind: "loyalty_earned", title: "Reward redeemed", body: `${label} — ${cost} points used.` });
+      get().pushNotification({ kind: "loyalty_earned", title: "Reward redeemed", body: `${label} - ${cost} points used.` });
       return true;
     },
 
@@ -477,6 +480,21 @@ export const useAppStore = create<AppState>()(
         }
       }),
 
+    submitKycRecord: ({ name, role, phone, nin }) =>
+      set((s) => {
+        s.kycQueue.unshift({
+          id: `kyc-${Date.now().toString(36)}`,
+          name,
+          role,
+          phone,
+          nin,
+          submitted: formatDate(new Date()),
+          trust: 0,
+          risk: [],
+          status: "PENDING",
+        });
+      }),
+
     /* ---------------- admin ---------------- */
     approveKyc: (id) =>
       set((s) => {
@@ -586,7 +604,7 @@ export const useAppStore = create<AppState>()(
       name: "awaagent-store",
       version: 1,
       storage: createJSONStorage(() => idbStorage),
-      // Persist only data collections — actions come from the initializer.
+      // Persist only data collections - actions come from the initializer.
       partialize: (s) => ({
         properties: s.properties,
         savedIds: s.savedIds,
