@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { BottomSheet } from "@/components/shared/bottom-sheet";
 import { Field } from "@/components/shared/field";
+import { FileDrop } from "@/components/shared/file-drop";
 import { Icon } from "@/components/ui/icon";
 import { disputeSchema, DISPUTE_REASONS, type DisputeValues } from "@/lib/validations";
 
@@ -51,9 +52,7 @@ export function DisputeSheet({ open, onClose, onSubmit }: DisputeSheetProps) {
 
         <div className="field">
           <span className="label">Evidence (optional)</span>
-          <div className="row gap-2 center" style={{ border: "1.5px dashed var(--line-2)", borderRadius: 12, padding: "18px", color: "var(--muted)", fontSize: 13.5, cursor: "pointer" }}>
-            <Icon name="upload" size={18} /> Add photos or screenshots
-          </div>
+          <FileDrop label="Add photos or screenshots" accept="image/*,application/pdf" />
         </div>
 
         <button className="btn btn-danger btn-block btn-lg" type="submit" disabled={isSubmitting}>

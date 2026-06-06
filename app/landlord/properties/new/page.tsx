@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Icon } from "@/components/ui/icon";
 import { Naira } from "@/components/shared/naira";
 import { Field } from "@/components/shared/field";
+import { FileDrop } from "@/components/shared/file-drop";
 import { PROPERTY_TYPES, AREAS } from "@/lib/constants";
 import { calculateRentBreakdown, cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -48,7 +49,7 @@ export default function LandlordAddPropertyPage() {
         </div>
         <div className="field">
           <span className="label">Proof of ownership</span>
-          <div className="row gap-2 center" style={{ border: "1.5px dashed var(--line-2)", borderRadius: 12, padding: 18, color: "var(--muted)", fontSize: 13.5 }}><Icon name="upload" size={18} /> Upload C of O / tenancy agreement</div>
+          <FileDrop label="Upload C of O / tenancy agreement" accept="image/*,application/pdf" multiple={false} />
         </div>
         <button className="btn btn-primary btn-block btn-lg" onClick={submit}>Submit for verification</button>
       </div>

@@ -21,17 +21,30 @@ export function PropImage({ src, label, className, sizes = "100vw", priority }: 
   const [err, setErr] = useState(false);
 
   if (src && !err) {
+    // User-uploaded photos are data:/blob: URLs — render them with a plain
+    // <img> (next/image optimization doesn't apply to inline sources).
+    const isLocal = src.startsWith("data:") || src.startsWith("blob:");
     return (
       <div className={cn("relative overflow-hidden bg-[var(--paper-2)]", className)}>
-        <Image
-          src={src}
-          alt={label ?? "Property photo"}
-          fill
-          sizes={sizes}
-          priority={priority}
-          onError={() => setErr(true)}
-          className="object-cover"
-        />
+        {isLocal ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={src}
+            alt={label ?? "Property photo"}
+            onError={() => setErr(true)}
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+        ) : (
+          <Image
+            src={src}
+            alt={label ?? "Property photo"}
+            fill
+            sizes={sizes}
+            priority={priority}
+            onError={() => setErr(true)}
+            className="object-cover"
+          />
+        )}
       </div>
     );
   }
