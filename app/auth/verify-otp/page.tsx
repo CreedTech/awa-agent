@@ -28,11 +28,16 @@ export default function VerifyOtpPage() {
     setVerifying(true);
     const { verified } = await authService.verifyOtp(code);
     setVerifying(false);
-    if (verified) {
-      router.push("/auth/role-selection");
-    } else {
+    if (!verified) {
       setError(true);
+      return;
     }
+    // verifyOtp logs the pending account in; route into their own space.
+    const account = useAuthStore.getState().account;
+    toast.success("Number verified");
+    if (account?.role === "agent") router.replace("/agent/kyc");
+    else if (account?.role === "landlord") router.replace("/landlord/kyc");
+    else router.replace("/tenant/dashboard");
   };
 
   return (
@@ -48,7 +53,7 @@ export default function VerifyOtpPage() {
           </span>
         )}
         <button className="btn btn-primary btn-block btn-lg" disabled={code.length < 6 || verifying} onClick={verify}>
-          {verifying ? "Verifying…" : "Verify & continue"}
+          {verifying ? "Verifying..." : "Verify & continue"}
         </button>
         <div className="row center" style={{ fontSize: 13.5, color: "var(--muted)" }}>
           {seconds > 0 ? (

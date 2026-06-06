@@ -1,65 +1,53 @@
 /* ============================================================
-   AwaAgent - Auth / session store
-   Simulated auth + the prototype role switcher. Persisted to
-   localStorage so a refresh keeps you in the same role.
-   Replace the simulated actions with real calls in `authService`.
+   AwaAgent - Session store
+   Holds the currently logged-in account. No role toggle: a person
+   signs in to their own account and lands in their own dashboard.
+   Persisted to localStorage (sync) so route guards hydrate without
+   a flash. The account directory lives in `accounts-store`.
    ============================================================ */
 
 "use client";
 
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { Role, User } from "@/lib/types";
-import { TENANT_ME, AGENT_ME, LANDLORD_ME, ADMIN_ME } from "@/lib/mock-data";
-
-/** Demo identities used by the prototype role switcher. */
-const DEMO_USERS: Record<Exclude<Role, "guest">, User> = {
-  tenant: TENANT_ME,
-  agent: { id: AGENT_ME.id, name: AGENT_ME.name, role: "agent", photo: AGENT_ME.photo, kycStatus: "VERIFIED", accountStatus: "ACTIVE", trustScore: AGENT_ME.trust, joined: AGENT_ME.since },
-  landlord: LANDLORD_ME,
-  admin: ADMIN_ME,
-};
+import type { Account, KycStatus, Role } from "@/lib/types";
 
 interface AuthState {
+  account: Account | null;
   role: Role;
-  user: User | null;
   isAuthenticated: boolean;
-  /** Set during onboarding before account creation completes. */
+  /** Account awaiting OTP verification during signup. */
+  pendingAccountId: string | null;
   pendingPhone: string | null;
 
-  setRole: (role: Role) => void;
-  /** Prototype-only: instantly assume a role with its demo identity. */
-  switchRole: (role: Exclude<Role, "guest">) => void;
-  login: (role: Exclude<Role, "guest">, user?: Partial<User>) => void;
+  login: (account: Account) => void;
   logout: () => void;
-  setPendingPhone: (phone: string | null) => void;
+  setPending: (account: Account) => void;
+  /** Reflect a KYC status change on the active session. */
+  setSessionKyc: (status: KycStatus) => void;
 }
 
 export const useAuthStore = create<AuthState>()(
   persist(
     (set) => ({
-      role: "guest",
-      user: null,
+      account: null,
+      role: "guest" as Role,
       isAuthenticated: false,
+      pendingAccountId: null,
       pendingPhone: null,
 
-      setRole: (role) => set({ role }),
-
-      switchRole: (role) =>
-        set({ role, user: DEMO_USERS[role], isAuthenticated: true }),
-
-      login: (role, user) =>
-        set({
-          role,
-          isAuthenticated: true,
-          user: { ...DEMO_USERS[role], ...user },
-        }),
+      login: (account) =>
+        set({ account, role: account.role, isAuthenticated: true, pendingAccountId: null }),
 
       logout: () =>
-        set({ role: "guest", user: null, isAuthenticated: false, pendingPhone: null }),
+        set({ account: null, role: "guest", isAuthenticated: false, pendingAccountId: null, pendingPhone: null }),
 
-      setPendingPhone: (pendingPhone) => set({ pendingPhone }),
+      setPending: (account) =>
+        set({ pendingAccountId: account.id, pendingPhone: account.phone }),
+
+      setSessionKyc: (status) =>
+        set((s) => (s.account ? { account: { ...s.account, kycStatus: status } } : s)),
     }),
-    { name: "awaagent-auth" },
+    { name: "awaagent-session" },
   ),
 );

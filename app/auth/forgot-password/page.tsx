@@ -56,7 +56,7 @@ export default function ForgotPasswordPage() {
           <input className="input" placeholder="0803 552 1190" {...register("identifier")} />
         </Field>
         <button className="btn btn-primary btn-block btn-lg" type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "Sending…" : "Send reset code"}
+          {isSubmitting ? "Sending..." : "Send reset code"}
         </button>
       </form>
     </AuthShell>

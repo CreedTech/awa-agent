@@ -84,6 +84,19 @@ export interface User {
   city?: string;
 }
 
+/** A login-able account (demo auth). Passwords are plaintext for the
+ *  prototype only - a real backend hashes them and never returns them. */
+export interface Account {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  password: string;
+  role: Exclude<Role, "guest">;
+  kycStatus: KycStatus;
+  photo?: string;
+}
+
 export interface AgentProfile {
   id: string; // AGT-xxxx
   name: string;
@@ -255,7 +268,8 @@ export type NotificationKind =
   | "landlord_payout"
   | "property_approved"
   | "authorization_request"
-  | "loyalty_earned";
+  | "loyalty_earned"
+  | "kyc_update";
 
 export interface AppNotification {
   id: string;
