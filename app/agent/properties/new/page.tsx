@@ -134,20 +134,43 @@ export default function AddPropertyPage() {
         {step === 1 && (
           <>
             <h2 style={{ fontSize: 20 }}>Photos</h2>
-            <p style={{ color: "var(--muted)", fontSize: 14 }}>Add at least 3 clear photos. (Demo: tap to add a placeholder.)</p>
+            <p style={{ color: "var(--muted)", fontSize: 14 }}>Add at least 3 clear photos of the property.</p>
             <div className="drawer-grid">
               {photos.map((src, i) => (
-                <div key={i} className="ph" style={{ aspectRatio: "4/3", borderRadius: 12 }}>
-                  <span className="ph-label">Photo {i + 1}</span>
+                <div key={i} style={{ position: "relative", aspectRatio: "4/3", borderRadius: 12, overflow: "hidden", background: "var(--paper-2)" }}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={src} alt={`Photo ${i + 1}`} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                  <button
+                    type="button"
+                    aria-label="Remove photo"
+                    onClick={() => setPhotos((p) => p.filter((_, idx) => idx !== i))}
+                    style={{ position: "absolute", top: 6, right: 6, width: 26, height: 26, borderRadius: "50%", background: "rgba(7,18,35,.7)", color: "#fff", display: "grid", placeItems: "center" }}
+                  >
+                    <Icon name="close" size={14} />
+                  </button>
                 </div>
               ))}
-              <button
+              <label
                 className="col center"
-                style={{ aspectRatio: "4/3", borderRadius: 12, border: "1.5px dashed var(--line-2)", color: "var(--muted)", gap: 6 }}
-                onClick={() => setPhotos((p) => [...p, `photo-${p.length}`])}
+                style={{ aspectRatio: "4/3", borderRadius: 12, border: "1.5px dashed var(--line-2)", color: "var(--muted)", gap: 6, cursor: "pointer" }}
               >
                 <Icon name="plus" size={22} /> <span style={{ fontSize: 12.5 }}>Add photo</span>
-              </button>
+                <input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  style={{ display: "none" }}
+                  onChange={(e) => {
+                    const files = Array.from(e.target.files ?? []);
+                    files.forEach((f) => {
+                      const reader = new FileReader();
+                      reader.onload = () => setPhotos((p) => [...p, reader.result as string]);
+                      reader.readAsDataURL(f);
+                    });
+                    e.target.value = "";
+                  }}
+                />
+              </label>
             </div>
             {errors.photos && <span style={{ fontSize: 12.5, color: "var(--danger)" }}>{errors.photos}</span>}
           </>
