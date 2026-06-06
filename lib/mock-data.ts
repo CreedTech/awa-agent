@@ -27,12 +27,15 @@ import { calculateRentBreakdown } from "./utils";
 const UNS = (id: string, w = 800, h = 600) =>
   `https://images.unsplash.com/photo-${id}?w=${w}&h=${h}&fit=crop&auto=format&q=80`;
 
+/** Nigerian portrait helper for demo avatars. */
+const NAIJA = (id: string, size = 160) => UNS(id, size, size);
+
 /* ---------------- Agents ---------------- */
 export const AGENTS: Record<string, AgentProfile> = {
-  a1: { id: "AGT-4471", name: "Tunde Adeyemi", trust: 94, deals: 38, since: "2024", commissionPct: 10, verified: true, area: "Bodija · Ibadan", tier: "High Trust", ninStatus: "VERIFIED", photo: UNS("1531384441138-2c568b8f8f14", 160, 160) },
-  a2: { id: "AGT-2210", name: "Aisha Bello", trust: 88, deals: 21, since: "2025", commissionPct: 9, verified: true, area: "Akobo · Ibadan", tier: "Verified", ninStatus: "VERIFIED", photo: UNS("1531746020798-e6953c6e8e04", 160, 160) },
-  a3: { id: "AGT-7793", name: "Chidi Okonkwo", trust: 76, deals: 12, since: "2025", commissionPct: 9, verified: true, area: "Ring Rd · Ibadan", tier: "Verified", ninStatus: "VERIFIED", photo: UNS("1507003211169-0a1dd7228f2d", 160, 160) },
-  a4: { id: "AGT-9920", name: "Funke Ogunleye", trust: 97, deals: 54, since: "2023", commissionPct: 10, verified: true, area: "Jericho · Ibadan", tier: "High Trust", ninStatus: "VERIFIED", photo: UNS("1573497019940-1c28c88b4f3e", 160, 160) },
+  a1: { id: "AGT-4471", name: "Tunde Adeyemi", trust: 94, deals: 38, since: "2024", commissionPct: 10, verified: true, area: "Bodija · Ibadan", tier: "High Trust", ninStatus: "VERIFIED", photo: NAIJA("1654155427842-a4a249bf693e") },
+  a2: { id: "AGT-2210", name: "Aisha Bello", trust: 88, deals: 21, since: "2025", commissionPct: 9, verified: true, area: "Akobo · Ibadan", tier: "Verified", ninStatus: "VERIFIED", photo: NAIJA("1753334480128-99cb4f8b28e2") },
+  a3: { id: "AGT-7793", name: "Chidi Okonkwo", trust: 76, deals: 12, since: "2025", commissionPct: 9, verified: true, area: "Ring Rd · Ibadan", tier: "Verified", ninStatus: "VERIFIED", photo: NAIJA("1723221906960-1c5a5febc9c3") },
+  a4: { id: "AGT-9920", name: "Funke Ogunleye", trust: 97, deals: 54, since: "2023", commissionPct: 10, verified: true, area: "Jericho · Ibadan", tier: "High Trust", ninStatus: "VERIFIED", photo: NAIJA("1742473717014-ca04e722e0b7") },
 };
 
 export const agentById = (id: string): AgentProfile | undefined =>
@@ -149,7 +152,7 @@ export const propertyById = (id: string) => PROPERTIES.find((p) => p.id === id);
 export const TENANT_ME: User = {
   id: "usr-tenant-1", name: "Bisi Akande", role: "tenant",
   email: "bisi.akande@example.com", phone: "0803 552 1190",
-  photo: UNS("1595152452543-12ae8099f8b0", 160, 160),
+  photo: NAIJA("1531300185372-b7cbe2eddf0b"),
   kycStatus: "VERIFIED", accountStatus: "ACTIVE", trustScore: 72, joined: "Feb 2026", city: "Ibadan",
 };
 
@@ -268,7 +271,7 @@ export const COMMISSIONS: AgentCommission[] = [
 /* ---------------- Landlord (Chief R. Adeleke) ---------------- */
 export const LANDLORD_ME: User & { bank: string; ninStatus: string; properties: number; tenants: number } = {
   id: "LND-3092", name: "Chief R. Adeleke", role: "landlord",
-  phone: "0803 441 0092", photo: UNS("1506794778202-cad09ac37cf8", 160, 160),
+  phone: "0803 441 0092", photo: NAIJA("1654155427842-a4a249bf693e"),
   kycStatus: "VERIFIED", accountStatus: "ACTIVE", joined: "Jan 2025", city: "Ibadan",
   bank: "GTBank · 056·····92", ninStatus: "VERIFIED", properties: 4, tenants: 2,
 };
@@ -302,8 +305,8 @@ export const LANDLORD_PROPERTIES: LandlordProperty[] = [
     status: "LIVE", available: false, tenant: "Mrs. K. Ojo", tenantSince: "Mar 2026", escrowRef: "AWA-TX-7821", nextDue: "Mar 2027", views: 148, inspections: 7, daysToLet: 12, maxAgents: 3,
     img: UNS("1560448204-e02f11c3d0e2", 800, 400),
     agents: [
-      { id: "AGT-4471", name: "Tunde Adeyemi", trust: 94, role: "PRIMARY", status: "AUTHORIZED", commission: 10, since: "Jan 2025", deals: 3, photo: UNS("1531384441138-2c568b8f8f14", 160, 160) },
-      { id: "AGT-2210", name: "Aisha Bello", trust: 88, role: "AUTHORIZED", status: "AUTHORIZED", commission: 9, since: "Mar 2025", deals: 1, photo: UNS("1531746020798-e6953c6e8e04", 160, 160) },
+      { id: "AGT-4471", name: "Tunde Adeyemi", trust: 94, role: "PRIMARY", status: "AUTHORIZED", commission: 10, since: "Jan 2025", deals: 3, photo: NAIJA("1654155427842-a4a249bf693e") },
+      { id: "AGT-2210", name: "Aisha Bello", trust: 88, role: "AUTHORIZED", status: "AUTHORIZED", commission: 9, since: "Mar 2025", deals: 1, photo: NAIJA("1753334480128-99cb4f8b28e2") },
     ],
   },
   {
@@ -311,7 +314,7 @@ export const LANDLORD_PROPERTIES: LandlordProperty[] = [
     status: "LIVE", available: true, tenant: null, tenantSince: null, escrowRef: null, nextDue: null, views: 87, inspections: 4, daysToLet: null, maxAgents: 2,
     img: UNS("1580587771525-78b9dba3b914", 800, 400),
     agents: [
-      { id: "AGT-4471", name: "Tunde Adeyemi", trust: 94, role: "PRIMARY", status: "AUTHORIZED", commission: 10, since: "Feb 2025", deals: 0, photo: UNS("1531384441138-2c568b8f8f14", 160, 160) },
+      { id: "AGT-4471", name: "Tunde Adeyemi", trust: 94, role: "PRIMARY", status: "AUTHORIZED", commission: 10, since: "Feb 2025", deals: 0, photo: NAIJA("1654155427842-a4a249bf693e") },
     ],
   },
   {
@@ -319,7 +322,7 @@ export const LANDLORD_PROPERTIES: LandlordProperty[] = [
     status: "PENDING_ADMIN", available: true, tenant: null, tenantSince: null, escrowRef: null, nextDue: null, views: 0, inspections: 0, daysToLet: null, maxAgents: 2,
     img: UNS("1522771739844-6a9f6a868527", 800, 400),
     agents: [
-      { id: "AGT-7793", name: "Emeka Okafor", trust: 76, role: "AUTHORIZED", status: "AUTHORIZED", commission: 9, since: "May 2026", deals: 0, photo: UNS("1507003211169-0a1dd7228f2d", 160, 160) },
+      { id: "AGT-7793", name: "Emeka Okafor", trust: 76, role: "AUTHORIZED", status: "AUTHORIZED", commission: 9, since: "May 2026", deals: 0, photo: NAIJA("1723221906960-1c5a5febc9c3") },
     ],
   },
   {
@@ -327,9 +330,9 @@ export const LANDLORD_PROPERTIES: LandlordProperty[] = [
     status: "OCCUPIED", available: false, tenant: "Mr. A. Bello", tenantSince: "Nov 2025", escrowRef: "AWA-TX-5502", nextDue: "Nov 2026", views: 201, inspections: 11, daysToLet: 8, maxAgents: 4,
     img: UNS("1512917774080-9991f1c4c750", 800, 400),
     agents: [
-      { id: "AGT-4471", name: "Tunde Adeyemi", trust: 94, role: "PRIMARY", status: "AUTHORIZED", commission: 10, since: "Oct 2024", deals: 2, photo: UNS("1531384441138-2c568b8f8f14", 160, 160) },
-      { id: "AGT-2210", name: "Aisha Bello", trust: 88, role: "AUTHORIZED", status: "AUTHORIZED", commission: 9, since: "Oct 2024", deals: 1, photo: UNS("1531746020798-e6953c6e8e04", 160, 160) },
-      { id: "AGT-7793", name: "Emeka Okafor", trust: 76, role: "AUTHORIZED", status: "AUTHORIZED", commission: 9, since: "Jan 2025", deals: 1, photo: UNS("1507003211169-0a1dd7228f2d", 160, 160) },
+      { id: "AGT-4471", name: "Tunde Adeyemi", trust: 94, role: "PRIMARY", status: "AUTHORIZED", commission: 10, since: "Oct 2024", deals: 2, photo: NAIJA("1654155427842-a4a249bf693e") },
+      { id: "AGT-2210", name: "Aisha Bello", trust: 88, role: "AUTHORIZED", status: "AUTHORIZED", commission: 9, since: "Oct 2024", deals: 1, photo: NAIJA("1753334480128-99cb4f8b28e2") },
+      { id: "AGT-7793", name: "Emeka Okafor", trust: 76, role: "AUTHORIZED", status: "AUTHORIZED", commission: 9, since: "Jan 2025", deals: 1, photo: NAIJA("1723221906960-1c5a5febc9c3") },
     ],
   },
 ];
