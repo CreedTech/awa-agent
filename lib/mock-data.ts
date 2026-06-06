@@ -271,7 +271,7 @@ export const COMMISSIONS: AgentCommission[] = [
 /* ---------------- Landlord (Chief R. Adeleke) ---------------- */
 export const LANDLORD_ME: User & { bank: string; ninStatus: string; properties: number; tenants: number } = {
   id: "LND-3092", name: "Chief R. Adeleke", role: "landlord",
-  phone: "0803 441 0092", photo: NAIJA("1654155427842-a4a249bf693e"),
+  phone: "0803 441 0092", photo: NAIJA("1531299983330-093763e1d963"),
   kycStatus: "VERIFIED", accountStatus: "ACTIVE", joined: "Jan 2025", city: "Ibadan",
   bank: "GTBank · 056·····92", ninStatus: "VERIFIED", properties: 4, tenants: 2,
 };
