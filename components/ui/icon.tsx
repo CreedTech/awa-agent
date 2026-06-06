@@ -8,6 +8,7 @@ interface IconProps {
   strokeWidth?: number;
   className?: string;
   color?: string;
+  style?: React.CSSProperties;
   "aria-hidden"?: boolean;
 }
 

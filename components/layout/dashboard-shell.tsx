@@ -14,6 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAppStore } from "@/store/app-store";
+import { useShallow } from "zustand/react/shallow";
 import { useAuthStore } from "@/store/auth-store";
 import type { NavItem } from "@/lib/constants";
 import { cn } from "@/lib/utils";
@@ -35,13 +36,17 @@ export function DashboardShell({ role, nav, identity, title, subtitle, actions, 
   const logout = useAuthStore((s) => s.logout);
   const isAdmin = role === "admin";
 
-  // Live badge counters sourced from the store.
-  const badges = useAppStore((s) => ({
-    requests: s.agentRequests.filter((r) => r.status === "PENDING").length,
-    kyc: s.kycQueue.filter((k) => k.status === "PENDING").length,
-    props: s.propQueue.filter((p) => p.status === "PENDING").length,
-    disputes: s.disputes.filter((d) => d.status !== "RESOLVED").length,
-  }));
+  // Live badge counters sourced from the store. `useShallow` keeps the
+  // returned object stable (shallow-compared) so this doesn't re-render
+  // every snapshot — the values are plain numbers.
+  const badges = useAppStore(
+    useShallow((s) => ({
+      requests: s.agentRequests.filter((r) => r.status === "PENDING").length,
+      kyc: s.kycQueue.filter((k) => k.status === "PENDING").length,
+      props: s.propQueue.filter((p) => p.status === "PENDING").length,
+      disputes: s.disputes.filter((d) => d.status !== "RESOLVED").length,
+    })),
+  );
 
   const active = (href: string) => pathname === href || pathname.startsWith(href + "/");
 
