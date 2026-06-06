@@ -2,7 +2,8 @@
 
 import { PageHeader } from "@/components/shared/page-header";
 import { Icon } from "@/components/ui/icon";
-import { LOYALTY } from "@/lib/mock-data";
+import { useAppStore } from "@/store/app-store";
+import { useShallow } from "zustand/react/shallow";
 import type { IconName } from "@/lib/icons";
 import { toast } from "sonner";
 
@@ -20,6 +21,10 @@ const REDEEM: { icon: IconName; label: string; cost: number; hint: string }[] = 
 ];
 
 export default function LoyaltyPage() {
+  const balance = useAppStore((s) => s.loyaltyBalance);
+  const history = useAppStore(useShallow((s) => s.loyaltyHistory));
+  const redeem = useAppStore((s) => s.redeemLoyalty);
+
   return (
     <div className="page page-narrow">
       <PageHeader title="Loyalty" subtitle="Earn points for renting safely — redeem them for perks." />
@@ -27,7 +32,7 @@ export default function LoyaltyPage() {
       <div className="card" style={{ background: "linear-gradient(120deg, var(--gold-600), var(--gold-500))", color: "var(--navy-900)", border: "none", padding: "22px 24px", marginBottom: 18 }}>
         <span style={{ fontSize: 13, fontWeight: 600, opacity: 0.8 }}>Your balance</span>
         <div className="row gap-2" style={{ alignItems: "baseline", marginTop: 2 }}>
-          <span style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 40 }}>{LOYALTY.balance}</span>
+          <span style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 40 }}>{balance}</span>
           <span style={{ fontWeight: 700 }}>points</span>
         </div>
       </div>

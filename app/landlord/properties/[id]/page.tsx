@@ -18,7 +18,10 @@ const STATUS: Record<string, BadgeVariant> = { LIVE: "ok", OCCUPIED: "lock", PEN
 export default function LandlordPropertyDetailPage() {
   const { id } = useParams<{ id: string }>();
   const prop = useAppStore((s) => s.landlordProperties.find((p) => p.id === id));
+  const setStatus = useAppStore((s) => s.setLandlordPropertyStatus);
   if (!prop) return notFound();
+
+  const paused = prop.status === "PAUSED";
 
   return (
     <div style={{ maxWidth: 820 }}>
@@ -60,7 +63,16 @@ export default function LandlordPropertyDetailPage() {
 
       <div className="row wrap gap-2">
         <Link href="/landlord/agent-matrix" className="btn btn-primary btn-sm"><Icon name="users" size={16} /> Agent matrix</Link>
-        <button className="btn btn-warn btn-sm" onClick={() => toast("Property paused (demo)")}><Icon name="pause" size={16} /> Pause listing</button>
+        <button
+          className={`btn btn-sm ${paused ? "btn-ok" : "btn-warn"}`}
+          onClick={() => {
+            const next = paused ? "LIVE" : "PAUSED";
+            setStatus(prop.id, next);
+            toast(next === "PAUSED" ? "Listing paused" : "Listing resumed");
+          }}
+        >
+          <Icon name={paused ? "check" : "pause"} size={16} /> {paused ? "Resume listing" : "Pause listing"}
+        </button>
         <Link href={`/properties/p1`} className="btn btn-quiet btn-sm"><Icon name="eye" size={16} /> View public</Link>
       </div>
     </div>
