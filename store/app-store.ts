@@ -11,9 +11,11 @@
 "use client";
 
 import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 import type {
   Property,
+  PropertyStatus,
   Inspection,
   EscrowTransaction,
   Dispute,
@@ -22,6 +24,7 @@ import type {
   NotificationKind,
   DisputeResolution,
   AgentRole,
+  LoyaltyTransaction,
 } from "@/lib/types";
 import {
   PROPERTIES,
@@ -36,11 +39,15 @@ import {
   SAVED_IDS,
   INSPECTION_SETTINGS,
   TENANTS,
+  LOYALTY,
+  AGENT_EARNINGS,
   propertyById,
   type PropQueueRow,
   type LandlordProperty,
+  type AgentPayout,
 } from "@/lib/mock-data";
 import type { LandlordAuthorization } from "@/lib/types";
+import { idbStorage } from "@/lib/idb-storage";
 import {
   calculateRentBreakdown,
   generateInspectionOtp,
@@ -71,6 +78,10 @@ interface AppState {
   notifications: AppNotification[];
   users: typeof TENANTS;
   inspectionSettings: InspectionSettings;
+  loyaltyBalance: number;
+  loyaltyHistory: LoyaltyTransaction[];
+  agentAvailable: number;
+  agentPayouts: AgentPayout[];
 
   /* ---- tenant actions ---- */
   toggleSaved: (propertyId: string) => void;
@@ -81,13 +92,17 @@ interface AppState {
   failPayment: (txnId: string) => void;
   confirmKeys: (txnId: string) => void;
   raiseDispute: (txnId: string, reason: string) => void;
+  redeemLoyalty: (cost: number, label: string) => boolean;
 
   /* ---- agent actions ---- */
   approveInspection: (inspectionId: string) => void;
   verifyInspectionOtp: (inspectionId: string, code: string) => boolean;
   completeInspection: (inspectionId: string) => void;
   addProperty: (draft: Partial<Property>) => Property;
+  updateProperty: (propertyId: string, patch: Partial<Property>) => void;
+  setPropertyStatus: (propertyId: string, status: PropertyStatus) => void;
   setInspectionSettings: (settings: Partial<InspectionSettings>) => void;
+  withdrawAgent: (amount: number, bank: string, accountNumber: string) => boolean;
 
   /* ---- landlord actions ---- */
   resolveAgentRequest: (requestId: string, approve: boolean) => void;
@@ -95,6 +110,7 @@ interface AppState {
   revokeAgent: (propertyId: string, agentId: string) => void;
   reauthorizeAgent: (propertyId: string, agentId: string) => void;
   setMaxAgents: (propertyId: string, max: number) => void;
+  setLandlordPropertyStatus: (propertyId: string, status: LandlordProperty["status"]) => void;
 
   /* ---- admin actions ---- */
   approveKyc: (id: string) => void;
@@ -129,12 +145,17 @@ const seed = () => ({
   notifications: structuredClone(NOTIFICATIONS),
   users: structuredClone(TENANTS),
   inspectionSettings: { ...INSPECTION_SETTINGS },
+  loyaltyBalance: LOYALTY.balance,
+  loyaltyHistory: structuredClone(LOYALTY.history),
+  agentAvailable: AGENT_EARNINGS.available,
+  agentPayouts: structuredClone(AGENT_EARNINGS.history),
 });
 
 let notifSeq = 100;
 
 export const useAppStore = create<AppState>()(
-  immer((set, get) => ({
+  persist(
+    immer((set, get) => ({
     ...seed(),
 
     /* ---------------- tenant ---------------- */
@@ -262,6 +283,22 @@ export const useAppStore = create<AppState>()(
       });
     },
 
+    redeemLoyalty: (cost, label) => {
+      if (get().loyaltyBalance < cost) return false;
+      set((s) => {
+        s.loyaltyBalance -= cost;
+        s.loyaltyHistory.unshift({
+          id: `ly-${Date.now().toString(36)}`,
+          label: `Redeemed: ${label}`,
+          points: -cost,
+          date: formatDate(new Date()),
+          kind: "redeem",
+        });
+      });
+      get().pushNotification({ kind: "loyalty_earned", title: "Reward redeemed", body: `${label} — ${cost} points used.` });
+      return true;
+    },
+
     /* ---------------- agent ---------------- */
     approveInspection: (inspectionId) => {
       set((s) => {
@@ -346,10 +383,39 @@ export const useAppStore = create<AppState>()(
       return property;
     },
 
+    updateProperty: (propertyId, patch) =>
+      set((s) => {
+        const p = s.properties.find((x) => x.id === propertyId);
+        if (p) Object.assign(p, patch);
+      }),
+
+    setPropertyStatus: (propertyId, status) =>
+      set((s) => {
+        const p = s.properties.find((x) => x.id === propertyId);
+        if (p) p.status = status;
+      }),
+
     setInspectionSettings: (settings) =>
       set((s) => {
         s.inspectionSettings = { ...s.inspectionSettings, ...settings };
       }),
+
+    withdrawAgent: (amount, bank) => {
+      if (amount <= 0 || amount > get().agentAvailable) return false;
+      set((s) => {
+        s.agentAvailable -= amount;
+        s.agentPayouts.unshift({
+          id: `PO-${Math.floor(1000 + Math.random() * 8999)}`,
+          type: "Commission split",
+          prop: `Withdrawal to ${bank}`,
+          amount,
+          date: formatDate(new Date()),
+          status: "Paid",
+        });
+      });
+      get().pushNotification({ kind: "agent_payout", title: "Withdrawal sent", body: `${amount.toLocaleString("en-NG")} is on its way to your ${bank} account.` });
+      return true;
+    },
 
     /* ---------------- landlord ---------------- */
     resolveAgentRequest: (requestId, approve) =>
@@ -400,6 +466,15 @@ export const useAppStore = create<AppState>()(
       set((s) => {
         const prop = s.landlordProperties.find((p) => p.id === propertyId);
         if (prop) prop.maxAgents = Math.max(1, Math.min(8, max));
+      }),
+
+    setLandlordPropertyStatus: (propertyId, status) =>
+      set((s) => {
+        const prop = s.landlordProperties.find((p) => p.id === propertyId);
+        if (prop) {
+          prop.status = status;
+          prop.available = status === "LIVE";
+        }
       }),
 
     /* ---------------- admin ---------------- */
