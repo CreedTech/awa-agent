@@ -11,7 +11,7 @@ const TIERS = [
     price: "Free",
     sub: "For every renter",
     featured: false,
-    features: ["Escrow-protected payments", "Verified inspections", "Transparent rent breakdown", "Dispute protection"],
+    features: ["Escrow-protected payments", "Verified inspections", "Total price shown upfront", "Dispute protection"],
   },
   {
     name: "Premium",
@@ -29,11 +29,10 @@ const TIERS = [
   },
 ];
 
-const FEES = [
-  { label: "Base rent", value: "Set by landlord", note: "Paid to the landlord" },
-  { label: "Agent commission", value: "8–10%", note: "Based on agent trust score" },
-  { label: "Escrow service fee", value: "2.5%", note: "Year 1 - protects your money" },
-  { label: "Year 2 renewal", value: "Base rent only", note: "No commission, 1% escrow fee" },
+const PRICE_RULES = [
+  "Every listing shows one total first-year price before you book or pay.",
+  "No viewing fee is allowed on AwaAgent.",
+  "Renewal pricing is lower after the first year.",
 ];
 
 export default function PricingPage() {
@@ -76,17 +75,16 @@ export default function PricingPage() {
       </section>
 
       <section className="page page-narrow">
-        <div className="page-head"><h2 className="page-title">How rent is calculated</h2>
-          <p className="page-sub">Every figure is shown to you up front - no surprises at the door.</p>
+        <div className="page-head"><h2 className="page-title">What renters see</h2>
+          <p className="page-sub">One total upfront price - no line-item surprises while browsing.</p>
         </div>
-        <div className="card">
-          {FEES.map((f) => (
-            <div key={f.label} className="brk-row" style={{ padding: "16px 20px" }}>
-              <div className="col" style={{ gap: 2 }}>
-                <strong style={{ fontSize: 14.5 }}>{f.label}</strong>
-                <span style={{ fontSize: 12.5, color: "var(--muted)" }}>{f.note}</span>
-              </div>
-              <strong style={{ fontFamily: "var(--font-display)", fontSize: 16 }}>{f.value}</strong>
+        <div className="card card-pad col gap-3">
+          {PRICE_RULES.map((rule) => (
+            <div key={rule} className="row gap-3">
+              <span className="grid place-items-center" style={{ width: 26, height: 26, borderRadius: "50%", background: "var(--ok-bg)", color: "var(--ok)", flex: "0 0 auto" }}>
+                <Icon name="check" size={15} strokeWidth={2.4} />
+              </span>
+              <span style={{ fontSize: 14.5, color: "var(--ink-2)" }}>{rule}</span>
             </div>
           ))}
         </div>

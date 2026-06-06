@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { BottomSheet } from "@/components/shared/bottom-sheet";
 import { Icon } from "@/components/ui/icon";
 import { Naira } from "@/components/shared/naira";
-import { RentBreakdownView } from "@/components/property/rent-breakdown";
 import { useAppStore } from "@/store/app-store";
 import { agentById } from "@/lib/mock-data";
 import { calculateRentBreakdown } from "@/lib/utils";
@@ -64,8 +63,12 @@ export function PaySheet({ property, open, onClose }: PaySheetProps) {
               <span>Your money is held in escrow and only released when you confirm your keys.</span>
             </div>
             <strong style={{ fontSize: 15 }}>{property.title}</strong>
-            <div style={{ margin: "12px 0" }}>
-              <RentBreakdownView breakdown={breakdown} showRenewalNote={false} />
+            <div className="card card-pad row between" style={{ background: "var(--navy-050)", border: "none", margin: "12px 0" }}>
+              <div className="col" style={{ gap: 2 }}>
+                <strong style={{ fontSize: 14 }}>Total to pay</strong>
+                <span style={{ fontSize: 12.5, color: "var(--muted)" }}>Held safely in escrow until key handover.</span>
+              </div>
+              <Naira value={breakdown.total} size={22} color="var(--navy-800)" />
             </div>
             {env.paystackPublicKey === "" && (
               <p style={{ fontSize: 12, color: "var(--faint)", marginBottom: 10 }}>

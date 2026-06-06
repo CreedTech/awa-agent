@@ -81,7 +81,7 @@ function FiltersPanel({
 
       <div className="field">
         <span className="label row between">
-          <span>Max all-in price</span>
+          <span>Max total price</span>
           <span className="num" style={{ color: "var(--navy-700)" }}>{formatCurrency(filters.maxPrice)}</span>
         </span>
         <input
@@ -179,7 +179,7 @@ function ExploreContent() {
           <div className="row between wrap gap-4">
             <div className="col gap-2">
               <h1 style={{ color: "#fff", fontSize: 26 }}>Escrow-protected homes in Ibadan</h1>
-              <p style={{ color: "rgba(255,255,255,.8)", fontSize: 14.5 }}>Every price is all-in. Every agent is verified.</p>
+              <p style={{ color: "rgba(255,255,255,.8)", fontSize: 14.5 }}>Every listing shows the total upfront price. Every agent is verified.</p>
             </div>
             <div className="row gap-6">
               {[["100%", "Fraud refund"], ["38", "Verified agents"], ["2.5%", "Escrow fee"]].map(([v, l]) => (

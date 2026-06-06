@@ -7,7 +7,6 @@ import { PropImage } from "@/components/shared/prop-image";
 import { Avatar } from "@/components/shared/avatar";
 import { TrustBadge } from "@/components/shared/trust-badge";
 import { Naira } from "@/components/shared/naira";
-import { RentBreakdownView } from "@/components/property/rent-breakdown";
 import { EscrowExplainer } from "@/components/property/escrow-explainer";
 import { RestrictedPrompt } from "@/components/property/restricted-prompt";
 import { BookingSheet } from "@/components/inspection/booking-sheet";
@@ -140,10 +139,9 @@ export default function PropertyDetailPage() {
           <aside className="detail-aside">
             <div className="card card-pad col gap-4">
               <div className="col" style={{ gap: 2 }}>
-                <span style={{ fontSize: 12.5, color: "var(--muted)", fontWeight: 600 }}>1st-year, all-in</span>
+                <span style={{ fontSize: 12.5, color: "var(--muted)", fontWeight: 600 }}>Total first-year price</span>
                 <Naira value={breakdown.total} size={30} />
               </div>
-              <RentBreakdownView breakdown={breakdown} />
               <div className="col gap-2">
                 <button className="btn btn-gold btn-block btn-lg" onClick={guard("pay securely", () => setPaying(true))}>
                   <Icon name="lock" size={18} /> Pay securely

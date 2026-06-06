@@ -7,7 +7,7 @@ import type { IconName } from "@/lib/icons";
 export const metadata: Metadata = { title: "How it works" };
 
 const JOURNEY: { icon: IconName; title: string; body: string }[] = [
-  { icon: "explore", title: "1. Find a verified home", body: "Browse listings with transparent, all-in pricing. Every agent has passed NIN-based KYC, and prices include rent, commission and the escrow fee." },
+  { icon: "explore", title: "1. Find a verified home", body: "Browse listings with the total upfront price clearly shown. Every agent has passed NIN-based KYC." },
   { icon: "calendar", title: "2. Book a safe inspection", body: "Choose a slot and receive a 6-digit OTP. No DMs, no illegal viewing fees. The exact address stays hidden until your inspection is approved." },
   { icon: "pin", title: "3. Unlock the address", body: "Once the agent approves, the exact address, map route and safety tips unlock. You meet on-site and read your OTP to verify the meeting." },
   { icon: "lock", title: "4. Pay into escrow", body: "Pay securely - your rent is held by AwaAgent, never handed to a stranger. Funds stay locked until you confirm handover." },

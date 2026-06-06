@@ -68,7 +68,7 @@ export function PropertyCard({ property }: { property: Property }) {
           <div className="row between">
             <div className="col" style={{ gap: 0 }}>
               <Naira value={total} size={20} />
-              <span style={{ fontSize: 11.5, color: "var(--muted)" }}>1st-year, all-in</span>
+              <span style={{ fontSize: 11.5, color: "var(--muted)" }}>Total first-year price</span>
             </div>
             {agent && <TrustBadge score={agent.trust} sm />}
           </div>

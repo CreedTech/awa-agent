@@ -6,7 +6,7 @@ import { PROPERTIES } from "@/lib/mock-data";
 import type { IconName } from "@/lib/icons";
 
 const HOW = [
-  { icon: "explore", title: "Find a verified home", body: "Browse listings with transparent, all-in pricing. Every agent passes NIN-based KYC." },
+  { icon: "explore", title: "Find a verified home", body: "Browse listings with the total upfront price clearly shown. Every agent passes NIN-based KYC." },
   { icon: "calendar", title: "Book a safe inspection", body: "Pick a slot and get a 6-digit OTP. No DMs, no illegal viewing fees, exact address stays hidden until approved." },
   { icon: "lock", title: "Pay into escrow", body: "Your rent is locked safely - never paid directly to a stranger." },
   { icon: "key", title: "Confirm your keys", body: "Funds are only released to the landlord and agent once you confirm you've received your keys." },
@@ -16,7 +16,7 @@ const BENEFITS = [
   {
     icon: "home",
     audience: "For tenants",
-    points: ["Escrow-protected rent", "Transparent rent breakdown", "Verified, safe inspections", "Dispute protection"],
+    points: ["Escrow-protected rent", "Total upfront price", "Verified, safe inspections", "Dispute protection"],
   },
   {
     icon: "user",
@@ -40,7 +40,7 @@ const STATS = [
 const FAQ = [
   { q: "How does escrow protect me?", a: "Your rent is held by AwaAgent - not the agent or landlord. We only release it once you confirm you've physically received your keys. If something goes wrong, you can raise a dispute and funds stay frozen until it's resolved." },
   { q: "Why can't I see the exact address?", a: "To protect both you and the property, the exact address and map pin stay hidden until your inspection is approved. You always see the general area and a nearby landmark up front." },
-  { q: "What are the fees?", a: "You pay the base rent, the agent's commission (8–10% based on trust), and a flat 2.5% escrow fee in year one. From year two you only pay the base rent - no commission." },
+  { q: "What are the fees?", a: "Every listing shows the total first-year price before you pay. From year two, renewals are cheaper because agent commission is not charged again." },
   { q: "What is the OTP for?", a: "Every in-person inspection uses a 6-digit code you read to the agent on-site. It proves the meeting really happened and stops fake viewings and illegal fees." },
 ];
 
@@ -167,7 +167,7 @@ export default function HomePage() {
         <div className="page-head row between">
           <div className="col">
             <h2 className="page-title">Featured homes in Ibadan</h2>
-            <p className="page-sub">Verified listings with all-in, escrow-protected pricing.</p>
+            <p className="page-sub">Verified listings with the total first-year price shown upfront.</p>
           </div>
           <Link href="/explore" className="btn btn-ghost btn-sm">
             View all <Icon name="arrowR" size={16} />
