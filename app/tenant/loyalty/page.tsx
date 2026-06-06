@@ -53,7 +53,7 @@ export default function LoyaltyPage() {
         <div className="card card-pad">
           <h3 style={{ fontSize: 16, marginBottom: 12 }}>Recent activity</h3>
           <div className="col gap-2">
-            {LOYALTY.history.map((h) => (
+            {history.map((h) => (
               <div key={h.id} className="row between" style={{ padding: "8px 0", fontSize: 13.5 }}>
                 <span className="col" style={{ gap: 1 }}>
                   <span>{h.label}</span>
@@ -79,8 +79,11 @@ export default function LoyaltyPage() {
             <p style={{ fontSize: 13, color: "var(--muted)", flex: 1 }}>{r.hint}</p>
             <button
               className="btn btn-ghost btn-sm"
-              disabled={LOYALTY.balance < r.cost}
-              onClick={() => toast.success(`Redeemed: ${r.label}`)}
+              disabled={balance < r.cost}
+              onClick={() => {
+                if (redeem(r.cost, r.label)) toast.success(`Redeemed: ${r.label}`);
+                else toast.error("Not enough points");
+              }}
             >
               {r.cost} points
             </button>
