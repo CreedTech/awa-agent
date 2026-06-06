@@ -6,7 +6,6 @@ import { Logo } from "@/components/shared/logo";
 import { Avatar } from "@/components/shared/avatar";
 import { Icon } from "@/components/ui/icon";
 import { NotificationBell } from "@/components/shared/notification-bell";
-import { RoleSwitcher } from "./role-switcher";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -38,7 +37,7 @@ export function DashboardShell({ role, nav, identity, title, subtitle, actions, 
 
   // Live badge counters sourced from the store. `useShallow` keeps the
   // returned object stable (shallow-compared) so this doesn't re-render
-  // every snapshot — the values are plain numbers.
+  // every snapshot - the values are plain numbers.
   const badges = useAppStore(
     useShallow((s) => ({
       requests: s.agentRequests.filter((r) => r.status === "PENDING").length,
@@ -165,8 +164,6 @@ export function DashboardShell({ role, nav, identity, title, subtitle, actions, 
           </Link>
         ))}
       </nav>
-
-      <RoleSwitcher />
     </div>
   );
 }

@@ -75,6 +75,8 @@ export function TenantTopNav() {
   const pathname = usePathname();
   const router = useRouter();
   const logout = useAuthStore((s) => s.logout);
+  const account = useAuthStore((s) => s.account);
+  const me = { name: account?.name ?? TENANT_ME.name, photo: account?.photo ?? TENANT_ME.photo };
 
   return (
     <header className="topnav">
@@ -106,14 +108,14 @@ export function TenantTopNav() {
           }}
         >
           <Icon name="search" size={17} />
-          <input name="q" placeholder="Search Bodija, Akobo, flats…" aria-label="Search properties" />
+          <input name="q" placeholder="Search Bodija, Akobo, flats..." aria-label="Search properties" />
         </form>
 
         <div className="row gap-2" style={{ marginLeft: "auto" }}>
           <NotificationBell />
           <DropdownMenu>
             <DropdownMenuTrigger render={<button aria-label="Account menu" />}>
-              <Avatar name={TENANT_ME.name} photo={TENANT_ME.photo} size={36} gold />
+              <Avatar name={me.name} photo={me.photo} size={36} gold />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem render={<Link href="/tenant/dashboard" />}>

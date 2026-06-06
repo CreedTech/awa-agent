@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { PublicTopNav, TenantTopNav } from "./top-nav";
 import { BottomNav } from "./bottom-nav";
-import { RoleSwitcher } from "./role-switcher";
 import { useAuthStore } from "@/store/auth-store";
 
 /**
@@ -24,7 +23,6 @@ export function AppFrame({ children }: { children: React.ReactNode }) {
       {isTenant ? <TenantTopNav /> : <PublicTopNav />}
       <main className="grow">{children}</main>
       {isTenant && <BottomNav />}
-      <RoleSwitcher />
     </div>
   );
 }
