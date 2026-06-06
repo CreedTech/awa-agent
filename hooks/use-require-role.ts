@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/auth-store";
 import type { Role } from "@/lib/types";
@@ -16,9 +16,7 @@ export function useRequireRole(role: Role): boolean {
   const pathname = usePathname();
   const sessionRole = useAuthStore((s) => s.role);
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
-
-  const [hydrated, setHydrated] = useState(false);
-  useEffect(() => setHydrated(true), []);
+  const hydrated = useAuthStore((s) => s.hydrated);
 
   const authorized = isAuthenticated && sessionRole === role;
 

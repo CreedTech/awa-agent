@@ -10,20 +10,26 @@ import { Providers } from './providers';
 const display = Schibsted_Grotesk({
   subsets: ['latin'],
   variable: '--font-display',
-  display: 'swap',
+  display: 'optional',
+  preload: false,
+  fallback: ['system-ui', 'Arial'],
 });
 
 const body = Hanken_Grotesk({
   subsets: ['latin'],
   variable: '--font-body',
-  display: 'swap',
+  display: 'optional',
+  preload: false,
+  fallback: ['system-ui', 'Arial'],
 });
 
 const mono = Space_Mono({
   subsets: ['latin'],
   weight: ['400', '700'],
   variable: '--font-mono',
-  display: 'swap',
+  display: 'optional',
+  preload: false,
+  fallback: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
 });
 
 export const metadata: Metadata = {
@@ -58,8 +64,9 @@ export default function RootLayout({
       lang="en"
       data-scroll-behavior="smooth"
       className={`${display.variable} ${body.variable} ${mono.variable}`}
+      style={{ background: '#f3f5f8', color: '#0b1f38' }}
     >
-      <body>
+      <body style={{ background: '#f3f5f8', color: '#0b1f38' }}>
         <Providers>{children}</Providers>
       </body>
     </html>

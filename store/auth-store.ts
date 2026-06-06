@@ -16,10 +16,12 @@ interface AuthState {
   account: Account | null;
   role: Role;
   isAuthenticated: boolean;
+  hydrated: boolean;
   /** Account awaiting OTP verification during signup. */
   pendingAccountId: string | null;
   pendingPhone: string | null;
 
+  setHydrated: (hydrated: boolean) => void;
   login: (account: Account) => void;
   logout: () => void;
   setPending: (account: Account) => void;
@@ -33,8 +35,11 @@ export const useAuthStore = create<AuthState>()(
       account: null,
       role: "guest" as Role,
       isAuthenticated: false,
+      hydrated: false,
       pendingAccountId: null,
       pendingPhone: null,
+
+      setHydrated: (hydrated) => set({ hydrated }),
 
       login: (account) =>
         set({ account, role: account.role, isAuthenticated: true, pendingAccountId: null }),
@@ -48,6 +53,18 @@ export const useAuthStore = create<AuthState>()(
       setSessionKyc: (status) =>
         set((s) => (s.account ? { account: { ...s.account, kycStatus: status } } : s)),
     }),
-    { name: "awaagent-session" },
+    {
+      name: "awaagent-session",
+      partialize: (s) => ({
+        account: s.account,
+        role: s.role,
+        isAuthenticated: s.isAuthenticated,
+        pendingAccountId: s.pendingAccountId,
+        pendingPhone: s.pendingPhone,
+      }),
+      onRehydrateStorage: () => (state) => {
+        state?.setHydrated(true);
+      },
+    },
   ),
 );
