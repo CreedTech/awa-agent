@@ -62,11 +62,15 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       data-scroll-behavior="smooth"
       className={`${display.variable} ${body.variable} ${mono.variable}`}
       style={{ background: '#f3f5f8', color: '#0b1f38' }}
     >
-      <body style={{ background: '#f3f5f8', color: '#0b1f38' }}>
+      <body
+        suppressHydrationWarning
+        style={{ background: '#f3f5f8', color: '#0b1f38' }}
+      >
         <Providers>{children}</Providers>
       </body>
     </html>
