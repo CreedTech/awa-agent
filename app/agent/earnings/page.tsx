@@ -9,22 +9,36 @@ import { BottomSheet } from "@/components/shared/bottom-sheet";
 import { Field } from "@/components/shared/field";
 import { CommissionAttribution } from "@/components/agent/commission-attribution";
 import { AGENT_EARNINGS, COMMISSIONS } from "@/lib/mock-data";
+import { useAppStore } from "@/store/app-store";
+import { useShallow } from "zustand/react/shallow";
 import { withdrawSchema, type WithdrawValues } from "@/lib/validations";
 import { formatCurrency } from "@/lib/utils";
 import { toast } from "sonner";
 
 export default function AgentEarningsPage() {
+  const available = useAppStore((s) => s.agentAvailable);
+  const history = useAppStore(useShallow((s) => s.agentPayouts));
+  const withdraw = useAppStore((s) => s.withdrawAgent);
+
   const [withdrawing, setWithdrawing] = useState(false);
   const [attribution, setAttribution] = useState<string | null>(null);
   const [whyNotPaid, setWhyNotPaid] = useState(false);
 
-  const { register, handleSubmit, reset, formState: { errors, isSubmitting } } =
+  const { register, handleSubmit, reset, setError, formState: { errors, isSubmitting } } =
     useForm<WithdrawValues>({ resolver: zodResolver(withdrawSchema) });
 
   const submitWithdraw = (values: WithdrawValues) => {
-    toast.success(`Withdrawal of ${formatCurrency(values.amount)} requested`);
-    reset();
-    setWithdrawing(false);
+    if (values.amount > available) {
+      setError("amount", { message: `You can withdraw up to ${formatCurrency(available)}` });
+      return;
+    }
+    if (withdraw(values.amount, values.bank, values.accountNumber)) {
+      toast.success(`Withdrawal of ${formatCurrency(values.amount)} sent to ${values.bank}`);
+      reset();
+      setWithdrawing(false);
+    } else {
+      toast.error("Withdrawal failed");
+    }
   };
 
   const commissionFor = (ref: string) => COMMISSIONS.find((c) => c.txnRef === ref);
@@ -34,7 +48,7 @@ export default function AgentEarningsPage() {
       {/* Balance */}
       <div className="card" style={{ background: "linear-gradient(120deg, var(--navy-800), var(--navy-700))", color: "#fff", border: "none", padding: "24px", marginBottom: 18 }}>
         <span style={{ fontSize: 13, color: "rgba(255,255,255,.7)" }}>Available to withdraw</span>
-        <div style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 36, marginTop: 4 }}>{formatCurrency(AGENT_EARNINGS.available)}</div>
+        <div style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 36, marginTop: 4 }}>{formatCurrency(available)}</div>
         <div className="row between wrap gap-3" style={{ marginTop: 16 }}>
           <div className="row gap-6">
             <div className="col" style={{ gap: 0 }}>
@@ -56,7 +70,7 @@ export default function AgentEarningsPage() {
       </div>
 
       <div className="col gap-2">
-        {AGENT_EARNINGS.history.map((p) => {
+        {history.map((p) => {
           const hasAttribution = p.type === "Commission split" && commissionFor("AWA-TX-88120");
           return (
             <div key={p.id} className="card card-pad row between" style={{ alignItems: "center" }}>
