@@ -581,5 +581,30 @@ export const useAppStore = create<AppState>()(
       }),
 
     resetDemo: () => set(() => seed()),
-  })),
+    })),
+    {
+      name: "awaagent-store",
+      version: 1,
+      storage: createJSONStorage(() => idbStorage),
+      // Persist only data collections — actions come from the initializer.
+      partialize: (s) => ({
+        properties: s.properties,
+        savedIds: s.savedIds,
+        inspections: s.inspections,
+        escrow: s.escrow,
+        disputes: s.disputes,
+        kycQueue: s.kycQueue,
+        propQueue: s.propQueue,
+        agentRequests: s.agentRequests,
+        landlordProperties: s.landlordProperties,
+        notifications: s.notifications,
+        users: s.users,
+        inspectionSettings: s.inspectionSettings,
+        loyaltyBalance: s.loyaltyBalance,
+        loyaltyHistory: s.loyaltyHistory,
+        agentAvailable: s.agentAvailable,
+        agentPayouts: s.agentPayouts,
+      }),
+    },
+  ),
 );
