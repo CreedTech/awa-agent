@@ -154,6 +154,24 @@ const seed = () => ({
   agentPayouts: structuredClone(AGENT_EARNINGS.history),
 });
 
+const BROKEN_PROPERTY_PHOTO =
+  "https://images.unsplash.com/photo-1484154218993-3c9aca53ff7d?w=800&h=600&fit=crop&auto=format&q=80";
+const REPLACEMENT_PROPERTY_PHOTO =
+  "https://images.unsplash.com/photo-1556912173-3bb406ef7e77?w=800&h=600&fit=crop&auto=format&q=80";
+
+const replaceBrokenImageUrls = (value: unknown): unknown => {
+  if (typeof value === "string") {
+    return value === BROKEN_PROPERTY_PHOTO ? REPLACEMENT_PROPERTY_PHOTO : value;
+  }
+  if (Array.isArray(value)) return value.map(replaceBrokenImageUrls);
+  if (value && typeof value === "object") {
+    return Object.fromEntries(
+      Object.entries(value).map(([key, nested]) => [key, replaceBrokenImageUrls(nested)]),
+    );
+  }
+  return value;
+};
+
 let notifSeq = 100;
 
 export const useAppStore = create<AppState>()(
@@ -602,8 +620,9 @@ export const useAppStore = create<AppState>()(
     })),
     {
       name: "awaagent-store",
-      version: 1,
+      version: 2,
       storage: createJSONStorage(() => idbStorage),
+      migrate: (persistedState) => replaceBrokenImageUrls(persistedState) as AppState,
       // Persist only data collections - actions come from the initializer.
       partialize: (s) => ({
         properties: s.properties,
