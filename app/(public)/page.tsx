@@ -49,87 +49,106 @@ export default function HomePage() {
 
   return (
     <>
-      {/* Hero */}
-      <section style={{ background: "linear-gradient(165deg, var(--navy-800), var(--navy-900))", color: "#fff" }}>
-        <div className="page" style={{ paddingTop: 64, paddingBottom: 72 }}>
-          <span className="tag tag-gold" style={{ marginBottom: 18 }}>
-            <Icon name="shieldCheck" size={13} strokeWidth={2} /> Escrow-protected rentals
-          </span>
-          <h1 style={{ fontSize: "clamp(34px, 6vw, 60px)", color: "#fff", maxWidth: 760, lineHeight: 1.05 }}>
-            Rent without fear of fake agents or lost deposits.
-          </h1>
-          <p style={{ maxWidth: 560, marginTop: 18, fontSize: 18, color: "rgba(255,255,255,.8)" }}>
-            AwaAgent holds your rent in escrow and only releases it once you receive your keys.
-            Verified agents, transparent pricing, safe inspections.
-          </p>
-          <div className="row wrap gap-3" style={{ marginTop: 28 }}>
-            <Link href="/explore" className="btn btn-gold btn-lg">
-              <Icon name="explore" size={18} /> Explore properties
-            </Link>
-            <Link href="/auth/signup" className="btn btn-ghost btn-lg" style={{ background: "rgba(255,255,255,.08)", color: "#fff", boxShadow: "inset 0 0 0 1.4px rgba(255,255,255,.25)" }}>
-              Get started
-            </Link>
+   {/* ========== CINEMATIC HERO SECTION WITH IMAGE ========== */}
+<section className="hero-premium-image">
+  {/* Background Image */}
+  <div 
+    className="hero-image-bg"
+    style={{
+      backgroundImage: 'url("https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=1600&h=900&fit=crop&auto=format&q=80" )',
+    }}
+  ></div>
+  
+  {/* Overlay Gradient */}
+  <div className="hero-image-overlay"></div>
+  
+  {/* Glow Effects */}
+  <div className="hero-glow hero-glow-1"></div>
+  <div className="hero-glow hero-glow-2"></div>
+  
+  {/* Content */}
+  <div className="page" style={{ paddingTop: 80, paddingBottom: 88, position: "relative", zIndex: 2 }}>
+    <div className="hero-content">
+      <span className="tag tag-gold anim-up" style={{ marginBottom: 24, animationDelay: "0.1s" }}>
+        <Icon name="shieldCheck" size={13} strokeWidth={2} /> Banking-grade protection
+      </span>
+      
+      <h1 className="hero-title anim-up" style={{ animationDelay: "0.2s" }}>
+        Rent with absolute <span className="text-gradient">confidence</span>
+      </h1>
+      
+      <p className="hero-subtitle anim-up" style={{ animationDelay: "0.3s" }}>
+        Your money is protected in escrow. Verified agents. Transparent pricing. Safe inspections with OTP codes. 
+        Experience the future of Nigerian rentals.
+      </p>
+      
+      <div className="hero-cta anim-up" style={{ animationDelay: "0.4s" }}>
+        <Link href="/explore" className="btn btn-gold btn-lg" style={{ boxShadow: "0 12px 40px rgba(212, 175, 55, 0.35)" }}>
+          <Icon name="explore" size={18} /> Explore verified homes
+        </Link>
+        <Link href="/auth/signup" className="btn btn-ghost btn-lg" style={{ background: "rgba(255,255,255,.12)", color: "#fff", boxShadow: "inset 0 0 0 1.4px rgba(255,255,255,.3)", backdropFilter: "blur(10px)" }}>
+          Get started free
+        </Link>
+      </div>
+      
+      <div className="hero-stats anim-up" style={{ animationDelay: "0.5s" }}>
+        {STATS.map((s) => (
+          <div key={s.label} className="stat-card-hero">
+            <span className="stat-value-hero">{s.value}</span>
+            <span className="stat-label-hero">{s.label}</span>
           </div>
-          <div className="row wrap gap-6" style={{ marginTop: 48 }}>
-            {STATS.map((s) => (
-              <div key={s.label} className="col" style={{ gap: 2 }}>
-                <span style={{ fontFamily: "var(--font-display)", fontSize: 30, fontWeight: 800 }}>{s.value}</span>
-                <span style={{ fontSize: 13, color: "rgba(255,255,255,.65)" }}>{s.label}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* How it works */}
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+      {/* ========== HOW IT WORKS - PREMIUM CARDS ========== */}
       <section className="page">
         <div className="page-head">
           <h2 className="page-title">How AwaAgent works</h2>
           <p className="page-sub">Four steps from search to keys - protected the whole way.</p>
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(230px, 1fr))", gap: 18 }}>
+        <div className="how-grid">
           {HOW.map((step, i) => (
-            <div key={step.title} className="card card-pad col gap-3">
-              <span className="row between">
-                <span className="grid place-items-center" style={{ width: 42, height: 42, borderRadius: 12, background: "var(--navy-050)", color: "var(--navy-700)" }}>
-                  <Icon name={step.icon as IconName} size={22} />
+            <div key={step.title} className="how-card" style={{ animationDelay: `${i * 0.1}s` }}>
+              <div className="how-card-header">
+                <span className="how-icon-badge">
+                  <Icon name={step.icon as IconName} size={24} />
                 </span>
-                <span style={{ fontFamily: "var(--font-display)", fontSize: 26, fontWeight: 800, color: "var(--line-2)" }}>
-                  {i + 1}
-                </span>
-              </span>
-              <h3 style={{ fontSize: 17 }}>{step.title}</h3>
-              <p style={{ color: "var(--muted)", fontSize: 14 }}>{step.body}</p>
+                <span className="how-step-number">{i + 1}</span>
+              </div>
+              <h3 className="how-title">{step.title}</h3>
+              <p className="how-body">{step.body}</p>
+              <div className="how-accent"></div>
             </div>
           ))}
         </div>
       </section>
 
-      {/* Escrow protection band */}
+      {/* ========== ESCROW PROTECTION - PREMIUM BAND ========== */}
       <section className="page">
-        <div className="card" style={{ overflow: "hidden", background: "linear-gradient(120deg, var(--navy-800), var(--navy-700))", color: "#fff", border: "none" }}>
-          <div className="card-pad" style={{ padding: "40px 32px", display: "grid", gridTemplateColumns: "1.2fr 1fr", gap: 32, alignItems: "center" }}>
-            <div className="col gap-4">
-              <span className="tag tag-gold" style={{ width: "fit-content" }}>
+        <div className="escrow-card">
+          <div className="escrow-backdrop"></div>
+          <div className="escrow-content">
+            <div className="escrow-left">
+              <span className="tag tag-gold" style={{ width: "fit-content", marginBottom: 16 }}>
                 <Icon name="lock" size={13} strokeWidth={2} /> Escrow protection
               </span>
-              <h2 style={{ color: "#fff", fontSize: 30, maxWidth: 460 }}>Your money is safe until you hold the keys.</h2>
-              <p style={{ color: "rgba(255,255,255,.8)", fontSize: 15, maxWidth: 480 }}>
+              <h2 className="escrow-title">Your money is safe until you hold the keys.</h2>
+              <p className="escrow-description">
                 We never release rent to an agent or landlord on a promise. Pay into escrow, complete
                 your inspection, confirm key handover - then funds split automatically. Raise a
                 dispute any time and we freeze everything.
               </p>
-              <Link href="/trust-safety" className="btn btn-gold btn-sm" style={{ width: "fit-content" }}>
+              <Link href="/trust-safety" className="btn btn-gold btn-sm" style={{ width: "fit-content", marginTop: 20 }}>
                 See how we protect you
               </Link>
             </div>
-            <div className="col gap-3">
+            <div className="escrow-right">
               {["Pay securely into escrow", "Funds locked, never lost", "Confirm keys to release", "Disputes freeze the money"].map((t, i) => (
-                <div key={t} className="row gap-3" style={{ background: "rgba(255,255,255,.08)", borderRadius: 12, padding: "12px 14px" }}>
-                  <span className="grid place-items-center" style={{ width: 26, height: 26, borderRadius: "50%", background: "var(--gold-500)", color: "var(--navy-900)", fontWeight: 800, fontSize: 13 }}>
-                    {i + 1}
-                  </span>
-                  <span style={{ fontWeight: 600, fontSize: 14.5 }}>{t}</span>
+                <div key={t} className="escrow-step" style={{ animationDelay: `${i * 0.1}s` }}>
+                  <span className="escrow-step-number">{i + 1}</span>
+                  <span className="escrow-step-text">{t}</span>
                 </div>
               ))}
             </div>
@@ -137,22 +156,22 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Benefits by role */}
+      {/* ========== BENEFITS BY ROLE ========== */}
       <section className="page">
         <div className="page-head">
           <h2 className="page-title">Built for everyone in the deal</h2>
           <p className="page-sub">Fair, transparent and safe - for tenants, agents and landlords alike.</p>
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 18 }}>
-          {BENEFITS.map((b) => (
-            <div key={b.audience} className="card card-pad col gap-4">
-              <span className="grid place-items-center" style={{ width: 44, height: 44, borderRadius: 12, background: "var(--gold-050)", color: "var(--gold-700)" }}>
-                <Icon name={b.icon as IconName} size={22} />
-              </span>
-              <h3 style={{ fontSize: 18 }}>{b.audience}</h3>
-              <div className="col gap-3">
+        <div className="benefits-grid">
+          {BENEFITS.map((b, idx) => (
+            <div key={b.audience} className="benefit-card" style={{ animationDelay: `${idx * 0.15}s` }}>
+              <div className="benefit-icon-wrapper">
+                <Icon name={b.icon as IconName} size={28} />
+              </div>
+              <h3 className="benefit-title">{b.audience}</h3>
+              <div className="benefit-points">
                 {b.points.map((p) => (
-                  <span key={p} className="row gap-2" style={{ fontSize: 14.5 }}>
+                  <span key={p} className="benefit-point">
                     <Icon name="check" size={16} strokeWidth={2.2} color="var(--ok)" /> {p}
                   </span>
                 ))}
@@ -162,7 +181,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Featured */}
+      {/* ========== FEATURED HOMES ========== */}
       <section className="page">
         <div className="page-head row between">
           <div className="col">
@@ -173,25 +192,28 @@ export default function HomePage() {
             View all <Icon name="arrowR" size={16} />
           </Link>
         </div>
-        <div className="prop-grid">
+        <div className="prop-grid-premium">
           {featured.map((p, i) => (
-            <PropertyCard key={p.id} property={p} priority={i === 0} />
+            <div key={p.id} className="prop-card-wrapper" style={{ animationDelay: `${i * 0.15}s` }}>
+              <PropertyCard property={p} priority={i === 0} />
+            </div>
           ))}
         </div>
       </section>
 
-      {/* FAQ */}
+      {/* ========== FAQ ========== */}
       <section className="page page-narrow">
         <div className="page-head">
           <h2 className="page-title">Frequently asked</h2>
         </div>
-        <div className="col gap-3">
-          {FAQ.map((f) => (
-            <details key={f.q} className="card card-pad">
-              <summary style={{ cursor: "pointer", fontWeight: 700, fontFamily: "var(--font-display)", fontSize: 16, listStyle: "none" }}>
-                {f.q}
+        <div className="faq-container">
+          {FAQ.map((f, idx) => (
+            <details key={f.q} className="faq-item" style={{ animationDelay: `${idx * 0.08}s` }}>
+              <summary className="faq-question">
+                <span>{f.q}</span>
+                {/* <Icon name="chevronDown" size={20} strokeWidth={1.8} /> */}
               </summary>
-              <p style={{ color: "var(--muted)", fontSize: 14.5, marginTop: 10, lineHeight: 1.6 }}>{f.a}</p>
+              <p className="faq-answer">{f.a}</p>
             </details>
           ))}
         </div>

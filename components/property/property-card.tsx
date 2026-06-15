@@ -18,11 +18,19 @@ export function PropertyCard({ property, priority }: { property: Property; prior
   const total = calculateRentBreakdown(property.baseRent, agent?.commissionPct).total;
 
   return (
-    <article className="prop-card" style={{ position: "relative" }}>
+    <article className="prop-card-premium">
       <Link href={`/properties/${property.id}`} aria-label={property.title}>
-        <div className="prop-photo">
-          <PropImage src={property.images[0]} label={property.imageLabels[0]} className="h-full w-full" sizes="(max-width:720px) 100vw, 340px" priority={priority} />
-          <div className="row gap-2" style={{ position: "absolute", top: 12, left: 12 }}>
+        <div className="prop-photo-premium">
+          <PropImage 
+            src={property.images[0]} 
+            label={property.imageLabels[0]} 
+            className="h-full w-full" 
+            sizes="(max-width:720px) 100vw, 340px" 
+            priority={priority} 
+          />
+          <div className="prop-overlay-premium"></div>
+          
+          <div className="prop-badges-premium">
             {property.available ? (
               <StatusBadge variant="ok">
                 <Icon name="check" size={12} strokeWidth={2.4} /> Available
@@ -36,39 +44,36 @@ export function PropertyCard({ property, priority }: { property: Property; prior
       </Link>
 
       <button
-        className="save-btn icon-btn"
+        className="prop-save-btn-premium"
         aria-label={saved ? "Remove from saved" : "Save property"}
         onClick={() => toggleSaved(property.id)}
-        style={{
-          position: "absolute",
-          top: 10,
-          right: 10,
-          background: "rgba(255,255,255,.92)",
-          color: saved ? "var(--gold-600)" : "var(--ink-2)",
-        }}
       >
         <Icon name="bookmark" size={18} strokeWidth={saved ? 2.4 : 1.7} />
       </button>
 
       <Link href={`/properties/${property.id}`}>
-        <div style={{ padding: "14px 16px 16px" }}>
-          <div className="row gap-3" style={{ color: "var(--muted)", fontSize: 12.5, fontWeight: 600, marginBottom: 7 }}>
-            <span className="row gap-2">
+        <div className="prop-content-premium">
+          <div className="prop-specs-premium">
+            <span className="prop-spec">
               <Icon name="bed" size={15} /> {property.beds} bed
             </span>
-            <span className="row gap-2">
+            <span className="prop-spec">
               <Icon name="bath" size={15} /> {property.baths} bath
             </span>
-            <span>{property.type}</span>
+            <span className="prop-spec-type">{property.type}</span>
           </div>
-          <h3 style={{ fontSize: 16.5, marginBottom: 4 }}>{property.title}</h3>
-          <div className="row gap-2" style={{ color: "var(--muted)", fontSize: 13, marginBottom: 12 }}>
-            <Icon name="pin" size={14} /> {property.area} · Near {property.landmark}
+
+          <h3 className="prop-title-premium">{property.title}</h3>
+
+          <div className="prop-location-premium">
+            <Icon name="pin" size={14} /> 
+            <span>{property.area} · Near {property.landmark}</span>
           </div>
-          <div className="row between">
-            <div className="col" style={{ gap: 0 }}>
+
+          <div className="prop-footer-premium">
+            <div className="prop-price-section">
               <Naira value={total} size={20} />
-              <span style={{ fontSize: 11.5, color: "var(--muted)" }}>Total first-year price</span>
+              <span className="prop-price-label">Total first-year price</span>
             </div>
             {agent && <TrustBadge score={agent.trust} sm />}
           </div>

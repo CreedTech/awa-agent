@@ -174,75 +174,103 @@ function ExploreContent() {
   return (
     <>
       {/* Trust banner */}
-      <div className="page" style={{ paddingBottom: 0 }}>
-        <div className="card" style={{ background: "linear-gradient(120deg, var(--navy-800), var(--navy-700))", color: "#fff", border: "none", padding: "24px 26px" }}>
-          <div className="row between wrap gap-4">
-            <div className="col gap-2">
-              <h1 style={{ color: "#fff", fontSize: 26 }}>Escrow-protected rental marketplace</h1>
-              <p style={{ color: "rgba(255,255,255,.8)", fontSize: 14.5 }}>Every listing shows the total upfront price. Every agent is verified.</p>
-            </div>
-            <div className="row gap-6">
-              {[["Verified", "Homes"], ["Escrow", "Payments"], ["No fees", "Viewings"]].map(([v, l]) => (
-                <div key={l} className="col" style={{ gap: 0 }}>
-                  <span style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 22 }}>{v}</span>
-                  <span style={{ fontSize: 12, color: "rgba(255,255,255,.65)" }}>{l}</span>
-                </div>
-              ))}
-            </div>
+   {/* Trust banner - UPGRADED */}
+<div className="explore-hero">
+  <div className="explore-hero-glow explore-hero-glow-1" />
+  <div className="explore-hero-glow explore-hero-glow-2" />
+  <div className="page" style={{ paddingBottom: 0, position: "relative", zIndex: 2 }}>
+    <div className="explore-hero-inner">
+      <div className="col gap-3">
+        <span className="tag tag-gold" style={{ width: "fit-content" }}>
+          <Icon name="shieldCheck" size={13} /> Verified marketplace
+        </span>
+        <h1 style={{ color: "#fff", fontSize: 32, maxWidth: 460, lineHeight: 1.15 }}>
+          Escrow-protected rentals in Ibadan
+        </h1>
+        <p style={{ color: "rgba(255,255,255,.75)", fontSize: 15 }}>
+          Every listing shows the total upfront price. Every agent is verified.
+        </p>
+      </div>
+      <div className="explore-hero-stats">
+        {[["Verified", "Homes & agents"], ["Escrow", "Payments protected"], ["No fees", "For viewings"]].map(([v, l]) => (
+          <div key={l} className="explore-stat-card">
+            <span className="explore-stat-value">{v}</span>
+            <span className="explore-stat-label">{l}</span>
           </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</div>
+
+     <div className="page">
+  <div className="feed-layout">
+    <aside className="filter-rail">
+      <div className="card card-pad explore-filter-card">
+        <div className="explore-filter-header">
+          <Icon name="filter" size={16} />
+          <span>Filters</span>
         </div>
+        <FiltersPanel filters={filters} setFilters={setFilters} />
+        {/* Reset */}
+        <button
+          className="btn btn-ghost btn-sm btn-block"
+          style={{ marginTop: 16 }}
+          onClick={() => setFilters(DEFAULT_FILTERS)}
+        >
+          Reset filters
+        </button>
+      </div>
+    </aside>
+
+    <div className="col gap-4">
+      <div className="row between wrap gap-3 explore-results-bar">
+        <div className="row gap-3">
+          <button
+            className="chip filter-mobile"
+            style={{ display: "none" }}
+            onClick={() => setSheetOpen(true)}
+          >
+            <Icon name="filter" size={15} /> Filters
+          </button>
+          <span className="explore-results-count">
+            <span className="explore-results-num">{results.length}</span>
+            {" "}{results.length === 1 ? "home" : "homes"}
+            {query && <> for <em>&ldquo;{query}&rdquo;</em></>}
+          </span>
+        </div>
+        <Select value={sort} onValueChange={(v) => setSort(v as SortKey)}>
+          <SelectTrigger className="w-[200px]">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="newest">Newest</SelectItem>
+            <SelectItem value="price-asc">Price: low to high</SelectItem>
+            <SelectItem value="price-desc">Price: high to low</SelectItem>
+            <SelectItem value="trust">Most trusted agent</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
-      <div className="page">
-        <div className="feed-layout">
-          <aside className="filter-rail">
-            <div className="card card-pad">
-              <FiltersPanel filters={filters} setFilters={setFilters} />
+      {results.length === 0 ? (
+        <EmptyState
+          icon="explore"
+          title="No properties match"
+          description="Try widening your budget or clearing some filters."
+          action={{ label: "Clear filters", onClick: () => setFilters(DEFAULT_FILTERS) }}
+        />
+      ) : (
+        <div className="prop-grid-premium">
+          {results.map((p, i) => (
+            <div key={p.id} className="prop-card-wrapper" style={{ animationDelay: `${Math.min(i * 0.07, 0.5)}s` }}>
+              <PropertyCard property={p} priority={i === 0} />
             </div>
-          </aside>
-
-          <div className="col gap-4">
-            <div className="row between wrap gap-3">
-              <div className="row gap-3">
-                <button className="chip filter-mobile" style={{ display: "none" }} onClick={() => setSheetOpen(true)}>
-                  <Icon name="filter" size={15} /> Filters
-                </button>
-                <span style={{ color: "var(--muted)", fontSize: 14, fontWeight: 600 }}>
-                  {results.length} {results.length === 1 ? "home" : "homes"}
-                  {query && <> for &ldquo;{query}&rdquo;</>}
-                </span>
-              </div>
-              <Select value={sort} onValueChange={(v) => setSort(v as SortKey)}>
-                <SelectTrigger className="w-[200px]">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="newest">Newest</SelectItem>
-                  <SelectItem value="price-asc">Price: low to high</SelectItem>
-                  <SelectItem value="price-desc">Price: high to low</SelectItem>
-                  <SelectItem value="trust">Most trusted agent</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            {results.length === 0 ? (
-              <EmptyState
-                icon="explore"
-                title="No properties match"
-                description="Try widening your budget or clearing some filters."
-                action={{ label: "Clear filters", onClick: () => setFilters(DEFAULT_FILTERS) }}
-              />
-            ) : (
-              <div className="prop-grid">
-                {results.map((p, i) => (
-                  <PropertyCard key={p.id} property={p} priority={i === 0} />
-                ))}
-              </div>
-            )}
-          </div>
+          ))}
         </div>
-      </div>
-
+      )}
+    </div>
+  </div>
+</div>
       <BottomSheet open={sheetOpen} onClose={() => setSheetOpen(false)} title="Filters" maxWidth={460}>
         <div style={{ padding: "8px 20px 24px" }}>
           <FiltersPanel filters={filters} setFilters={setFilters} />
