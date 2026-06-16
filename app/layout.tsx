@@ -6,6 +6,7 @@ import {
 } from 'next/font/google';
 import './globals.css';
 import { Providers } from './providers';
+import { PublicTopNav } from '@/components/layout/top-nav';
 
 const display = Schibsted_Grotesk({
   subsets: ['latin'],
@@ -71,7 +72,10 @@ export default function RootLayout({
         suppressHydrationWarning
         style={{ background: '#f3f5f8', color: '#0b1f38' }}
       >
-        <Providers>{children}</Providers>
+        <Providers>
+            {/* <PublicTopNav /> */}
+          {children}
+          </Providers>
       </body>
     </html>
   );
