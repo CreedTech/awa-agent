@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { authorizationService } from "@/services/authorization-service";
 import { propertyService } from "@/services/property-service";
+import { uploadService } from "@/services/upload-service";
 import { PageHeader } from "@/components/shared/page-header";
 
 export default function NewPropertyPage() {
@@ -25,13 +26,21 @@ export default function NewPropertyPage() {
       setError("Enter valid prices with year-two rent below year-one rent."); setBusy(false); return;
     }
     try {
+      const photos = form.getAll("photos").filter((item): item is File => item instanceof File && item.size > 0);
+      if (photos.length < 1 || photos.length > 12) throw new Error("Choose between one and twelve property photos.");
+      const uploadedPhotos: string[] = [];
+      for (const photo of photos) {
+        const uploaded = await uploadService.upload(photo, "LISTING_PHOTO");
+        if (!uploaded.url) throw new Error("Property photo upload did not return a URL.");
+        uploadedPhotos.push(uploaded.url);
+      }
       const property = await propertyService.create({
         landlordId: value("landlordId"), title: value("title"), description: value("description"),
         propertyType: value("propertyType"), bedrooms: Number(value("bedrooms")), bathrooms: Number(value("bathrooms")),
         year1RentNaira: year1, year2RentNaira: year2,
         address: { street: value("street"), lga: value("lga"), landmark: value("landmark") },
         amenities: value("amenities").split(",").map((item) => item.trim()).filter(Boolean),
-        photos: value("photos").split("\n").map((item) => item.trim()).filter(Boolean),
+        photos: uploadedPhotos,
         inspectionSlotsPerDay: Number(value("inspectionSlotsPerDay")),
       });
       router.push(`/properties/${property.id}`);
@@ -58,7 +67,7 @@ export default function NewPropertyPage() {
         <label className="field"><span className="label">Local government area</span><input className="input" name="lga" required /></label>
         <label className="field"><span className="label">Public landmark</span><input className="input" name="landmark" required /></label>
         <label className="field"><span className="label">Amenities (comma-separated)</span><input className="input" name="amenities" /></label>
-        <label className="field"><span className="label">Photo URLs (one HTTPS URL per line)</span><textarea className="input" name="photos" rows={3} /></label>
+        <label className="field"><span className="label">Property photos (JPEG, PNG or WebP; up to 10 MB each)</span><input className="input" name="photos" type="file" accept="image/jpeg,image/png,image/webp" multiple required /></label>
         <label className="field"><span className="label">Inspection slots per day</span><input className="input" name="inspectionSlotsPerDay" type="number" min={1} max={20} defaultValue={3} required /></label>
         <button className="btn btn-primary btn-block" type="submit" disabled={busy}>{busy ? "Creating..." : "Create listing"}</button>
       </form>}

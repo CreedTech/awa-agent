@@ -4,8 +4,10 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { PageHeader } from "@/components/shared/page-header";
 import { kycService, type KycRequest } from "@/services/kyc-service";
+import { uploadService } from "@/services/upload-service";
 
 function ReviewCard({ request, onReviewed }: { request: KycRequest; onReviewed: () => Promise<unknown> }) {
+  const documents = useQuery({ queryKey: ["kyc-documents", request.id], queryFn: () => uploadService.kycDocuments(request.id) });
   const [note, setNote] = useState("");
   const [checked, setChecked] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -21,6 +23,8 @@ function ReviewCard({ request, onReviewed }: { request: KycRequest; onReviewed: 
     <span>{request.email} · {request.phone}</span>
     <span>{request.document_type.replaceAll("_", " ")} ending {request.document_last4}</span>
     <span>Requested {new Date(request.created_at).toLocaleDateString("en-GB")}</span>
+    {documents.isError && <p role="alert">Could not load private document links.</p>}
+    {documents.data?.map((document, index) => <a key={document.id} href={document.downloadUrl} target="_blank" rel="noreferrer">Open document {index + 1}</a>)}
     <label className="col gap-2">Review note
       <textarea className="input" value={note} minLength={10} maxLength={1000} required onChange={(event) => setNote(event.target.value)} />
     </label>

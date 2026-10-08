@@ -21,7 +21,8 @@ export const kycService = {
     return response.data;
   },
   async submit(documentType: string, documentLast4: string) {
-    await apiFetch("/kyc/requests", { method: "POST", json: { documentType, documentLast4 } });
+    const response = await apiFetch<{ data: { id: string } }>("/kyc/requests", { method: "POST", json: { documentType, documentLast4 } });
+    return response.data.id;
   },
   async queue() {
     const response = await apiFetch<{ data: KycRequest[] }>("/kyc/admin/requests?status=PENDING");
