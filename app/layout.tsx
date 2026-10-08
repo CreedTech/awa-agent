@@ -39,14 +39,14 @@ export const metadata: Metadata = {
     template: '%s · AwaAgent',
   },
   description:
-    'AwaAgent is an escrow-protected rental marketplace for Nigeria. Inspect verified homes, pay securely into escrow, and release funds only after you receive your keys.',
+    'Browse live rental listings in Ibadan and request in-person inspections through AwaAgent.',
   applicationName: 'AwaAgent',
   keywords: [
     'AwaAgent',
-    'escrow rentals Nigeria',
+    'rentals Nigeria',
     'Ibadan rentals',
-    'verified agents',
-    'secure rent payment',
+    'property inspections',
+    'Ibadan homes',
   ],
 };
 

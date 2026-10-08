@@ -1,37 +1,37 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import { useParams, notFound } from "next/navigation";
 import { Icon } from "@/components/ui/icon";
 import { OtpInput } from "@/components/shared/otp-input";
-import { MapPlaceholder } from "@/components/shared/map-placeholder";
+import { LocationPanel } from "@/components/shared/location-panel";
 import { InspectionBadge } from "@/components/shared/status-badge";
-import { PaySheet } from "@/components/escrow/pay-sheet";
-import { useAppStore } from "@/store/app-store";
-import { propertyById } from "@/lib/mock-data";
-import { toast } from "sonner";
 import type { InspectionStatus } from "@/lib/types";
+import { useQuery } from "@tanstack/react-query";
+import { inspectionService } from "@/services/inspection-service";
+import { propertyService } from "@/services/property-service";
 
-const STEPS = ["Booked", "Approved", "Meet & verify", "Completed"];
+const STEPS = ["Requested", "Meet & verify", "Completed"];
 
 function stepIndex(status: InspectionStatus): number {
-  if (status === "COMPLETED") return 3;
-  if (status === "APPROVED") return 2;
-  if (["CONFIRMED", "SCHEDULED", "RESCHEDULED"].includes(status)) return 1;
+  if (status === "COMPLETED") return 2;
+  if (["CONFIRMED", "SCHEDULED", "RESCHEDULED", "APPROVED"].includes(status)) return 1;
   return 0;
 }
 
 export default function InspectionDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const inspection = useAppStore((s) => s.inspections.find((i) => i.id === id));
-  const approveInspection = useAppStore((s) => s.approveInspection);
-  const completeInspection = useAppStore((s) => s.completeInspection);
-  const cancelInspection = useAppStore((s) => s.cancelInspection);
-  const [paying, setPaying] = useState(false);
+  const liveInspection = useQuery({ queryKey: ["inspection", id], queryFn: () => inspectionService.get(id), enabled: !!id });
+  const inspection = liveInspection.data;
+  const liveProperty = useQuery({
+    queryKey: ["inspection-property", inspection?.propertyId],
+    queryFn: () => propertyService.get(inspection!.propertyId),
+    enabled: !!inspection?.propertyId,
+  });
 
+  if (liveInspection.isPending || (inspection && liveProperty.isPending)) return <div className="page">Loading inspection...</div>;
   if (!inspection) return notFound();
-  const prop = propertyById(inspection.propertyId);
+  const prop = liveProperty.data;
   if (!prop) return notFound();
 
   const active = stepIndex(inspection.status);
@@ -78,7 +78,7 @@ export default function InspectionDetailPage() {
                 <div className="step-body">
                   <strong style={{ fontSize: 14.5 }}>{label}</strong>
                   <p style={{ color: "var(--muted)", fontSize: 12.5, marginTop: 2 }}>
-                    {["Inspection requested & confirmed", "Agent approves - address unlocks", "Meet on-site & read your OTP", "Inspection done - pay securely"][i]}
+                    {["Inspection requested", "Meet on-site and read your code", "Address unlocked after verification"][i]}
                   </p>
                 </div>
               </div>
@@ -96,10 +96,10 @@ export default function InspectionDetailPage() {
                 {inspection.addressUnlocked ? "Unlocked" : "Locked"}
               </span>
             </div>
-            <MapPlaceholder unlocked={inspection.addressUnlocked} landmark={prop.landmark} address={prop.exactAddress} location={prop.location} height={160} />
+            <LocationPanel unlocked={inspection.addressUnlocked} landmark={prop.landmark} address={inspection.exactAddress} />
             {inspection.addressUnlocked && (
               <div className="col gap-2" style={{ marginTop: 12 }}>
-                <strong className="row gap-2" style={{ fontSize: 14 }}><Icon name="pin" size={15} color="var(--gold-600)" /> {prop.exactAddress}</strong>
+                <strong className="row gap-2" style={{ fontSize: 14 }}><Icon name="pin" size={15} color="var(--gold-600)" /> {inspection.exactAddress}</strong>
                 <div className="card" style={{ background: "var(--ok-bg)", border: "none", padding: "10px 12px", fontSize: 12.5, color: "var(--ink-2)" }}>
                   <strong style={{ color: "var(--ok)" }}>Safety:</strong> inspect in daylight, tell a friend, and never pay any viewing fee.
                 </div>
@@ -107,35 +107,10 @@ export default function InspectionDetailPage() {
             )}
           </div>
 
-          {/* Stage actions */}
-          {!cancelled && (
-            <div className="card card-pad col gap-2">
-              {inspection.status !== "COMPLETED" && inspection.status !== "APPROVED" && (
-                <>
-                  <button className="btn btn-gold btn-block" onClick={() => { approveInspection(inspection.id); toast.success("Agent approved - address unlocked"); }}>
-                    <Icon name="shieldCheck" size={17} /> Agent approves (demo)
-                  </button>
-                  <button className="btn btn-danger btn-block btn-sm" onClick={() => { cancelInspection(inspection.id); toast("Inspection cancelled"); }}>
-                    Cancel inspection
-                  </button>
-                </>
-              )}
-              {inspection.status === "APPROVED" && (
-                <button className="btn btn-primary btn-block" onClick={() => { completeInspection(inspection.id); toast.success("Inspection marked complete"); }}>
-                  <Icon name="check" size={17} strokeWidth={2.2} /> Mark inspection complete
-                </button>
-              )}
-              {inspection.status === "COMPLETED" && (
-                <button className="btn btn-gold btn-block btn-lg" onClick={() => setPaying(true)}>
-                  <Icon name="lock" size={18} /> Pay securely into escrow
-                </button>
-              )}
-            </div>
-          )}
+          {inspection.status === "COMPLETED" && <p style={{ color: "var(--muted)", fontSize: 14 }}>Online payment is currently unavailable.</p>}
         </div>
       </div>
 
-      <PaySheet property={prop} open={paying} onClose={() => setPaying(false)} />
     </div>
   );
 }

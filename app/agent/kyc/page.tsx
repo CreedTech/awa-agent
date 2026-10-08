@@ -1,7 +1,5 @@
-"use client";
+import { LiveFeatureUnavailable } from "@/components/shared/live-feature-unavailable";
 
-import { KycFlow } from "@/components/auth/kyc-flow";
-
-export default function AgentKycPage() {
-  return <KycFlow role="agent" />;
+export default function Page() {
+  return <LiveFeatureUnavailable feature="Agent Kyc" />;
 }

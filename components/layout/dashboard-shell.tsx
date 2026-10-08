@@ -5,15 +5,12 @@ import { usePathname, useRouter } from "next/navigation";
 import { Logo } from "@/components/shared/logo";
 import { Avatar } from "@/components/shared/avatar";
 import { Icon } from "@/components/ui/icon";
-import { NotificationBell } from "@/components/shared/notification-bell";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useAppStore } from "@/store/app-store";
-import { useShallow } from "zustand/react/shallow";
 import { useAuthStore } from "@/store/auth-store";
 import type { NavItem } from "@/lib/constants";
 import { cn } from "@/lib/utils";
@@ -35,23 +32,10 @@ export function DashboardShell({ role, nav, identity, title, subtitle, actions, 
   const logout = useAuthStore((s) => s.logout);
   const isAdmin = role === "admin";
 
-  // Live badge counters sourced from the store. `useShallow` keeps the
-  // returned object stable (shallow-compared) so this doesn't re-render
-  // every snapshot - the values are plain numbers.
-  const badges = useAppStore(
-    useShallow((s) => ({
-      requests: s.agentRequests.filter((r) => r.status === "PENDING").length,
-      kyc: s.kycQueue.filter((k) => k.status === "PENDING").length,
-      props: s.propQueue.filter((p) => p.status === "PENDING").length,
-      disputes: s.disputes.filter((d) => d.status !== "RESOLVED").length,
-    })),
-  );
-
   const active = (href: string) => pathname === href || pathname.startsWith(href + "/");
 
   const NavLinks = () =>
     nav.map((item) => {
-      const count = item.badgeKey ? badges[item.badgeKey as keyof typeof badges] : 0;
       return (
         <Link
           key={item.href}
@@ -60,22 +44,6 @@ export function DashboardShell({ role, nav, identity, title, subtitle, actions, 
         >
           <Icon name={item.icon as never} size={18} />
           <span className="desktop-label">{item.label}</span>
-          {count > 0 && (
-            <span
-              className="desktop-label"
-              style={{
-                marginLeft: "auto",
-                fontSize: 11,
-                fontWeight: 700,
-                padding: "1px 7px",
-                borderRadius: 999,
-                background: isAdmin ? "var(--danger)" : "var(--gold-500)",
-                color: isAdmin ? "#fff" : "var(--navy-900)",
-              }}
-            >
-              {count}
-            </span>
-          )}
         </Link>
       );
     });
@@ -128,7 +96,6 @@ export function DashboardShell({ role, nav, identity, title, subtitle, actions, 
               Admin only
             </span>
           )}
-          <NotificationBell />
           <DropdownMenu>
             <DropdownMenuTrigger render={<button aria-label="Account menu" />}>
               <Avatar name={identity.name} photo={identity.photo} size={34} />

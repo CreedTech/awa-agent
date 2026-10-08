@@ -6,55 +6,80 @@ import { OtpInput } from "@/components/shared/otp-input";
 import { BottomSheet } from "@/components/shared/bottom-sheet";
 import { StatusBadge } from "@/components/shared/status-badge";
 import { Avatar } from "@/components/shared/avatar";
-import { SCAN_QUEUE, propertyById, type ScanQueueItem } from "@/lib/mock-data";
 import { toast } from "sonner";
+import { useQuery } from "@tanstack/react-query";
+import { apiFetch } from "@/lib/api";
+import { inspectionService } from "@/services/inspection-service";
 
-type Gps = "idle" | "checking" | "ok" | "fail";
+type VerificationState = "idle" | "checking" | "ok";
+interface QueueItem {
+  id: string;
+  tenant: string;
+  time: string;
+  status: "PENDING" | "VERIFIED";
+  propertyTitle: string;
+}
 
 export default function AgentInspectionsPage() {
-  const [verified, setVerified] = useState<Record<string, boolean>>(
-    Object.fromEntries(SCAN_QUEUE.filter((q) => q.status === "VERIFIED").map((q) => [q.id, true])),
-  );
-  const [active, setActive] = useState<ScanQueueItem | null>(null);
+  const liveQueue = useQuery({
+    queryKey: ["agent-inspections"],
+    queryFn: async () => {
+      const response = await apiFetch<{ data: Array<{ inspectionId: string; status: string; propertyTitle: string; tenant: { name: string }; preferredDate: string }> }>("/inspection/agent");
+      return response.data.map((item): QueueItem => ({
+        id: item.inspectionId, tenant: item.tenant.name,
+        time: item.preferredDate ?? "", status: item.status === "COMPLETED" ? "VERIFIED" : "PENDING",
+        propertyTitle: item.propertyTitle,
+      }));
+    },
+  });
+  const queue = liveQueue.data ?? [];
+  const [verified, setVerified] = useState<Record<string, boolean>>({});
+  const [active, setActive] = useState<QueueItem | null>(null);
   const [code, setCode] = useState("");
-  const [gps, setGps] = useState<Gps>("idle");
+  const [gps, setGps] = useState<VerificationState>("idle");
   const [error, setError] = useState(false);
 
-  const open = (item: ScanQueueItem) => { setActive(item); setCode(""); setGps("idle"); setError(false); };
+  const open = (item: QueueItem) => { setActive(item); setCode(""); setGps("idle"); setError(false); };
 
-  const verify = () => {
+  const verify = async () => {
     if (!active) return;
-    if (code.replace(/\s/g, "") !== active.otp) { setError(true); return; }
     setGps("checking");
-    setTimeout(() => {
+    try {
+      await inspectionService.verifyOtp(active.id, code);
+      setVerified((value) => ({ ...value, [active.id]: true }));
       setGps("ok");
-      setVerified((v) => ({ ...v, [active.id]: true }));
       toast.success(`Inspection verified for ${active.tenant}`);
-      setTimeout(() => setActive(null), 900);
-    }, 1200);
+      setActive(null);
+      void liveQueue.refetch();
+    } catch (error) {
+      setGps("idle");
+      setError(true);
+      toast.error(error instanceof Error ? error.message : "Verification failed.");
+    }
   };
 
-  const pending = SCAN_QUEUE.filter((q) => !verified[q.id]);
-  const done = SCAN_QUEUE.filter((q) => verified[q.id]);
+  const pending = queue.filter((q) => q.status !== "VERIFIED" && !verified[q.id]);
+  const done = queue.filter((q) => q.status === "VERIFIED" || verified[q.id]);
 
   return (
     <>
       <p style={{ color: "var(--muted)", fontSize: 14.5, marginBottom: 18 }}>
-        Verify each tenant in person by entering their 6-digit code. The meeting is GPS-checked and earns you impression points.
+        Verify each tenant in person by entering their 6-digit code.
       </p>
 
       <h3 style={{ fontSize: 16, marginBottom: 12 }}>Today&apos;s queue</h3>
       <div className="col gap-3" style={{ marginBottom: 26 }}>
-        {pending.length === 0 && <p style={{ color: "var(--muted)", fontSize: 14 }}>No pending inspections right now.</p>}
+        {liveQueue.isPending && <p style={{ color: "var(--muted)", fontSize: 14 }}>Loading inspections...</p>}
+        {liveQueue.isError && <p role="alert" style={{ color: "var(--danger)", fontSize: 14 }}>Could not load inspections. Please try again.</p>}
+        {liveQueue.isSuccess && pending.length === 0 && <p style={{ color: "var(--muted)", fontSize: 14 }}>No pending inspections right now.</p>}
         {pending.map((q) => {
-          const prop = propertyById(q.propertyId);
           return (
             <div key={q.id} className="card card-pad row between" style={{ alignItems: "center" }}>
               <div className="row gap-3">
                 <Avatar name={q.tenant} size={42} />
                 <div className="col" style={{ gap: 2 }}>
                   <strong style={{ fontSize: 14.5 }}>{q.tenant}</strong>
-                  <span style={{ fontSize: 12.5, color: "var(--muted)" }}>{prop?.title} · {q.time}</span>
+                  <span style={{ fontSize: 12.5, color: "var(--muted)" }}>{q.propertyTitle} · {q.time}</span>
                 </div>
               </div>
               <button className="btn btn-primary btn-sm" onClick={() => open(q)}><Icon name="key" size={15} /> Verify</button>
@@ -68,14 +93,13 @@ export default function AgentInspectionsPage() {
           <h3 style={{ fontSize: 16, marginBottom: 12 }}>Verified</h3>
           <div className="col gap-3">
             {done.map((q) => {
-              const prop = propertyById(q.propertyId);
               return (
                 <div key={q.id} className="card card-pad row between" style={{ alignItems: "center", opacity: 0.85 }}>
                   <div className="row gap-3">
                     <Avatar name={q.tenant} size={42} />
                     <div className="col" style={{ gap: 2 }}>
                       <strong style={{ fontSize: 14.5 }}>{q.tenant}</strong>
-                      <span style={{ fontSize: 12.5, color: "var(--muted)" }}>{prop?.title} · {q.time}</span>
+                      <span style={{ fontSize: 12.5, color: "var(--muted)" }}>{q.propertyTitle} · {q.time}</span>
                     </div>
                   </div>
                   <StatusBadge variant="ok"><Icon name="check" size={12} strokeWidth={2.4} /> Verified</StatusBadge>
@@ -94,14 +118,13 @@ export default function AgentInspectionsPage() {
             {error && <span className="row gap-2 center" style={{ color: "var(--danger)", fontSize: 13, fontWeight: 600 }}><Icon name="alert" size={14} /> Code doesn&apos;t match - try again.</span>}
             {gps !== "idle" && (
               <div className="row gap-2 center" style={{ fontSize: 13.5, color: gps === "ok" ? "var(--ok)" : "var(--muted)" }}>
-                {gps === "checking" && <><div className="spinner" style={{ width: 18, height: 18, borderWidth: 2 }} /> Checking GPS...</>}
-                {gps === "ok" && <><Icon name="gps" size={16} /> GPS confirmed - you&apos;re on-site</>}
+                {gps === "checking" && <><div className="spinner" style={{ width: 18, height: 18, borderWidth: 2 }} /> Verifying code...</>}
+                {gps === "ok" && <><Icon name="check" size={16} /> Inspection verified</>}
               </div>
             )}
             <button className="btn btn-gold btn-block btn-lg" disabled={code.length < 6 || gps === "checking"} onClick={verify}>
               <Icon name="shieldCheck" size={18} /> Verify meeting
             </button>
-            <span style={{ fontSize: 12, color: "var(--faint)" }}>Demo code: {active.otp}</span>
           </div>
         )}
       </BottomSheet>

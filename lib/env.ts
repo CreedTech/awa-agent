@@ -10,9 +10,6 @@ const num = (v: string | undefined, fallback: number): number => {
   return Number.isFinite(n) && v !== undefined && v !== "" ? n : fallback;
 };
 
-const bool = (v: string | undefined, fallback: boolean): boolean =>
-  v === undefined ? fallback : v === "true" || v === "1";
-
 const str = (v: string | undefined, fallback: string): string =>
   v && v.length > 0 ? v : fallback;
 
@@ -32,17 +29,8 @@ export const env = {
   maxInspectionsPerDay: num(process.env.NEXT_PUBLIC_MAX_INSPECTIONS_PER_DAY, 4),
   otpResendSeconds: num(process.env.NEXT_PUBLIC_OTP_RESEND_SECONDS, 30),
 
-  /** Backend integration - when a real API exists, point here & flip useMocks */
-  apiBaseUrl: str(process.env.NEXT_PUBLIC_API_BASE_URL, ""),
-  useMocks: bool(process.env.NEXT_PUBLIC_USE_MOCKS, true),
+  apiBaseUrl: str(process.env.NEXT_PUBLIC_API_BASE_URL, "https://api.awaagent.b2686bbc.sslip.io/api/v1"),
 
-  /** Third-party (placeholders until keys are provisioned) */
-  paystackPublicKey: str(process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY, ""),
-  googleMapsApiKey: str(process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY, ""),
-  smileIdentityToken: str(process.env.NEXT_PUBLIC_SMILE_IDENTITY_TOKEN, ""),
-
-  /** Simulated network latency for the mock service layer (ms). */
-  mockLatencyMs: num(process.env.NEXT_PUBLIC_MOCK_LATENCY_MS, 400),
 } as const;
 
 export type Env = typeof env;

@@ -5,7 +5,6 @@ import { usePathname, useRouter } from "next/navigation";
 import { Logo } from "@/components/shared/logo";
 import { Icon } from "@/components/ui/icon";
 import { Avatar } from "@/components/shared/avatar";
-import { NotificationBell } from "@/components/shared/notification-bell";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,7 +13,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { PUBLIC_NAV, TENANT_NAV } from "@/lib/constants";
 import { useAuthStore } from "@/store/auth-store";
-import { TENANT_ME } from "@/lib/mock-data";
 
 function isActive(pathname: string, href: string) {
   return pathname === href || (href !== "/" && pathname.startsWith(href));
@@ -43,11 +41,8 @@ export function PublicTopNav() {
         </nav>
 
         <div className="row gap-3" style={{ marginLeft: "auto" }}>
-          <Link href="/auth/login" className="btn btn-quiet desktop-only">
+          <Link href="/auth/login" className="btn btn-primary btn-sm">
             Log in
-          </Link>
-          <Link href="/auth/signup" className="btn btn-primary btn-sm">
-            Get started
           </Link>
           <DropdownMenu>
             <DropdownMenuTrigger render={<button className="icon-btn mobile-only-inline" aria-label="Menu" />}>
@@ -76,7 +71,7 @@ export function TenantTopNav() {
   const router = useRouter();
   const logout = useAuthStore((s) => s.logout);
   const account = useAuthStore((s) => s.account);
-  const me = { name: account?.name ?? TENANT_ME.name, photo: account?.photo ?? TENANT_ME.photo };
+  const me = { name: account?.name ?? "Tenant", photo: account?.photo };
 
   return (
     <header className="topnav">
@@ -112,7 +107,6 @@ export function TenantTopNav() {
         </form>
 
         <div className="row gap-2" style={{ marginLeft: "auto" }}>
-          <NotificationBell />
           <DropdownMenu>
             <DropdownMenuTrigger render={<button aria-label="Account menu" />}>
               <Avatar name={me.name} photo={me.photo} size={36} gold />

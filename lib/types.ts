@@ -1,9 +1,4 @@
-/* ============================================================
-   AwaAgent - Domain types
-   The single source of truth for every entity in the product.
-   Mock services in `services/*` return these shapes so they can be
-   swapped for a real API (see `lib/api.ts`) with no UI changes.
-   ============================================================ */
+/* AwaAgent domain types. */
 
 export type Role = "guest" | "tenant" | "agent" | "landlord" | "admin";
 
@@ -84,14 +79,12 @@ export interface User {
   city?: string;
 }
 
-/** A login-able account (demo auth). Passwords are plaintext for the
- *  prototype only - a real backend hashes them and never returns them. */
+/** Account details returned by the backend. */
 export interface Account {
   id: string;
   name: string;
   email: string;
   phone: string;
-  password: string;
   role: Exclude<Role, "guest">;
   kycStatus: KycStatus;
   photo?: string;
@@ -136,6 +129,9 @@ export interface Property {
   baths: number;
   baseRent: number;
   agentId: string;
+  agentTrustScore?: number;
+  agentName?: string;
+  agentKycStatus?: KycStatus;
   amenities: string[];
   /** Gallery labels (placeholder fallbacks). */
   imageLabels: string[];
@@ -153,6 +149,8 @@ export interface Property {
 export interface Inspection {
   id: string;
   propertyId: string;
+  propertyTitle?: string;
+  landmark?: string;
   tenantName: string;
   date: string;
   time: string;
@@ -162,6 +160,7 @@ export interface Inspection {
   gpsOk?: boolean | null;
   otpVerified?: boolean;
   addressUnlocked: boolean;
+  exactAddress?: string;
 }
 
 /* ---------------- Escrow ---------------- */
@@ -176,7 +175,7 @@ export interface EscrowTransaction {
   lockedOn?: string;
   settledOn?: string;
   refundedOn?: string;
-  /** Paystack transaction reference (mock). */
+  /** Paystack transaction reference. */
   paystackRef: string;
   /** Idempotency guard for escrow initiation. */
   idempotencyKey?: string;

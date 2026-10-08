@@ -1,10 +1,5 @@
-import { redirect } from "next/navigation";
+import { LiveFeatureUnavailable } from "@/components/shared/live-feature-unavailable";
 
-/**
- * The old "preview any dashboard" launcher is gone - people now sign up
- * for one account type and log into their own dashboard. Keep the route
- * working by sending it to signup.
- */
-export default function RoleSelectionRedirect() {
-  redirect("/auth/signup");
+export default function RoleSelectionPage() {
+  return <LiveFeatureUnavailable feature="Account signup" />;
 }

@@ -69,7 +69,7 @@ export const AMENITIES = [
   "Air Conditioning",
 ] as const;
 
-/* Approx. centre of Ibadan for mock GPS capture. */
+/* Approximate centre of Ibadan. */
 export const IBADAN_CENTER = { lat: 7.3775, lng: 3.947 };
 
 /* ---------------- Roles ---------------- */
@@ -82,10 +82,10 @@ export const ROLE_LABELS: Record<Role, string> = {
 };
 
 export const ROLE_HOME: Record<Exclude<Role, "guest">, string> = {
-  tenant: "/tenant/dashboard",
-  agent: "/agent/dashboard",
-  landlord: "/landlord/dashboard",
-  admin: "/admin/dashboard",
+  tenant: "/tenant/inspections",
+  agent: "/agent/inspections",
+  landlord: "/explore",
+  admin: "/explore",
 };
 
 export interface RoleCard {

@@ -103,12 +103,6 @@ export function formatDate(date: Date | string): string {
 
 /* ---------------- Inspections ---------------- */
 
-/** 6-digit inspection OTP, grouped "408 152". */
-export function generateInspectionOtp(): string {
-  const n = Math.floor(100000 + Math.random() * 900000).toString();
-  return `${n.slice(0, 3)} ${n.slice(3)}`;
-}
-
 /** Queue position when a slot already has bookings. */
 export function calculateQueuePosition(
   existingBookings: number,
@@ -125,24 +119,4 @@ export function initials(name: string): string {
     .slice(0, 2)
     .join("")
     .toUpperCase();
-}
-
-/** Idempotency key for escrow initiation (prevents double-charge). */
-export function makeIdempotencyKey(prefix = "esc"): string {
-  return `${prefix}_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
-}
-
-/** Mock Paystack reference. */
-export function makePaystackRef(): string {
-  return `ps_${Math.random().toString(36).slice(2, 11)}`;
-}
-
-/** Mock transaction id, e.g. AWA-TX-90412. */
-export function makeTxnId(): string {
-  return `AWA-TX-${Math.floor(80000 + Math.random() * 19999)}`;
-}
-
-/** Simulate async network latency for the mock service layer. */
-export function delay<T>(value: T, ms = 450): Promise<T> {
-  return new Promise((resolve) => setTimeout(() => resolve(value), ms));
 }

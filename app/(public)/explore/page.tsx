@@ -15,8 +15,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useAppStore } from "@/store/app-store";
-import { agentById } from "@/lib/mock-data";
-import { calculateRentBreakdown, formatCurrency, cn } from "@/lib/utils";
+import { useQuery } from "@tanstack/react-query";
+import { propertyService } from "@/services/property-service";
+import { formatCurrency, cn } from "@/lib/utils";
 import { PROPERTY_TYPES, AREAS, AMENITIES } from "@/lib/constants";
 import type { Property } from "@/lib/types";
 
@@ -43,7 +44,7 @@ const DEFAULT_FILTERS: Filters = {
 };
 
 function priceOf(p: Property) {
-  return calculateRentBreakdown(p.baseRent, agentById(p.agentId)?.commissionPct).total;
+  return p.baseRent;
 }
 
 function FiltersPanel({
@@ -129,10 +130,6 @@ function FiltersPanel({
         <span className="check-box">{filters.availableNow && <Icon name="check" size={13} strokeWidth={2.6} />}</span>
         Available now
       </button>
-      <button className={cn("check", filters.verifiedOnly && "is-on")} onClick={() => patch({ verifiedOnly: !filters.verifiedOnly })}>
-        <span className="check-box">{filters.verifiedOnly && <Icon name="check" size={13} strokeWidth={2.6} />}</span>
-        Verified agents only
-      </button>
     </div>
   );
 }
@@ -141,13 +138,15 @@ function ExploreContent() {
   const params = useSearchParams();
   const query = params.get("q")?.toLowerCase() ?? "";
   const properties = useAppStore((s) => s.properties);
+  const listings = useQuery({ queryKey: ["properties"], queryFn: propertyService.list });
+  const liveProperties = listings.data ?? properties;
 
   const [filters, setFilters] = useState<Filters>(DEFAULT_FILTERS);
   const [sort, setSort] = useState<SortKey>("newest");
   const [sheetOpen, setSheetOpen] = useState(false);
 
   const results = useMemo(() => {
-    let list = properties.filter((p) => p.status === "LIVE");
+    let list = liveProperties.filter((p) => p.status === "LIVE");
     if (query)
       list = list.filter(
         (p) =>
@@ -162,14 +161,13 @@ function ExploreContent() {
     if (filters.beds > 0) list = list.filter((p) => p.beds >= filters.beds);
     if (filters.amenities.length) list = list.filter((p) => filters.amenities.every((a) => p.amenities.includes(a)));
     if (filters.availableNow) list = list.filter((p) => p.available);
-    if (filters.verifiedOnly) list = list.filter((p) => agentById(p.agentId)?.verified);
 
     const sorted = [...list];
     if (sort === "price-asc") sorted.sort((a, b) => priceOf(a) - priceOf(b));
     else if (sort === "price-desc") sorted.sort((a, b) => priceOf(b) - priceOf(a));
-    else if (sort === "trust") sorted.sort((a, b) => (agentById(b.agentId)?.trust ?? 0) - (agentById(a.agentId)?.trust ?? 0));
+    else if (sort === "trust") sorted.sort((a, b) => (b.agentTrustScore ?? 0) - (a.agentTrustScore ?? 0));
     return sorted;
-  }, [properties, query, filters, sort]);
+  }, [liveProperties, query, filters, sort]);
 
   return (
     <>
@@ -182,17 +180,17 @@ function ExploreContent() {
     <div className="explore-hero-inner">
       <div className="col gap-3">
         <span className="tag tag-gold" style={{ width: "fit-content" }}>
-          <Icon name="shieldCheck" size={13} /> Verified marketplace
+          <Icon name="shieldCheck" size={13} /> Live listings
         </span>
         <h1 style={{ color: "#fff", fontSize: 32, maxWidth: 460, lineHeight: 1.15 }}>
-          Escrow-protected rentals in Ibadan
+          Explore rentals in Ibadan
         </h1>
         <p style={{ color: "rgba(255,255,255,.75)", fontSize: 15 }}>
-          Every listing shows the total upfront price. Every agent is verified.
+          Browse current listings and see the first-year price supplied by the backend.
         </p>
       </div>
       <div className="explore-hero-stats">
-        {[["Verified", "Homes & agents"], ["Escrow", "Payments protected"], ["No fees", "For viewings"]].map(([v, l]) => (
+        {[["Live", "Property listings"], ["Price", "First-year total"], ["Code", "In-person inspections"]].map(([v, l]) => (
           <div key={l} className="explore-stat-card">
             <span className="explore-stat-value">{v}</span>
             <span className="explore-stat-label">{l}</span>
@@ -252,7 +250,7 @@ function ExploreContent() {
         </Select>
       </div>
 
-      {results.length === 0 ? (
+      {listings.isPending ? <p>Loading properties...</p> : listings.isError ? <p role="alert">Could not load properties. Please try again.</p> : results.length === 0 ? (
         <EmptyState
           icon="explore"
           title="No properties match"

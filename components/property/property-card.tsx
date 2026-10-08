@@ -6,16 +6,10 @@ import { PropImage } from "@/components/shared/prop-image";
 import { Naira } from "@/components/shared/naira";
 import { TrustBadge } from "@/components/shared/trust-badge";
 import { StatusBadge } from "@/components/shared/status-badge";
-import { useAppStore } from "@/store/app-store";
-import { agentById } from "@/lib/mock-data";
-import { calculateRentBreakdown } from "@/lib/utils";
 import type { Property } from "@/lib/types";
 
 export function PropertyCard({ property, priority }: { property: Property; priority?: boolean }) {
-  const saved = useAppStore((s) => s.savedIds.includes(property.id));
-  const toggleSaved = useAppStore((s) => s.toggleSaved);
-  const agent = agentById(property.agentId);
-  const total = calculateRentBreakdown(property.baseRent, agent?.commissionPct).total;
+  const total = property.baseRent;
 
   return (
     <article className="prop-card-premium">
@@ -43,13 +37,6 @@ export function PropertyCard({ property, priority }: { property: Property; prior
         </div>
       </Link>
 
-      <button
-        className="prop-save-btn-premium"
-        aria-label={saved ? "Remove from saved" : "Save property"}
-        onClick={() => toggleSaved(property.id)}
-      >
-        <Icon name="bookmark" size={18} strokeWidth={saved ? 2.4 : 1.7} />
-      </button>
 
       <Link href={`/properties/${property.id}`}>
         <div className="prop-content-premium">
@@ -75,7 +62,7 @@ export function PropertyCard({ property, priority }: { property: Property; prior
               <Naira value={total} size={20} />
               <span className="prop-price-label">Total first-year price</span>
             </div>
-            {agent && <TrustBadge score={agent.trust} sm />}
+            {property.agentTrustScore !== undefined && <TrustBadge score={property.agentTrustScore} sm />}
           </div>
         </div>
       </Link>

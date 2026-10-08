@@ -16,9 +16,8 @@ const COLUMNS = [
   {
     title: "For partners",
     links: [
-      { label: "Become an agent", href: "/auth/signup" },
-      { label: "List as a landlord", href: "/auth/signup" },
-      { label: "Agent earnings", href: "/how-it-works" },
+      { label: "Agent access", href: "/auth/login" },
+      { label: "Landlord access", href: "/auth/login" },
     ],
   },
   {
@@ -39,12 +38,11 @@ export function Footer() {
           <div className="col gap-4" style={{ maxWidth: 320 }}>
             <Logo light />
             <p style={{ fontSize: 14, lineHeight: 1.6 }}>
-              Escrow-protected rentals for Nigeria. We hold your rent safely until you receive your
-              keys - no fake agents, no illegal viewing fees, no unsafe cash payments.
+              Browse current rental listings in Ibadan and arrange in-person inspections.
+              Online payments and new account registration are not available yet.
             </p>
             <div className="row gap-2" style={{ fontSize: 13 }}>
-              <Icon name="shieldCheck" size={16} color="var(--gold-400)" /> Funds held in escrow ·
-              Licensed partners
+              <Icon name="shieldCheck" size={16} color="var(--gold-400)" /> Inspection codes verified in person
             </div>
           </div>
           <div className="row wrap gap-6">
