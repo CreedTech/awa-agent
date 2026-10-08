@@ -21,12 +21,13 @@ export function PropImage({ src, label, className, sizes = "100vw", priority }: 
   const [err, setErr] = useState(false);
 
   if (src && !err) {
-    // User-uploaded photos are data:/blob: URLs - render them with a plain
-    // <img> (next/image optimization doesn't apply to inline sources).
-    const isLocal = src.startsWith("data:") || src.startsWith("blob:");
+    // R2 uses an operator-configured custom domain that is not known at build time.
+    // Serve it directly; Next's optimizer only accepts configured remote hosts.
+    const knownHost = URL.canParse(src) && ["images.unsplash.com", "plus.unsplash.com", "i.pravatar.cc"].includes(new URL(src).hostname);
+    const useDirectImage = src.startsWith("data:") || src.startsWith("blob:") || (src.startsWith("https://") && !knownHost);
     return (
       <div className={cn("relative overflow-hidden bg-[var(--paper-2)]", className)}>
-        {isLocal ? (
+        {useDirectImage ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={src}
