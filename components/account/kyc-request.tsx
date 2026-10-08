@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { PageHeader } from "@/components/shared/page-header";
 import { kycService } from "@/services/kyc-service";
+import { uploadService } from "@/services/upload-service";
 
 export function KycRequestPage() {
   const current = useQuery({ queryKey: ["kyc-me"], queryFn: kycService.mine });
@@ -11,7 +12,7 @@ export function KycRequestPage() {
   const [last4, setLast4] = useState("");
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
-  const pending = current.data?.requests.some((request) => request.status === "PENDING");
+  const pending = current.data?.requests.find((request) => request.status === "PENDING");
 
   const submit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault(); setBusy(true); setMessage(null);
@@ -23,12 +24,25 @@ export function KycRequestPage() {
     finally { setBusy(false); }
   };
 
+  const uploadEvidence = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!pending) return;
+    setBusy(true); setMessage(null);
+    try {
+      const files = new FormData(event.currentTarget).getAll("evidence").filter((item): item is File => item instanceof File && item.size > 0);
+      if (!files.length || files.length > 2) throw new Error("Choose one or two document images.");
+      for (const file of files) await uploadService.upload(file, "KYC_DOCUMENT", pending.id);
+      setMessage("Document images uploaded for private admin review. Bring the original for inspection.");
+    } catch (error) { setMessage(error instanceof Error ? error.message : "Could not upload documents."); }
+    finally { setBusy(false); }
+  };
+
   return <div className="page page-narrow col gap-5">
     <PageHeader title="Identity verification" subtitle="AwaAgent reviews your original identity document manually." />
     {current.isPending ? <p>Loading verification status...</p> : current.isError ? <p role="alert">Could not load verification status.</p> : <>
       <div className="card card-pad col gap-3">
         <strong>Status: {current.data?.kycStatus}</strong>
-        <p>Submit the type and last four characters of your document. An administrator will arrange to inspect the original before approving you. Do not upload or send your full identity number through this form.</p>
+        <p>Submit the type and last four characters of your document. You can then upload document images privately for review. An administrator must still inspect the original before approving you.</p>
       </div>
       {current.data?.kycStatus !== "VERIFIED" && !pending &&
         <form className="card card-pad col gap-4" onSubmit={submit}>
@@ -45,6 +59,12 @@ export function KycRequestPage() {
           </label>
           <button className="btn btn-primary" disabled={busy} type="submit">{busy ? "Submitting..." : "Request review"}</button>
         </form>}
+      {pending && <form className="card card-pad col gap-3" onSubmit={uploadEvidence}>
+        <strong>Private identity evidence</strong>
+        <p>Upload one or two clear JPEG, PNG or WebP images, up to 5 MB each. Only administrators can open them.</p>
+        <input className="input" type="file" name="evidence" accept="image/jpeg,image/png,image/webp" multiple required />
+        <button className="btn btn-primary" disabled={busy} type="submit">{busy ? "Uploading..." : "Upload document images"}</button>
+      </form>}
       {current.data?.requests.map((request) => <div className="card card-pad col gap-2" key={request.id}>
         <strong>{request.document_type.replaceAll("_", " ")} · {request.status}</strong>
         <span>Submitted {new Date(request.created_at).toLocaleDateString("en-GB")}</span>
