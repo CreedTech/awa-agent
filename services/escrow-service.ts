@@ -19,9 +19,16 @@ export interface EscrowTransaction {
   payouts: Array<{ role: string; amount: number; status: string }>;
 }
 
+export interface PaymentReceipt {
+  id: string; paystackReference: string; grossAmount: number; platformFee: number;
+  agentShare: number; landlordShare: number; status: string; paidAt: string;
+  settledAt?: string | null; refundedAt?: string | null; propertyTitle: string;
+  propertyArea: string; tenantName: string; agentName: string; landlordName: string;
+}
+
 export const escrowService = {
-  async mine(): Promise<Array<{ id: string; propertyId: string; propertyTitle: string; grossAmount: number; platformFee: number; agentShare: number; landlordShare: number; status: EscrowTransaction["status"]; createdAt: string; settledAt?: string }>> {
-    const response = await apiFetch<{ data: Array<{ id: string; propertyId: string; propertyTitle: string; grossAmount: number; platformFee: number; agentShare: number; landlordShare: number; status: EscrowTransaction["status"]; createdAt: string; settledAt?: string }> }>("/escrow/mine");
+  async mine(): Promise<Array<{ id: string; propertyId: string; propertyTitle: string; grossAmount: number; platformFee: number; agentShare: number; landlordShare: number; status: EscrowTransaction["status"]; createdAt: string; fundsLockedAt?: string | null; settledAt?: string | null }>> {
+    const response = await apiFetch<{ data: Array<{ id: string; propertyId: string; propertyTitle: string; grossAmount: number; platformFee: number; agentShare: number; landlordShare: number; status: EscrowTransaction["status"]; createdAt: string; fundsLockedAt?: string | null; settledAt?: string | null }> }>("/escrow/mine");
     return response.data;
   },
   async disputes(): Promise<Array<{ id: string; propertyTitle: string; grossAmount: number; status: string; reason: string; description: string; raisedAt: string; resolutionNote?: string }>> {
@@ -56,6 +63,10 @@ export const escrowService = {
   },
   async get(id: string): Promise<EscrowTransaction> {
     const response = await apiFetch<{ data: EscrowTransaction }>(`/escrow/${encodeURIComponent(id)}`);
+    return response.data;
+  },
+  async receipt(id: string): Promise<PaymentReceipt> {
+    const response = await apiFetch<{ data: PaymentReceipt }>(`/escrow/${encodeURIComponent(id)}/receipt`);
     return response.data;
   },
   async release(transactionId: string) {

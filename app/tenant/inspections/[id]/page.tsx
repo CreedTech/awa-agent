@@ -31,11 +31,22 @@ export default function InspectionDetailPage() {
     enabled: !!inspection?.propertyId,
   });
   const [paying, setPaying] = useState(false);
+  const [actionBusy, setActionBusy] = useState(false);
+  const [actionError, setActionError] = useState<string | null>(null);
 
-  if (liveInspection.isPending || (inspection && liveProperty.isPending)) return <div className="page">Loading inspection...</div>;
+  const changeInspection = async (action: "cancel" | "reschedule", preferredDate?: string) => {
+    setActionBusy(true); setActionError(null);
+    try {
+      if (action === "cancel") await inspectionService.cancel(id);
+      else await inspectionService.reschedule(id, preferredDate ?? "");
+      await liveInspection.refetch();
+    } catch (error) { setActionError(error instanceof Error ? error.message : "Could not update inspection."); }
+    finally { setActionBusy(false); }
+  };
+
+  if (liveInspection.isPending) return <div className="page">Loading inspection...</div>;
   if (!inspection) return notFound();
   const prop = liveProperty.data;
-  if (!prop) return notFound();
 
   const active = stepIndex(inspection.status);
   const cancelled = ["TENANT_CANCELLED", "AGENT_CANCELLED", "EXPIRED"].includes(inspection.status);
@@ -48,7 +59,7 @@ export default function InspectionDetailPage() {
 
       <div className="row between wrap gap-3" style={{ marginBottom: 18 }}>
         <div className="col gap-2">
-          <h1 className="page-title" style={{ fontSize: 26 }}>{prop.title}</h1>
+          <h1 className="page-title" style={{ fontSize: 26 }}>{inspection.propertyTitle ?? prop?.title ?? "Property inspection"}</h1>
           <span className="row gap-2" style={{ color: "var(--muted)", fontSize: 14 }}>
             <Icon name="calendar" size={15} /> {inspection.date} · {inspection.time}
           </span>
@@ -57,13 +68,13 @@ export default function InspectionDetailPage() {
       </div>
 
       {/* OTP */}
-      <div className="card card-pad" style={{ textAlign: "center", marginBottom: 18 }}>
+      {inspection.status === "REQUESTED" && <div className="card card-pad" style={{ textAlign: "center", marginBottom: 18 }}>
         <span className="label" style={{ display: "block", marginBottom: 10 }}>Your meeting code</span>
         <OtpInput value={inspection.otp} onChange={() => {}} readOnly />
         <p style={{ color: "var(--muted)", fontSize: 13, marginTop: 12 }}>
           Read this 6-digit code to the agent in person. Never share it before you meet.
         </p>
-      </div>
+      </div>}
 
       <div className="two-col">
         {/* Step tracker */}
@@ -99,10 +110,11 @@ export default function InspectionDetailPage() {
                 {inspection.addressUnlocked ? "Unlocked" : "Locked"}
               </span>
             </div>
-            <LocationPanel unlocked={inspection.addressUnlocked} landmark={prop.landmark} address={inspection.exactAddress} />
+            <LocationPanel unlocked={inspection.addressUnlocked} landmark={inspection.landmark ?? prop?.landmark ?? ""} address={inspection.exactAddress} />
             {inspection.addressUnlocked && (
               <div className="col gap-2" style={{ marginTop: 12 }}>
                 <strong className="row gap-2" style={{ fontSize: 14 }}><Icon name="pin" size={15} color="var(--gold-600)" /> {inspection.exactAddress}</strong>
+                {inspection.exactAddress && <a className="btn btn-ghost" href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(inspection.location ? `${inspection.location.lat},${inspection.location.lng}` : inspection.exactAddress)}`} target="_blank" rel="noopener noreferrer">Open directions</a>}
                 <div className="card" style={{ background: "var(--ok-bg)", border: "none", padding: "10px 12px", fontSize: 12.5, color: "var(--ink-2)" }}>
                   <strong style={{ color: "var(--ok)" }}>Safety:</strong> inspect in daylight, tell a friend, and never pay any viewing fee.
                 </div>
@@ -110,14 +122,28 @@ export default function InspectionDetailPage() {
             )}
           </div>
 
-          {inspection.status === "COMPLETED" && <button className="btn btn-gold btn-block btn-lg" onClick={() => setPaying(true)}>
+          {inspection.status === "COMPLETED" && prop?.available && <button className="btn btn-gold btn-block btn-lg" onClick={() => setPaying(true)}>
             Continue to payment
           </button>}
 
         </div>
       </div>
 
-      <PaySheet property={prop} open={paying} onClose={() => setPaying(false)} />
+      {inspection.status === "REQUESTED" && <div className="card card-pad col gap-3" style={{ marginTop: 18 }}>
+        <strong>Change this inspection</strong>
+        <form className="row gap-2 wrap" onSubmit={(event) => {
+          event.preventDefault();
+          const date = String(new FormData(event.currentTarget).get("preferredDate") ?? "");
+          void changeInspection("reschedule", date);
+        }}>
+          <input className="input" name="preferredDate" type="date" defaultValue={inspection.preferredDate} required />
+          <button className="btn btn-ghost" type="submit" disabled={actionBusy}>Reschedule</button>
+        </form>
+        <button className="btn btn-ghost" type="button" disabled={actionBusy} onClick={() => void changeInspection("cancel")}>Cancel inspection</button>
+        {actionError && <p role="alert">{actionError}</p>}
+      </div>}
+
+      {prop && <PaySheet property={prop} open={paying} onClose={() => setPaying(false)} />}
 
     </div>
   );

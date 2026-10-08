@@ -9,6 +9,10 @@ export interface Subscription {
 }
 
 export const subscriptionService = {
+  async pricing(): Promise<{ tier: string; priceNaira: number; durationDays: number }> {
+    const response = await apiFetch<{ data: { tier: string; priceNaira: number; durationDays: number } }>("/subscriptions/pricing");
+    return response.data;
+  },
   async mine(): Promise<Subscription> {
     const response = await apiFetch<{ data: Subscription }>("/subscriptions/me");
     return response.data;

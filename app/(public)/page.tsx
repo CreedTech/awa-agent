@@ -8,7 +8,7 @@ const HOW = [
   { icon: "explore", title: "Browse live listings", body: "See available homes and their first-year prices from the AwaAgent property API." },
   { icon: "calendar", title: "Request an inspection", body: "Eligible tenant accounts can choose a preferred day and receive an inspection code." },
   { icon: "key", title: "Verify in person", body: "The assigned agent verifies the tenant's code at the property." },
-  { icon: "lock", title: "Payment is not open", body: "Online checkout remains unavailable until the backend provides a real payment link." },
+  { icon: "lock", title: "Payment launch is pending", body: "Paystack checkout opens after live credentials and payment checks are complete." },
 ] as const;
 
 const BENEFITS = [
@@ -25,7 +25,7 @@ const BENEFITS = [
   {
     icon: "building",
     audience: "For landlords",
-    points: ["Backend-linked account", "Property representation coming later", "Payouts coming later", "Authorization coming later"],
+    points: ["Backend-linked account", "Agent authorization", "Property oversight", "Payout records"],
   },
 ] as const;
 
@@ -37,7 +37,7 @@ const STATS = [
 ];
 
 const FAQ = [
-  { q: "Can I pay through AwaAgent now?", a: "Not yet. Checkout is unavailable until the backend provides a real payment link." },
+  { q: "Can I pay through AwaAgent now?", a: "Not yet. Paystack checkout will open after the live account and payment flow pass launch checks." },
   { q: "Why can't I see the exact address?", a: "The backend hides the street address on public listings. It is returned to a tenant after their inspection code is verified." },
   { q: "What price is shown?", a: "Listings show the first-year amount supplied by the backend. Payment is not currently available." },
   { q: "What is the inspection code for?", a: "Read the code to your assigned agent in person. The backend records the inspection as completed after the agent verifies it." },
@@ -133,14 +133,14 @@ export default function HomePage() {
               </span>
               <h2 className="escrow-title">Online checkout is not available yet.</h2>
               <p className="escrow-description">
-                The backend currently returns a test checkout URL. We have disabled payment in the frontend until a real payment provider is connected.
+                Paystack is integrated, but live checkout stays off until account credentials, webhooks, transfers and refunds pass launch checks.
               </p>
               <Link href="/trust-safety" className="btn btn-gold btn-sm" style={{ width: "fit-content", marginTop: 20 }}>
                 See safety guidance
               </Link>
             </div>
             <div className="escrow-right">
-              {["Browse current listings", "Request an inspection", "Verify the meeting code", "Checkout opens after integration"].map((t, i) => (
+              {["Browse current listings", "Request an inspection", "Verify the meeting code", "Checkout opens after launch checks"].map((t, i) => (
                 <div key={t} className="escrow-step" style={{ animationDelay: `${i * 0.1}s` }}>
                   <span className="escrow-step-number">{i + 1}</span>
                   <span className="escrow-step-text">{t}</span>

@@ -18,6 +18,7 @@ export interface BackendListing {
   photos: string[] | null;
   impression_count: number | null;
   save_count: number | null;
+  inspection_slots_per_day?: number | null;
   status: string;
   badge: string | null;
 }
@@ -54,8 +55,9 @@ export function toProperty(listing: BackendListing): Property {
     imageLabels: images.map(() => listing.title),
     views: listing.impression_count ?? 0,
     bookmarks: listing.save_count ?? 0,
+    inspectionSlotsPerDay: listing.inspection_slots_per_day ?? 3,
     available: listing.status === "AVAILABLE",
     badge: listing.badge === "Premium" ? "Premium" : "Verified",
-    status: listing.status === "AVAILABLE" ? "LIVE" : listing.status === "OCCUPIED" ? "OCCUPIED" : "PAUSED",
+    status: listing.status === "AVAILABLE" ? "LIVE" : listing.status === "OCCUPIED" ? "OCCUPIED" : listing.status === "PENDING_REVIEW" ? "AWAITING_ADMIN_REVIEW" : listing.status === "REJECTED" ? "REJECTED" : listing.status === "REMOVED" ? "REMOVED" : "PAUSED",
   };
 }

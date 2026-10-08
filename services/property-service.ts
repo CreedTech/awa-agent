@@ -2,6 +2,11 @@ import { apiFetch } from "@/lib/api";
 import { toProperty, type BackendListing } from "@/lib/backend-mappers";
 import type { Property } from "@/lib/types";
 
+export interface ManagedListing extends BackendListing {
+  bathrooms: number; year_2_rent_naira: number; security_deposit: number;
+  address_street: string; inspection_slots_per_day: number;
+}
+
 export const propertyService = {
   async mine(): Promise<Property[]> {
     const response = await apiFetch<{ data: BackendListing[] }>("/properties/mine");
@@ -9,7 +14,7 @@ export const propertyService = {
   },
 
   async create(values: {
-    landlordId: string; title: string; description: string; propertyType: string;
+    landlordId?: string; agentId?: string; title: string; description: string; propertyType: string;
     bedrooms: number; bathrooms: number; year1RentNaira: number; year2RentNaira: number;
     address: { street: string; lga: string; landmark: string };
     amenities: string[]; photos: string[]; inspectionSlotsPerDay: number;
@@ -20,6 +25,16 @@ export const propertyService = {
 
   async setStatus(id: string, status: "AVAILABLE" | "PAUSED"): Promise<void> {
     await apiFetch(`/properties/${encodeURIComponent(id)}/status`, { method: "PATCH", json: { status } });
+  },
+  async setModerationStatus(id: string, status: "AVAILABLE" | "PAUSED" | "REJECTED" | "REMOVED"): Promise<void> {
+    await apiFetch(`/properties/${encodeURIComponent(id)}/status`, { method: "PATCH", json: { status } });
+  },
+  async manage(id: string): Promise<ManagedListing> {
+    const response = await apiFetch<{ data: ManagedListing }>(`/properties/${encodeURIComponent(id)}/manage`);
+    return response.data;
+  },
+  async update(id: string, values: Record<string, unknown>): Promise<void> {
+    await apiFetch(`/properties/${encodeURIComponent(id)}`, { method: "PATCH", json: values });
   },
   async saved(): Promise<Property[]> {
     const response = await apiFetch<{ data: BackendListing[] }>("/properties/saved/mine");

@@ -28,7 +28,8 @@ export function ManagedProperties({ role }: { role: "agent" | "landlord" }) {
       listings.data.length === 0 ? <p>No properties linked to this account yet.</p> :
       <div className="col gap-3">{listings.data.map((property) => <div key={property.id} className="card card-pad row between wrap gap-3">
         <div className="col gap-1"><Link href={`/properties/${property.id}`}><strong>{property.title}</strong></Link>
-          <span>{property.area} · {property.status}</span><Naira value={property.baseRent} size={17} /></div>
+          <span>{property.area} · {property.status.replaceAll("_", " ")}</span><Naira value={property.baseRent} size={17} />
+          <Link href={`/${role}/properties/${property.id}`}>Edit details</Link></div>
         {(property.status === "LIVE" || property.status === "PAUSED") && <button className="btn btn-ghost btn-sm" disabled={busy !== null}
           onClick={() => toggle(property.id, property.status === "LIVE")}>{property.status === "LIVE" ? "Pause" : "Publish"}</button>}
       </div>)}</div>}
