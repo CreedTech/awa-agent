@@ -258,6 +258,7 @@ export const ADMIN_NAV: NavItem[] = [
   { label: "Properties", href: "/admin/properties", icon: "building", badgeKey: "props" },
   { label: "Inspections", href: "/admin/inspections", icon: "calendar" },
   { label: "Escrow", href: "/admin/escrow", icon: "lock" },
+  { label: "Reconciliation", href: "/admin/reconciliation", icon: "receipt" },
   { label: "Disputes", href: "/admin/disputes", icon: "alert", badgeKey: "disputes" },
   { label: "Revenue", href: "/admin/revenue", icon: "analytics" },
   { label: "Commissions", href: "/admin/commissions", icon: "coins" },

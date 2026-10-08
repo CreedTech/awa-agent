@@ -12,6 +12,12 @@ export interface PlatformSettings { subscriptionPriceNaira: number; platformFeeB
 export interface AuditEvent { id: number; action: string; targetType: string; targetId: string; actorName: string; createdAt: string; detail: Record<string, unknown> }
 export interface TrustUser { id: string; name: string; role: string; kycStatus: string; trustScore: number; pendingFlags: number; upheldFlags: number }
 export interface TrustFlag { id: string; reason: string; description: string; status: string; createdAt: string; reportedId: string; reportedName: string }
+export interface ReconciliationCase {
+  id: string; status: string; legacyStatus: string | null; paystackReference: string | null;
+  grossAmount: number; createdAt: string; propertyTitle: string;
+  payouts: Array<{ id: string; role: string; status: string; reference: string }>;
+  notes: Array<{ note: string; at: string; actor: string }>;
+}
 
 export const adminService = {
   async dashboard() { const response = await apiFetch<{ data: AdminDashboard }>("/admin/dashboard"); return response.data; },
@@ -26,5 +32,12 @@ export const adminService = {
   async flags() { const response = await apiFetch<{ data: TrustFlag[] }>("/admin/flags"); return response.data; },
   async reviewFlag(id: string, decision: "UPHELD" | "DISMISSED", note: string) {
     await apiFetch(`/admin/flags/${encodeURIComponent(id)}/review`, { method: "POST", json: { decision, note } });
+  },
+  async reconciliation(): Promise<ReconciliationCase[]> {
+    const response = await apiFetch<{ data: ReconciliationCase[] }>("/admin/reconciliation");
+    return response.data;
+  },
+  async addReconciliationNote(id: string, note: string): Promise<void> {
+    await apiFetch(`/admin/reconciliation/${encodeURIComponent(id)}/notes`, { method: "POST", json: { note } });
   },
 };
