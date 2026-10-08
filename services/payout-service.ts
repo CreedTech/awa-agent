@@ -12,6 +12,9 @@ export const payoutService = {
     const response = await apiFetch<{ data: Array<{ id: string; transactionId: string; role: string; amount: number; status: string; createdAt: string }> }>("/escrow/admin/payouts");
     return response.data;
   },
+  async reconcile(id: string) {
+    await apiFetch(`/escrow/admin/payouts/${encodeURIComponent(id)}/reconcile`, { method: "POST" });
+  },
   async finalize(id: string, otp: string) {
     await apiFetch(`/escrow/admin/payouts/${encodeURIComponent(id)}/finalize`, { method: "POST", json: { otp } });
   },

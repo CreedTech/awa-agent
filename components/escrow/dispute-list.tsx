@@ -32,6 +32,12 @@ function Review({ id, onReviewed }: { id: string; onReviewed: () => Promise<unkn
 
 export function DisputeList({ admin = false }: { admin?: boolean }) {
   const disputes = useQuery({ queryKey: ["escrow-disputes"], queryFn: escrowService.disputes });
+  const [reconcileError, setReconcileError] = useState<string | null>(null);
+  const reconcile = async (id: string) => {
+    setReconcileError(null);
+    try { await escrowService.reconcileRefund(id); await disputes.refetch(); }
+    catch (error) { setReconcileError(error instanceof Error ? error.message : "Could not verify refund status."); }
+  };
   return <div className="page page-narrow col gap-5">
     <PageHeader title="Disputes" subtitle={admin ? "Review evidence outside the app before recording a decision." : "Problems raised against rent transactions."} />
     {disputes.isPending ? <p>Loading disputes...</p> : disputes.isError ? <p role="alert">Could not load disputes.</p> :
@@ -42,6 +48,8 @@ export function DisputeList({ admin = false }: { admin?: boolean }) {
         {dispute.description && <p>{dispute.description}</p>}
         {dispute.resolutionNote && <p>Review decision: {dispute.resolutionNote}</p>}
         {admin && dispute.status === "DISPUTED" && <Review id={dispute.id} onReviewed={() => disputes.refetch()} />}
+        {admin && dispute.status.startsWith("REFUND_") && <button className="btn btn-ghost" onClick={() => reconcile(dispute.id)}>Check refund with Paystack</button>}
       </div>) : <p>No disputes found.</p>}
+    {reconcileError && <p role="alert">{reconcileError}</p>}
   </div>;
 }

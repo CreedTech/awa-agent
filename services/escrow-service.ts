@@ -7,7 +7,7 @@ export interface EscrowTransaction {
   platformFee: number;
   agentShare: number;
   landlordShare: number;
-  status: "PENDING_PAYMENT" | "FUNDS_LOCKED" | "RELEASE_PENDING" | "SETTLED" | "DISPUTED" | "REFUND_PENDING" | "REFUND_UNKNOWN" | "REFUND_FAILED" | "REFUNDED" | "LEGACY_REVIEW";
+  status: "PENDING_PAYMENT" | "FUNDS_LOCKED" | "RELEASE_PENDING" | "SETTLED" | "PAYOUT_EXCEPTION" | "DISPUTED" | "REFUND_PENDING" | "REFUND_UNKNOWN" | "REFUND_FAILED" | "REFUNDED" | "LEGACY_REVIEW";
   checkoutUrl?: string;
   createdAt: string;
   fundsLockedAt?: string;
@@ -33,6 +33,9 @@ export const escrowService = {
   },
   async resolveDispute(id: string, decision: "RESTORE_RELEASE" | "REFUND", note: string) {
     await apiFetch(`/escrow/admin/disputes/${encodeURIComponent(id)}/resolve`, { method: "POST", json: { decision, note } });
+  },
+  async reconcileRefund(id: string) {
+    await apiFetch(`/escrow/admin/refunds/${encodeURIComponent(id)}/reconcile`, { method: "POST" });
   },
   async capabilities(): Promise<{ checkoutAvailable: boolean; payoutMode: string }> {
     const response = await apiFetch<{ data: { checkoutAvailable: boolean; payoutMode: string } }>("/escrow/capabilities");

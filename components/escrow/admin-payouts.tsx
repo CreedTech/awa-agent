@@ -21,10 +21,17 @@ function PayoutRow({ payout, onUpdated }: { payout: { id: string; transactionId:
     catch (error) { setMessage(error instanceof Error ? error.message : "Could not resend OTP."); }
     finally { setBusy(false); }
   };
+  const reconcile = async () => {
+    setBusy(true); setMessage(null);
+    try { await payoutService.reconcile(payout.id); await onUpdated(); }
+    catch (error) { setMessage(error instanceof Error ? error.message : "Could not verify transfer status."); }
+    finally { setBusy(false); }
+  };
   return <div className="card card-pad col gap-2">
     <strong>{payout.role} · {payout.status}</strong>
     <span>{payout.transactionId}</span>
     <Naira value={payout.amount} size={18} />
+    {payout.status !== "CREATED" && <button className="btn btn-ghost" type="button" disabled={busy} onClick={reconcile}>Check with Paystack</button>}
     {payout.status === "OTP_REQUIRED" && <form className="col gap-3" onSubmit={finalize}>
       <label className="col gap-2">Paystack business OTP
         <input className="input" inputMode="numeric" value={otp} minLength={6} maxLength={6} required onChange={(event) => setOtp(event.target.value)} />
