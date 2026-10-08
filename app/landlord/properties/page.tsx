@@ -1,5 +1,5 @@
-import { LiveFeatureUnavailable } from "@/components/shared/live-feature-unavailable";
+import { ManagedProperties } from "@/components/property/managed-properties";
 
-export default function Page() {
-  return <LiveFeatureUnavailable feature="Landlord Properties" />;
+export default function LandlordPropertiesPage() {
+  return <ManagedProperties role="landlord" />;
 }

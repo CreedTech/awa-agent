@@ -44,7 +44,7 @@ export default function LoginPage() {
     <AuthShell
       title="Welcome back"
       subtitle="Log in to your account to manage your rentals."
-      footer={<p style={{ fontSize: 14, color: "var(--muted)" }}>New account registration is currently unavailable.</p>}
+      footer={<p style={{ fontSize: 14, color: "var(--muted)" }}>New to AwaAgent? <Link href="/auth/signup">Create an account</Link></p>}
     >
       <form className="col gap-4" onSubmit={handleSubmit(onSubmit)} noValidate>
         {error && (

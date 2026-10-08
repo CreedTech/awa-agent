@@ -1,5 +1,3 @@
-import { LiveFeatureUnavailable } from "@/components/shared/live-feature-unavailable";
+import { AccountProfile } from "@/components/account/account-profile";
 
-export default function Page() {
-  return <LiveFeatureUnavailable feature="Agent Profile" />;
-}
+export default function Page() { return <AccountProfile />; }

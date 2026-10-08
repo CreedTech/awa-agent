@@ -25,8 +25,9 @@ const ninSchema = z
 export const signupSchema = z.object({
   name: z.string().min(2, "Enter your full name"),
   phone: phoneSchema,
-  email: z.string().email("Enter a valid email").optional().or(z.literal("")),
-  password: z.string().min(8, "Use at least 8 characters"),
+  email: z.email("Enter a valid email"),
+  password: z.string().min(10, "Use at least 10 characters"),
+  role: z.enum(["tenant", "agent", "landlord"]),
 });
 export type SignupValues = z.infer<typeof signupSchema>;
 
@@ -37,7 +38,7 @@ export const loginSchema = z.object({
 export type LoginValues = z.infer<typeof loginSchema>;
 
 export const forgotPasswordSchema = z.object({
-  identifier: z.string().min(1, "Enter your phone or email"),
+  identifier: z.email("Enter your email"),
 });
 export type ForgotPasswordValues = z.infer<typeof forgotPasswordSchema>;
 

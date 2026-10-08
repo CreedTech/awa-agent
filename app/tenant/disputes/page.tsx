@@ -1,5 +1,5 @@
-import { LiveFeatureUnavailable } from "@/components/shared/live-feature-unavailable";
+import { DisputeList } from "@/components/escrow/dispute-list";
 
 export default function Page() {
-  return <LiveFeatureUnavailable feature="Tenant Disputes" />;
+  return <DisputeList />;
 }

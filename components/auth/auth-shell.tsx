@@ -3,9 +3,9 @@ import { Logo } from "@/components/shared/logo";
 import { Icon } from "@/components/ui/icon";
 
 const TRUST_POINTS = [
-  { icon: "lock", title: "Escrow-protected", body: "Your rent is held safely until you get your keys." },
-  { icon: "shieldCheck", title: "Verified agents only", body: "Every agent passes NIN-based KYC." },
-  { icon: "calendar", title: "Safe inspections", body: "OTP-verified meetings, no illegal fees." },
+  { icon: "explore", title: "Browse current listings", body: "See available homes and first-year prices." },
+  { icon: "calendar", title: "Request a visit", body: "Eligible tenants can request an in-person inspection." },
+  { icon: "shieldCheck", title: "Verify at the property", body: "The assigned agent checks your inspection code in person." },
 ] as const;
 
 const BRAND_IMAGES = [
@@ -47,7 +47,7 @@ export function AuthShell({ title, subtitle, children, footer }: AuthShellProps)
 
           <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", gap: 28, paddingTop: 40 }}>
             <h2 style={{ color: "#fff", fontSize: 30, maxWidth: 320, textShadow: "0 2px 12px rgba(0,0,0,0.4)" }}>
-              Rent without fear.
+              Find your next home.
             </h2>
             <div className="col gap-5">
               {TRUST_POINTS.map((t) => (
@@ -80,7 +80,6 @@ export function AuthShell({ title, subtitle, children, footer }: AuthShellProps)
                   <img src={src} alt="" aria-hidden="true" />
                 </div>
               ))}
-              <div className="auth-preview-more">+2k<span>homes</span></div>
             </div>
           </div>
         </div>

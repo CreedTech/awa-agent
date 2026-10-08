@@ -215,6 +215,7 @@ export const TENANT_NAV: NavItem[] = [
 
 export const TENANT_MENU: NavItem[] = [
   { label: "Dashboard", href: "/tenant/dashboard", icon: "grid" },
+  { label: "Identity verification", href: "/tenant/kyc", icon: "shield" },
   { label: "Loyalty", href: "/tenant/loyalty", icon: "gift" },
   { label: "Subscription", href: "/tenant/subscription", icon: "crown" },
   { label: "Receipts", href: "/tenant/receipts", icon: "receipt" },

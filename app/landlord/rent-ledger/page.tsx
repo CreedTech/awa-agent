@@ -1,5 +1,5 @@
-import { LiveFeatureUnavailable } from "@/components/shared/live-feature-unavailable";
+import { TransactionList } from "@/components/escrow/transaction-list";
 
 export default function Page() {
-  return <LiveFeatureUnavailable feature="Landlord Rent Ledger" />;
+  return <TransactionList title="Rent ledger" subtitle="Rent transactions for your properties." />;
 }

@@ -12,19 +12,18 @@ bun run dev
 
 The frontend uses the backend API at `NEXT_PUBLIC_API_BASE_URL`. It defaults to the production API URL. Set it to `http://localhost:5000/api/v1` to use a local backend.
 
-## Connected features
+## Integration work in this checkout
 
-- Login with a backend account and bearer token.
-- Public property browsing and property details.
-- Tenant inspection list and booking for eligible accounts.
-- Agent inspection queue and OTP verification.
+- Login, Resend-backed email signup and password recovery, account profiles, and manual KYC review.
+- Public listings, landlord-agent authorization, managed listings, saved homes, and inspections.
+- Paystack-backed subscription checkout, rent checkout, transaction verification, payout account setup, dispute review, and payment records.
 
 The backend mounts inspection routes at `/api/v1/inspection` (singular). The frontend uses the backend's `{ status, data }` response format and displays backend error messages.
 
-## Planned features and backend work
+The new screens require the matching backend branch and database migration. They are not evidence that the production backend is already running these routes. Resend and Paystack credentials are not in this repository. Checkout and email actions fail closed until the backend is configured.
 
-The backend accepts new accounts through `/auth/signup`, but assigns every signup the same `123456` verification code and returns it in the response. The frontend currently disables signup until verification uses a real delivery and expiry flow. This is a frontend decision; the backend does **not** reject registration.
+## Remaining product work
 
-KYC submission, subscription checkout, agent authorization, and payment checkout also lack working production flows. The backend's escrow initialization returns a test checkout URL. Pages without working backend data show an unavailable state rather than fabricated records or actions. The full inventory of former screens, their intended flows, available backend routes, and restoration requirements is in [the feature inventory](docs/feature-inventory.md).
+Some dashboard pages still display an unavailable state while their data contracts are built. [The feature inventory](docs/feature-inventory.md) records the former screens and the current implementation status so those planned features are not lost.
 
-No payment can be collected in this frontend until the backend provides a real checkout URL and confirms payments through its webhook.
+The backend operator must configure Resend, a live transfer-enabled Paystack account, callback URLs and webhook URL, and an admin account, then verify the migration and payment lifecycle before launch.

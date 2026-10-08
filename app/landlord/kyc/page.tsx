@@ -1,5 +1,5 @@
-import { LiveFeatureUnavailable } from "@/components/shared/live-feature-unavailable";
+import { KycRequestPage } from "@/components/account/kyc-request";
 
 export default function Page() {
-  return <LiveFeatureUnavailable feature="Landlord Kyc" />;
+  return <KycRequestPage />;
 }

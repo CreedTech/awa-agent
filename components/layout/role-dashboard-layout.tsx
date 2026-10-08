@@ -41,10 +41,10 @@ export function RoleDashboardLayout({ role, nav, subtitle, children }: RoleDashb
   };
 
   const liveSupported = role === "agent"
-    ? pathname === "/agent/inspections" || pathname === "/agent/kyc" || pathname === "/agent/properties/new"
+    ? pathname === "/agent/inspections" || pathname === "/agent/landlord-authorizations" || pathname === "/agent/profile" || pathname === "/agent/kyc" || pathname === "/agent/properties" || pathname === "/agent/properties/new" || pathname === "/agent/earnings" || pathname === "/agent/commissions"
     : role === "landlord"
-      ? pathname === "/landlord/kyc" || pathname === "/landlord/properties/new"
-      : false;
+      ? pathname === "/landlord/agents" || pathname === "/landlord/profile" || pathname === "/landlord/kyc" || pathname === "/landlord/properties" || pathname === "/landlord/properties/new" || pathname === "/landlord/rent-ledger" || pathname === "/landlord/payouts" || pathname === "/landlord/disputes"
+      : pathname === "/admin/kyc" || pathname === "/admin/escrow" || pathname === "/admin/disputes" || pathname === "/admin/revenue" || pathname === "/admin/commissions";
 
   return (
     <DashboardShell role={role} nav={nav} identity={resolved} title={active.label} subtitle={subtitle}>
