@@ -1,5 +1,5 @@
-import { LiveFeatureUnavailable } from "@/components/shared/live-feature-unavailable";
+import { TransactionList } from "@/components/escrow/transaction-list";
 
 export default function Page() {
-  return <LiveFeatureUnavailable feature="Admin Revenue" />;
+  return <TransactionList title="Platform revenue" subtitle="Recorded platform share of completed rent payments, before provider fees." amountField="platformFee" settledOnly />;
 }

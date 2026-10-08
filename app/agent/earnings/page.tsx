@@ -1,5 +1,5 @@
-import { LiveFeatureUnavailable } from "@/components/shared/live-feature-unavailable";
+import { TransactionList } from "@/components/escrow/transaction-list";
 
 export default function Page() {
-  return <LiveFeatureUnavailable feature="Agent Earnings" />;
+  return <TransactionList title="Earnings" subtitle="Confirmed agent transfers." amountField="agentShare" settledOnly />;
 }

@@ -1,10 +1,12 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { useParams, notFound } from "next/navigation";
 import { Icon } from "@/components/ui/icon";
 import { OtpInput } from "@/components/shared/otp-input";
 import { LocationPanel } from "@/components/shared/location-panel";
+import { PaySheet } from "@/components/escrow/pay-sheet";
 import { InspectionBadge } from "@/components/shared/status-badge";
 import type { InspectionStatus } from "@/lib/types";
 import { useQuery } from "@tanstack/react-query";
@@ -28,6 +30,7 @@ export default function InspectionDetailPage() {
     queryFn: () => propertyService.get(inspection!.propertyId),
     enabled: !!inspection?.propertyId,
   });
+  const [paying, setPaying] = useState(false);
 
   if (liveInspection.isPending || (inspection && liveProperty.isPending)) return <div className="page">Loading inspection...</div>;
   if (!inspection) return notFound();
@@ -107,9 +110,14 @@ export default function InspectionDetailPage() {
             )}
           </div>
 
-          {inspection.status === "COMPLETED" && <p style={{ color: "var(--muted)", fontSize: 14 }}>Online payment is currently unavailable.</p>}
+          {inspection.status === "COMPLETED" && <button className="btn btn-gold btn-block btn-lg" onClick={() => setPaying(true)}>
+            Continue to payment
+          </button>}
+
         </div>
       </div>
+
+      <PaySheet property={prop} open={paying} onClose={() => setPaying(false)} />
 
     </div>
   );

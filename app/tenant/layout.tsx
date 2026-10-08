@@ -21,7 +21,7 @@ export default function TenantLayout({ children }: { children: React.ReactNode }
   return (
     <div className="app">
       <TenantTopNav />
-      <main className="grow">{pathname === "/tenant/inspections" || pathname.startsWith("/tenant/inspections/")
+      <main className="grow">{pathname === "/tenant/inspections" || pathname.startsWith("/tenant/inspections/") || pathname === "/tenant/escrow" || pathname.startsWith("/tenant/escrow/") || pathname === "/tenant/subscription" || pathname === "/tenant/saved" || pathname === "/tenant/profile" || pathname === "/tenant/kyc" || pathname === "/tenant/disputes" || pathname === "/tenant/receipts"
         ? children
         : <LiveFeatureUnavailable feature="This dashboard" />}</main>
       <BottomNav />

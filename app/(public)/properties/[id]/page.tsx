@@ -29,9 +29,24 @@ export default function PropertyDetailPage() {
   const unlocked = Boolean(unlockedAddress);
   const role = useAuthStore((s) => s.role);
   const isAuthed = useAuthStore((s) => s.isAuthenticated);
+  const savedHomes = useQuery({ queryKey: ["saved-properties"], queryFn: propertyService.saved, enabled: isAuthed && role === "tenant" });
+  const isSaved = savedHomes.data?.some((item) => item.id === id) ?? false;
 
   const [booking, setBooking] = useState(false);
   const [restricted, setRestricted] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+
+  const toggleSaved = async () => {
+    setSaving(true); setSaveError(null);
+    try {
+      if (isSaved) await propertyService.unsave(id);
+      else await propertyService.save(id);
+      await savedHomes.refetch();
+    } catch (cause) {
+      setSaveError(cause instanceof Error ? cause.message : "Could not update saved home.");
+    } finally { setSaving(false); }
+  };
 
   if (liveProperty.isPending) return <div className="page">Loading property...</div>;
   if (liveProperty.isError && !(liveProperty.error instanceof ApiError && liveProperty.error.status === 404)) {
@@ -145,6 +160,10 @@ export default function PropertyDetailPage() {
                 <button className="btn btn-ghost btn-block" onClick={guard("book an inspection", () => setBooking(true))}>
                   <Icon name="calendar" size={17} /> Request inspection
                 </button>
+                {role === "tenant" && <button className="btn btn-quiet btn-block" onClick={toggleSaved} disabled={saving || savedHomes.isPending}>
+                  {isSaved ? "Remove from saved homes" : "Save this home"}
+                </button>}
+                {saveError && <p role="alert" style={{ color: "var(--danger)", fontSize: 13 }}>{saveError}</p>}
                 <p style={{ color: "var(--muted)", fontSize: 13 }}>Online payment is currently unavailable.</p>
               </div>
             </div>

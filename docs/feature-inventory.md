@@ -2,7 +2,13 @@
 
 This records the product flows present in the frontend before commit `6c8d808` removed local fabricated state. It is a recovery map, not a claim that these flows were production ready. The original UI and transitions are still available in Git at commit `fb7148f` (for example, `git show fb7148f:app/tenant/escrow/page.tsx`). Rebuild each flow against authenticated backend data and server-enforced rules; do not restore the old local data layer.
 
-Backend reference reviewed: `AwaAgent/awaagent-backend`, commit `5b65080`; production health reported build `c6a2357` on 2026-10-08. The backend mounts `/api/v1/auth`, `/properties`, `/inspection`, `/escrow`, and `/trust`. Its OpenAPI file calls the inspection path `/inspections`, but the mounted route is **`/inspection`**.
+Baseline backend reference reviewed: `AwaAgent/awaagent-backend`, commit `5b65080`; production health reported build `c6a2357` on 2026-10-08. The baseline mounts `/api/v1/auth`, `/properties`, `/inspection`, `/escrow`, and `/trust`. Its OpenAPI file calls the inspection path `/inspections`, but the mounted route is **`/inspection`**. The table below is the **pre-implementation inventory**; it preserves what was missing when the old frontend screens were removed.
+
+## Current implementation in progress
+
+Backend branch `feat/platform-flows` and the frontend checkout now implement Resend signup/recovery, manual admin KYC, landlord-agent authorizations, Paystack subscription checkout, rent checkout verification, payout recipient setup, signed webhook processing, saved homes, owned listings, profiles, dispute submission and admin decision, refund tracking, and role-scoped payment lists. These changes are not yet deployed. The provider credentials, callback URLs, admin bootstrap, database migration rehearsal, and live transaction acceptance tests remain launch gates.
+
+Still unimplemented: durable notifications, hosted listing photos, editable listing details, inspection rescheduling/cancellation, complete admin management/settings/audit views, loyalty/rewards, map navigation, downloadable receipts, and complete refund/ambiguous-transfer reconciliation. Paystack charge funds go to the merchant account; the current integration does not constitute a separate escrow account. Keep these areas in the plan when implementing future backend work. A later Dojah integration can replace manual identity evidence checks while preserving KYC review history.
 
 | Area and original frontend routes | Intended product flow | Backend status / work before restoring |
 | --- | --- | --- |

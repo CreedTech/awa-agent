@@ -1,5 +1,5 @@
-import { LiveFeatureUnavailable } from "@/components/shared/live-feature-unavailable";
+import { TransactionList } from "@/components/escrow/transaction-list";
 
 export default function Page() {
-  return <LiveFeatureUnavailable feature="Tenant Receipts" />;
+  return <TransactionList title="Payment records" subtitle="Your completed rent payments." settledOnly tenantLinks />;
 }
