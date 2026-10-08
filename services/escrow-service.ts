@@ -7,7 +7,7 @@ export interface EscrowTransaction {
   platformFee: number;
   agentShare: number;
   landlordShare: number;
-  status: "PENDING_PAYMENT" | "FUNDS_LOCKED" | "RELEASE_PENDING" | "SETTLED" | "DISPUTED" | "REFUND_PENDING" | "REFUND_UNKNOWN" | "REFUND_FAILED" | "REFUNDED";
+  status: "PENDING_PAYMENT" | "FUNDS_LOCKED" | "RELEASE_PENDING" | "SETTLED" | "DISPUTED" | "REFUND_PENDING" | "REFUND_UNKNOWN" | "REFUND_FAILED" | "REFUNDED" | "LEGACY_REVIEW";
   checkoutUrl?: string;
   createdAt: string;
   fundsLockedAt?: string;
