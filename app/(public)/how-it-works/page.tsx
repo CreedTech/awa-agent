@@ -23,7 +23,7 @@ export default function HowItWorksPage() {
         <div className="hiw-step-body"><div className="hiw-step-num">0{index + 1}</div><h2 className="hiw-step-title">{step.title}</h2><p className="hiw-step-desc">{step.body}</p></div>
       </div>)}
     </div>
-    <div className="card card-pad" style={{ marginTop: 36 }}><strong>Payment status</strong><p style={{ color: "var(--muted)", marginTop: 8 }}>Online checkout is unavailable until the backend provides a real payment link. Do not send rent to anyone outside a verified payment flow.</p></div>
+    <div className="card card-pad" style={{ marginTop: 36 }}><strong>Payment status</strong><p style={{ color: "var(--muted)", marginTop: 8 }}>Online checkout is unavailable until the Paystack live account passes launch checks. Do not send rent to anyone outside a verified payment flow.</p></div>
     <Link href="/explore" className="btn btn-primary" style={{ marginTop: 22 }}>Browse properties</Link>
     </section>
     <Footer />

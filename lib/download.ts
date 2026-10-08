@@ -6,6 +6,7 @@
 import { formatCurrency } from "./utils";
 import { env } from "./env";
 import type { EscrowTransaction, Property } from "./types";
+import type { PaymentReceipt } from "@/services/escrow-service";
 
 /** Trigger a browser download for a Blob. */
 function saveBlob(blob: Blob, filename: string) {
@@ -121,4 +122,26 @@ export async function downloadReceiptPdf(txn: EscrowTransaction, property?: Prop
   );
 
   doc.save(`AwaAgent-receipt-${txn.id}.pdf`);
+}
+
+/** Download a payment record using fields returned by the authenticated API. */
+export async function downloadPaymentReceipt(receipt: PaymentReceipt) {
+  const { jsPDF } = await import("jspdf");
+  const doc = new jsPDF({ unit: "pt", format: "a4" });
+  const money = (value: number) => `NGN ${Number(value).toLocaleString("en-NG")}`;
+  doc.setFont("helvetica", "bold"); doc.setFontSize(20); doc.text("AwaAgent payment record", 48, 60);
+  doc.setFont("helvetica", "normal"); doc.setFontSize(11);
+  const rows = [
+    ["Property", receipt.propertyTitle], ["Area", receipt.propertyArea], ["Tenant", receipt.tenantName],
+    ["Status", receipt.status.replaceAll("_", " ")], ["Paid on", new Date(receipt.paidAt).toLocaleString("en-NG")],
+    ["AwaAgent reference", receipt.id], ["Paystack reference", receipt.paystackReference],
+    ["Total charged", money(receipt.grossAmount)], ["Landlord share", money(receipt.landlordShare)],
+    ["Agent share", money(receipt.agentShare)], ["Platform share", money(receipt.platformFee)],
+    ["Settled on", receipt.settledAt ? new Date(receipt.settledAt).toLocaleString("en-NG") : "Not settled"],
+    ["Refunded on", receipt.refundedAt ? new Date(receipt.refundedAt).toLocaleString("en-NG") : "Not refunded"],
+  ];
+  let y = 94;
+  for (const [label, value] of rows) { doc.text(`${label}: ${String(value ?? "")}`, 48, y); y += 25; }
+  doc.setFontSize(9); doc.text("Generated from AwaAgent's verified payment record. This is not a bank statement.", 48, y + 20);
+  doc.save(`AwaAgent-payment-${receipt.id}.pdf`);
 }

@@ -139,6 +139,7 @@ export interface Property {
   description: string;
   views: number;
   bookmarks: number;
+  inspectionSlotsPerDay?: number;
   available: boolean;
   nextFree?: string;
   badge: "Verified" | "Premium";
@@ -153,6 +154,7 @@ export interface Inspection {
   landmark?: string;
   tenantName: string;
   date: string;
+  preferredDate?: string;
   time: string;
   otp: string;
   status: InspectionStatus;
@@ -161,6 +163,7 @@ export interface Inspection {
   otpVerified?: boolean;
   addressUnlocked: boolean;
   exactAddress?: string;
+  location?: GeoPoint;
 }
 
 /* ---------------- Escrow ---------------- */

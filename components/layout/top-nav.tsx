@@ -107,6 +107,7 @@ export function TenantTopNav() {
         </form>
 
         <div className="row gap-2" style={{ marginLeft: "auto" }}>
+          <Link className="btn btn-ghost" href="/tenant/notifications" aria-label="Notifications"><Icon name="bell" size={19} /></Link>
           <DropdownMenu>
             <DropdownMenuTrigger render={<button aria-label="Account menu" />}>
               <Avatar name={me.name} photo={me.photo} size={36} gold />

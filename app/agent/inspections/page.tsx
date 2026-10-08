@@ -16,7 +16,7 @@ interface QueueItem {
   id: string;
   tenant: string;
   time: string;
-  status: "PENDING" | "VERIFIED";
+  status: "PENDING" | "VERIFIED" | "CANCELLED";
   propertyTitle: string;
 }
 
@@ -27,7 +27,7 @@ export default function AgentInspectionsPage() {
       const response = await apiFetch<{ data: Array<{ inspectionId: string; status: string; propertyTitle: string; tenant: { name: string }; preferredDate: string }> }>("/inspection/agent");
       return response.data.map((item): QueueItem => ({
         id: item.inspectionId, tenant: item.tenant.name,
-        time: item.preferredDate ?? "", status: item.status === "COMPLETED" ? "VERIFIED" : "PENDING",
+        time: item.preferredDate ?? "", status: item.status === "COMPLETED" ? "VERIFIED" : item.status === "CANCELLED" ? "CANCELLED" : "PENDING",
         propertyTitle: item.propertyTitle,
       }));
     },
@@ -58,7 +58,7 @@ export default function AgentInspectionsPage() {
     }
   };
 
-  const pending = queue.filter((q) => q.status !== "VERIFIED" && !verified[q.id]);
+  const pending = queue.filter((q) => q.status === "PENDING" && !verified[q.id]);
   const done = queue.filter((q) => q.status === "VERIFIED" || verified[q.id]);
 
   return (

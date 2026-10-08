@@ -1,5 +1,5 @@
-import { LiveFeatureUnavailable } from "@/components/shared/live-feature-unavailable";
+import { InspectionOverview } from "@/components/inspection/inspection-overview";
 
 export default function Page() {
-  return <LiveFeatureUnavailable feature="Admin Inspections" />;
+  return <InspectionOverview title="All inspections" />;
 }

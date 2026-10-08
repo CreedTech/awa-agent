@@ -1,5 +1,5 @@
-import { LiveFeatureUnavailable } from "@/components/shared/live-feature-unavailable";
+import { PropertyEditor } from "@/components/property/property-editor";
 
 export default function Page() {
-  return <LiveFeatureUnavailable feature="Landlord Properties" />;
+  return <PropertyEditor role="landlord" />;
 }

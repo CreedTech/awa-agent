@@ -82,10 +82,10 @@ export const ROLE_LABELS: Record<Role, string> = {
 };
 
 export const ROLE_HOME: Record<Exclude<Role, "guest">, string> = {
-  tenant: "/tenant/inspections",
-  agent: "/agent/inspections",
-  landlord: "/explore",
-  admin: "/explore",
+  tenant: "/tenant/dashboard",
+  agent: "/agent/dashboard",
+  landlord: "/landlord/dashboard",
+  admin: "/admin/dashboard",
 };
 
 export interface RoleCard {
@@ -215,6 +215,7 @@ export const TENANT_NAV: NavItem[] = [
 
 export const TENANT_MENU: NavItem[] = [
   { label: "Dashboard", href: "/tenant/dashboard", icon: "grid" },
+  { label: "Notifications", href: "/tenant/notifications", icon: "bell" },
   { label: "Identity verification", href: "/tenant/kyc", icon: "shield" },
   { label: "Loyalty", href: "/tenant/loyalty", icon: "gift" },
   { label: "Subscription", href: "/tenant/subscription", icon: "crown" },
@@ -224,6 +225,7 @@ export const TENANT_MENU: NavItem[] = [
 
 export const AGENT_NAV: NavItem[] = [
   { label: "Dashboard", href: "/agent/dashboard", icon: "grid" },
+  { label: "Notifications", href: "/agent/notifications", icon: "bell" },
   { label: "Properties", href: "/agent/properties", icon: "building" },
   { label: "Inspections", href: "/agent/inspections", icon: "calendar" },
   { label: "Earnings", href: "/agent/earnings", icon: "wallet" },
@@ -236,6 +238,7 @@ export const AGENT_NAV: NavItem[] = [
 
 export const LANDLORD_NAV: NavItem[] = [
   { label: "Overview", href: "/landlord/dashboard", icon: "grid" },
+  { label: "Notifications", href: "/landlord/notifications", icon: "bell" },
   { label: "Properties", href: "/landlord/properties", icon: "building" },
   { label: "Agent Matrix", href: "/landlord/agent-matrix", icon: "users", badgeKey: "requests" },
   { label: "Agents", href: "/landlord/agents", icon: "user" },
@@ -249,6 +252,7 @@ export const LANDLORD_NAV: NavItem[] = [
 
 export const ADMIN_NAV: NavItem[] = [
   { label: "Overview", href: "/admin/dashboard", icon: "grid" },
+  { label: "Notifications", href: "/admin/notifications", icon: "bell" },
   { label: "Users", href: "/admin/users", icon: "users" },
   { label: "KYC Queue", href: "/admin/kyc", icon: "shieldCheck", badgeKey: "kyc" },
   { label: "Properties", href: "/admin/properties", icon: "building", badgeKey: "props" },

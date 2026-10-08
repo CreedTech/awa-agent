@@ -43,7 +43,7 @@ export default function NewPropertyPage() {
         photos: uploadedPhotos,
         inspectionSlotsPerDay: Number(value("inspectionSlotsPerDay")),
       });
-      router.push(`/properties/${property.id}`);
+      router.push(`/agent/properties/${property.id}`);
     } catch (cause) { setError(cause instanceof Error ? cause.message : "Could not create property."); setBusy(false); }
   };
 

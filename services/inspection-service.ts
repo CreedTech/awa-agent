@@ -12,9 +12,10 @@ interface BackendInspection {
   status: "PENDING" | "COMPLETED" | "CANCELLED";
   otp?: string;
   preferredDate?: string | null;
+  tenantName?: string;
   createdAt?: string;
   tenant?: { name: string };
-  fullAddress?: { street: string } | null;
+  fullAddress?: { street: string; lga?: string; lat?: number | null; lng?: number | null } | null;
 }
 
 function toInspection(value: BackendInspection): Inspection {
@@ -24,21 +25,24 @@ function toInspection(value: BackendInspection): Inspection {
     propertyId: value.propertyId ?? "",
     propertyTitle: value.propertyTitle,
     landmark: value.landmark,
-    tenantName: value.tenant?.name ?? useAuthStore.getState().account?.name ?? "",
+    tenantName: value.tenantName ?? value.tenant?.name ?? useAuthStore.getState().account?.name ?? "",
     date: date ? new Date(date).toLocaleDateString("en-GB") : "",
+    preferredDate: value.preferredDate?.slice(0, 10),
     time: "",
     otp: value.otp ?? "",
     status: value.status === "PENDING" ? "REQUESTED" : value.status === "CANCELLED" ? "EXPIRED" : "COMPLETED",
     queuePosition: 0,
     addressUnlocked: value.status === "COMPLETED",
-    exactAddress: value.fullAddress?.street,
+    exactAddress: value.fullAddress ? [value.fullAddress.street, value.fullAddress.lga].filter(Boolean).join(", ") : undefined,
+    location: value.fullAddress?.lat != null && value.fullAddress?.lng != null ? { lat: Number(value.fullAddress.lat), lng: Number(value.fullAddress.lng) } : undefined,
   };
 }
 
 export const inspectionService = {
   async list(): Promise<Inspection[]> {
     const role = useAuthStore.getState().role;
-    const response = await apiFetch<{ data: BackendInspection[] }>(role === "agent" ? "/inspection/agent" : "/inspection/mine");
+    const path = role === "agent" ? "/inspection/agent" : role === "landlord" ? "/inspection/landlord" : role === "admin" ? "/inspection/admin" : "/inspection/mine";
+    const response = await apiFetch<{ data: BackendInspection[] }>(path);
     return response.data.map(toInspection);
   },
 
@@ -55,6 +59,7 @@ export const inspectionService = {
       propertyId,
       tenantName: useAuthStore.getState().account?.name ?? "",
       date: preferredDate,
+      preferredDate,
       time: "",
       otp: response.data.otp,
       status: "REQUESTED",
@@ -70,5 +75,11 @@ export const inspectionService = {
     useAppStore.setState((state) => ({
       inspections: state.inspections.map((item) => item.id === id ? { ...item, status: "COMPLETED", otpVerified: true, addressUnlocked: true } : item),
     }));
+  },
+  async reschedule(id: string, preferredDate: string): Promise<void> {
+    await apiFetch(`/inspection/${encodeURIComponent(id)}/reschedule`, { method: "PATCH", json: { preferredDate } });
+  },
+  async cancel(id: string): Promise<void> {
+    await apiFetch(`/inspection/${encodeURIComponent(id)}/cancel`, { method: "POST" });
   },
 };

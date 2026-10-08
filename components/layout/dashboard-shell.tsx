@@ -30,6 +30,7 @@ export function DashboardShell({ role, nav, identity, title, subtitle, actions, 
   const pathname = usePathname();
   const router = useRouter();
   const logout = useAuthStore((s) => s.logout);
+  const kycStatus = useAuthStore((s) => s.account?.kycStatus);
   const isAdmin = role === "admin";
 
   const active = (href: string) => pathname === href || pathname.startsWith(href + "/");
@@ -78,7 +79,7 @@ export function DashboardShell({ role, nav, identity, title, subtitle, actions, 
         <div className="sidebar-identity" style={{ padding: "12px 16px", borderTop: "1px solid rgba(255,255,255,.08)" }}>
           <div className="row gap-2" style={{ color: "rgba(255,255,255,.55)", fontSize: 12.5 }}>
             <Icon name="shieldCheck" size={15} color="var(--gold-400)" />
-            NIN verified
+            Identity {kycStatus === "VERIFIED" ? "verified" : kycStatus?.toLowerCase() ?? "unverified"}
           </div>
         </div>
       </aside>
