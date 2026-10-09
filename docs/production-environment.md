@@ -23,6 +23,8 @@ The frontend is deployed on Vercel. The Express API and PostgreSQL run on the ba
 
 Use the backend repository's `.env.production.example` for the complete host configuration, including the existing deployment and observability values. Add secrets to the backend host's `.env.production`; do not put them in Vercel or send them in chat. The backend does not use an SMS provider. Inspection codes are displayed in the authenticated tenant app.
 
+Resend also sends new account notifications after the credentials are configured. The backend retains failed deliveries for admin review at `/admin/notifications` and retries temporary failures automatically. In-app notifications remain available if email delivery fails. Notifications older than seven days are not emailed after a late provider setup.
+
 ## Provider dashboard steps
 
 1. Verify the sending domain in Resend and add its DNS records. Set `RESEND_FROM_EMAIL` to that domain, then test registration and recovery to a real inbox.

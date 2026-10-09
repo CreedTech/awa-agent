@@ -18,6 +18,10 @@ export interface ReconciliationCase {
   payouts: Array<{ id: string; role: string; status: string; reference: string }>;
   notes: Array<{ note: string; at: string; actor: string }>;
 }
+export interface FailedNotificationEmail {
+  id: number; title: string; emailStatus: "FAILED"; emailAttempts: number;
+  emailLastError: string | null; createdAt: string; retryable: boolean; recipientName: string; recipientEmail: string;
+}
 
 export const adminService = {
   async dashboard() { const response = await apiFetch<{ data: AdminDashboard }>("/admin/dashboard"); return response.data; },
@@ -39,5 +43,12 @@ export const adminService = {
   },
   async addReconciliationNote(id: string, note: string): Promise<void> {
     await apiFetch(`/admin/reconciliation/${encodeURIComponent(id)}/notes`, { method: "POST", json: { note } });
+  },
+  async failedNotificationEmails(): Promise<FailedNotificationEmail[]> {
+    const response = await apiFetch<{ data: FailedNotificationEmail[] }>("/admin/notification-emails");
+    return response.data;
+  },
+  async retryNotificationEmail(id: number): Promise<void> {
+    await apiFetch(`/admin/notification-emails/${id}/retry`, { method: "POST" });
   },
 };

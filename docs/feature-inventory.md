@@ -14,7 +14,9 @@ The deployed follow-up adds a reconciliation queue with audited case notes, an a
 
 The current follow-up adds more stored notifications for payment, payout, refund, dispute, agent authorization, KYC queue and inspection outcomes. It adds agent performance counts and paid commission from actual database records, and limits inspection code attempts. These changes require this follow-up's backend and frontend deployments.
 
-Remaining product work: email delivery for non-auth notifications; provider and bank reconciliation of ambiguous transfers, refunds and historical payments (the queue records review notes but cannot prove bank settlement); a future KYC evidence retention/deletion policy and operator workflow (private documents are retained for now at the owner's direction); geocoded in-app maps beyond external directions; and live provider acceptance testing. These are tracked here so earlier UI concepts are not lost. See [production environment setup](production-environment.md) for all missing credentials and provider dashboard steps.
+The email delivery follow-up sends new account notifications through Resend after the provider is configured. It stores retry state, keeps older notifications in the app without sending stale email, and gives admins a failed-delivery queue with an audited retry action. It requires its own backend and frontend deployments.
+
+Remaining product work: provider and bank reconciliation of ambiguous transfers, refunds and historical payments (the queue records review notes but cannot prove bank settlement); a future KYC evidence retention/deletion policy and operator workflow (private documents are retained for now at the owner's direction); geocoded in-app maps beyond external directions; and live provider acceptance testing. These are tracked here so earlier UI concepts are not lost. See [production environment setup](production-environment.md) for all missing credentials and provider dashboard steps.
 
 | Area and original frontend routes | Intended product flow | Backend status / work before restoring |
 | --- | --- | --- |
