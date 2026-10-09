@@ -3,69 +3,73 @@
 import Link from "next/link";
 import { Icon } from "@/components/ui/icon";
 import { PropImage } from "@/components/shared/prop-image";
-import { Naira } from "@/components/shared/naira";
-import { TrustBadge } from "@/components/shared/trust-badge";
-import { StatusBadge } from "@/components/shared/status-badge";
+import { SaveButton } from "@/components/property/save-button";
+import { formatCurrency } from "@/lib/utils";
 import type { Property } from "@/lib/types";
 
-export function PropertyCard({ property, priority }: { property: Property; priority?: boolean }) {
-  const total = property.baseRent;
+interface PropertyCardProps {
+  property: Property;
+  priority?: boolean;
+  /** Explore query string to return to from the listing page. */
+  backQuery?: string;
+}
+
+export function PropertyCard({ property, priority, backQuery }: PropertyCardProps) {
+  const href = `/properties/${property.id}${backQuery ? `?back=${encodeURIComponent(`/explore${backQuery}`)}` : ""}`;
+  const photoCount = property.images.length;
 
   return (
-    <article className="prop-card-premium">
-      <Link href={`/properties/${property.id}`} aria-label={property.title}>
-        <div className="prop-photo-premium">
-          <PropImage 
-            src={property.images[0]} 
-            label={property.imageLabels[0]} 
-            className="h-full w-full" 
-            sizes="(max-width:720px) 100vw, 340px" 
-            priority={priority} 
-          />
-          <div className="prop-overlay-premium"></div>
-          
-          <div className="prop-badges-premium">
-            {property.available ? (
-              <StatusBadge variant="ok">
-                <Icon name="check" size={12} strokeWidth={2.4} /> Available
-              </StatusBadge>
-            ) : (
-              <StatusBadge variant="lock">Occupied{property.nextFree ? ` · ${property.nextFree}` : ""}</StatusBadge>
-            )}
-            {property.badge === "Premium" && <StatusBadge variant="gold">Premium</StatusBadge>}
-          </div>
+    <article className="aw-card">
+      <div className="aw-card-media">
+        <PropImage
+          src={property.images[0]}
+          label={`${property.title}, ${property.area}`}
+          className="aw-card-photo"
+          sizes="(max-width: 640px) 100vw, (max-width: 1100px) 50vw, 400px"
+          priority={priority}
+        />
+        {photoCount > 1 && (
+          <span className="aw-card-count">
+            <Icon name="image" size={14} /> {photoCount}
+          </span>
+        )}
+        <div className="aw-card-save">
+          <SaveButton propertyId={property.id} variant="overlay" />
         </div>
-      </Link>
-
-
-      <Link href={`/properties/${property.id}`}>
-        <div className="prop-content-premium">
-          <div className="prop-specs-premium">
-            <span className="prop-spec">
-              <Icon name="bed" size={15} /> {property.beds} bed
+      </div>
+      <div className="aw-card-body">
+        <p className="aw-card-price">
+          <strong className="num">{formatCurrency(property.baseRent)}</strong>
+          <span>/ first year</span>
+        </p>
+        {property.year2Rent && (
+          <p className="aw-card-year2"><span className="num">{formatCurrency(property.year2Rent)}</span> / year from year two</p>
+        )}
+        <p className="aw-card-facts">
+          {[
+            property.beds > 0 && <span key="bd"><b>{property.beds}</b> bd</span>,
+            property.baths > 0 && <span key="ba"><b>{property.baths}</b> ba</span>,
+            <span key="type">{property.type}</span>,
+          ].filter(Boolean)}
+        </p>
+        <h3 className="aw-card-title">
+          <Link href={href} className="aw-stretch">{property.title}</Link>
+        </h3>
+        <p className="aw-card-place">
+          <Icon name="pin" size={14} />
+          <span>{property.area || "Area not listed"}{property.landmark && ` · near ${property.landmark}`}</span>
+        </p>
+        <div className="aw-card-meta">
+          <p className={property.available ? "aw-card-status" : "aw-card-status is-off"}>
+            {property.available ? "Taking inspection requests" : "Not taking inspections"}
+          </p>
+          {property.agentTrustScore !== undefined && (
+            <span className="aw-card-trust" title="Agent trust score out of 100">
+              <Icon name="shieldCheck" size={14} /> Agent trust {property.agentTrustScore}
             </span>
-            <span className="prop-spec">
-              <Icon name="bath" size={15} /> {property.baths} bath
-            </span>
-            <span className="prop-spec-type">{property.type}</span>
-          </div>
-
-          <h3 className="prop-title-premium">{property.title}</h3>
-
-          <div className="prop-location-premium">
-            <Icon name="pin" size={14} /> 
-            <span>{property.area} · Near {property.landmark}</span>
-          </div>
-
-          <div className="prop-footer-premium">
-            <div className="prop-price-section">
-              <Naira value={total} size={20} />
-              <span className="prop-price-label">Total first-year price</span>
-            </div>
-            {property.agentTrustScore !== undefined && <TrustBadge score={property.agentTrustScore} sm />}
-          </div>
+          )}
         </div>
-      </Link>
+      </div>
     </article>
   );
 }

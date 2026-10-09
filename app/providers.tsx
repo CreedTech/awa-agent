@@ -6,20 +6,11 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/sonner";
 import { useAuthStore } from "@/store/auth-store";
 import { useAppStore } from "@/store/app-store";
-import { propertyService } from "@/services/property-service";
 import { inspectionService } from "@/services/inspection-service";
 
 function BackendSync() {
   const role = useAuthStore((state) => state.role);
   const token = useAuthStore((state) => state.token);
-
-  useEffect(() => {
-    let cancelled = false;
-    propertyService.list().then((properties) => {
-      if (!cancelled) useAppStore.setState({ properties });
-    }).catch((error) => console.error("Could not load properties", error));
-    return () => { cancelled = true; };
-  }, [token]);
 
   useEffect(() => {
     if (!token || !["tenant", "agent"].includes(role)) {

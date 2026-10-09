@@ -1,31 +1,42 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Icon } from "@/components/ui/icon";
-import { Footer } from "@/components/layout/footer";
+import { ProcessSteps } from "@/components/site/process-steps";
+import { InspectionPass } from "@/components/site/inspection-pass";
+import { PartnerSection } from "@/components/site/partner-section";
 
-export const metadata: Metadata = { title: "How it works" };
-
-const steps = [
-  { icon: "explore" as const, title: "Browse listings", body: "View available properties, their first-year price and a nearby landmark." },
-  { icon: "calendar" as const, title: "Request an inspection", body: "Choose a date and get a six-digit meeting code in your account." },
-  { icon: "key" as const, title: "Verify in person", body: "At the property, the assigned agent enters that code. A successful check completes the inspection and unlocks the address for the tenant." },
-];
+export const metadata: Metadata = {
+  title: "How it works",
+  description: "How to find a rental on AwaAgent, request an inspection and meet the agent assigned to the home.",
+};
 
 export default function HowItWorksPage() {
-  return <>
-    <section className="hiw-hero"><div className="page page-narrow" style={{ paddingTop: 72, paddingBottom: 72 }}>
-      <h1 className="hiw-hero-title">How AwaAgent works</h1>
-      <p className="hiw-hero-sub">Browse properties, inspect in person and keep every payment in the app.</p>
-    </div></section>
-    <section className="page page-narrow"><div className="hiw-steps">
-      {steps.map((step, index) => <div key={step.title} className="hiw-step">
-        <div className="hiw-step-rail"><div className="hiw-step-dot"><Icon name={step.icon} size={18} /></div>{index < steps.length - 1 && <div className="hiw-step-line" />}</div>
-        <div className="hiw-step-body"><div className="hiw-step-num">0{index + 1}</div><h2 className="hiw-step-title">{step.title}</h2><p className="hiw-step-desc">{step.body}</p></div>
-      </div>)}
-    </div>
-    <div className="card card-pad" style={{ marginTop: 36 }}><strong>Payment safety</strong><p style={{ color: "var(--muted)", marginTop: 8 }}>Start payment only from your AwaAgent account after the inspection. If checkout does not open, do not transfer rent directly to anyone.</p></div>
-    <Link href="/explore" className="btn btn-primary" style={{ marginTop: 22 }}>Browse properties</Link>
-    </section>
-    <Footer />
-  </>;
+  return (
+    <>
+      <section className="aw-wrap aw-page-head aw-page-head-split">
+        <div>
+          <h1 className="aw-h1">How renting through AwaAgent works</h1>
+          <p className="aw-lede">One price with no agency or viewing fees, a verified agent at the door, and the street address only when your code matches.</p>
+          <Link href="/explore" className="aw-btn aw-btn-clay">Find a home</Link>
+        </div>
+        <InspectionPass />
+      </section>
+      <section className="aw-section aw-wrap" aria-label="Steps for renters">
+        <ProcessSteps />
+      </section>
+      <section className="aw-wrap aw-section aw-compare" aria-labelledby="what-you-pay">
+        <h2 id="what-you-pay" className="aw-h2">Two different amounts</h2>
+        <dl className="aw-ledger">
+          <div>
+            <dt>Inspection access</dt>
+            <dd>Paid to AwaAgent from your tenant account. It lets you request inspections for a set number of days. <Link href="/pricing">Current price</Link></dd>
+          </div>
+          <div>
+            <dt>First-year price</dt>
+            <dd>The amount on each listing: base rent plus the agent&apos;s commission and AwaAgent&apos;s 2.5% fee, shown as one price with no agency, agreement or viewing fees. From year two you pay the base rent only. <Link href="/pricing">See an example</Link></dd>
+          </div>
+        </dl>
+      </section>
+      <PartnerSection />
+    </>
+  );
 }

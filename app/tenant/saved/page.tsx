@@ -13,6 +13,6 @@ export default function SavedHomesPage() {
     {saved.isPending ? <p>Loading saved homes...</p> : saved.isError ? <p role="alert">Could not load saved homes.</p> :
       saved.data.length === 0 ? <EmptyState icon="home" title="No saved homes" description="Save a listing to find it here later."
         action={{ label: "Explore homes", href: "/explore" }} /> :
-        <div className="prop-grid-premium">{saved.data.map((property) => <PropertyCard key={property.id} property={property} />)}</div>}
+        <div className="aw-grid">{saved.data.map((property) => <PropertyCard key={property.id} property={property} />)}</div>}
   </div>;
 }

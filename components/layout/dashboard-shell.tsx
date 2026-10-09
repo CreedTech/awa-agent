@@ -58,9 +58,9 @@ export function DashboardShell({ role, nav, identity, title, subtitle, actions, 
           {isAdmin && (
             <span
               className="sidebar-identity"
-              style={{ display: "inline-block", marginTop: 10, fontSize: 10.5, fontWeight: 800, letterSpacing: ".08em", color: "#fff", background: "var(--danger)", padding: "3px 8px", borderRadius: 6 }}
+              style={{ display: "inline-block", marginTop: 10, fontSize: 12, fontWeight: 600, color: "var(--navy-900)", background: "var(--gold-500)", padding: "3px 10px", borderRadius: 999 }}
             >
-              ADMIN CONSOLE
+              Admin console
             </span>
           )}
           <div className="sidebar-identity row gap-3" style={{ marginTop: 16, paddingBottom: 14, borderBottom: "1px solid rgba(255,255,255,.08)" }}>

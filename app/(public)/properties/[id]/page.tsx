@@ -1,180 +1,169 @@
 "use client";
 
-import { useState } from "react";
-import { useParams, notFound } from "next/navigation";
+import { Suspense, useCallback, useState } from "react";
+import Link from "next/link";
+import { useParams, useSearchParams, notFound } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { Icon } from "@/components/ui/icon";
-import { PropImage } from "@/components/shared/prop-image";
-import { Avatar } from "@/components/shared/avatar";
-import { TrustBadge } from "@/components/shared/trust-badge";
-import { Naira } from "@/components/shared/naira";
+import { PropertyGallery } from "@/components/property/property-gallery";
+import { InspectionPanel } from "@/components/property/inspection-panel";
+import { AgentCard } from "@/components/property/agent-card";
+import { SaveButton } from "@/components/property/save-button";
+import { LoadError } from "@/components/property/load-error";
 import { RestrictedPrompt } from "@/components/property/restricted-prompt";
 import { BookingSheet } from "@/components/inspection/booking-sheet";
 import { LocationPanel } from "@/components/shared/location-panel";
-import { Footer } from "@/components/layout/footer";
 import { useAppStore } from "@/store/app-store";
 import { useAuthStore } from "@/store/auth-store";
-import { useQuery } from "@tanstack/react-query";
 import { propertyService } from "@/services/property-service";
 import { ApiError } from "@/lib/api";
+import { bathLabel, bedLabel } from "@/lib/listings";
+import { formatCurrency } from "@/lib/utils";
 
-export default function PropertyDetailPage() {
+function PropertyDetail() {
   const { id } = useParams<{ id: string }>();
-  const liveProperty = useQuery({
-    queryKey: ["property", id],
-    queryFn: () => propertyService.get(id),
-    enabled: !!id,
-  });
-  const property = liveProperty.data;
+  const params = useSearchParams();
+  const back = params.get("back");
+  const backHref = back && back.startsWith("/explore") ? back : "/explore";
+  const listing = useQuery({ queryKey: ["property", id], queryFn: () => propertyService.get(id), enabled: !!id });
   const unlockedAddress = useAppStore((s) => s.inspections.find((i) => i.propertyId === id && i.addressUnlocked)?.exactAddress);
-  const unlocked = Boolean(unlockedAddress);
   const role = useAuthStore((s) => s.role);
   const isAuthed = useAuthStore((s) => s.isAuthenticated);
-  const savedHomes = useQuery({ queryKey: ["saved-properties"], queryFn: propertyService.saved, enabled: isAuthed && role === "tenant" });
-  const isSaved = savedHomes.data?.some((item) => item.id === id) ?? false;
-
   const [booking, setBooking] = useState(false);
   const [restricted, setRestricted] = useState<string | null>(null);
-  const [saving, setSaving] = useState(false);
-  const [saveError, setSaveError] = useState<string | null>(null);
+  const closeBooking = useCallback(() => setBooking(false), []);
+  const closeRestricted = useCallback(() => setRestricted(null), []);
 
-  const toggleSaved = async () => {
-    setSaving(true); setSaveError(null);
-    try {
-      if (isSaved) await propertyService.unsave(id);
-      else await propertyService.save(id);
-      await savedHomes.refetch();
-    } catch (cause) {
-      setSaveError(cause instanceof Error ? cause.message : "Could not update saved home.");
-    } finally { setSaving(false); }
-  };
-
-  if (liveProperty.isPending) return <div className="page">Loading property...</div>;
-  if (liveProperty.isError && !(liveProperty.error instanceof ApiError && liveProperty.error.status === 404)) {
-    return <div className="page" role="alert">Could not load this property. Please try again.</div>;
+  if (listing.isPending) {
+    return (
+      <div className="aw-wrap aw-detail" aria-busy="true">
+        <div className="aw-gallery aw-gallery-1"><div className="aw-gallery-tile aw-shimmer" /></div>
+        <span className="aw-shimmer aw-line-lg" style={{ marginTop: 32 }} />
+      </div>
+    );
   }
-  if (!property) return notFound();
+  if (listing.isError) {
+    if (listing.error instanceof ApiError && listing.error.status === 404) notFound();
+    return (
+      <div className="aw-wrap aw-detail">
+        <LoadError title="We couldn't load this home" message="Check your connection and try again." onRetry={() => listing.refetch()} retrying={listing.isFetching} />
+      </div>
+    );
+  }
 
+  const property = listing.data;
   const isGuest = !isAuthed || role === "guest";
+  const isPartner = !isGuest && role !== "tenant";
+  const requestInspection = () => (isGuest ? setRestricted("request an inspection") : setBooking(true));
 
-  const guard = (action: string, fn: () => void) => () => {
-    if (isGuest) setRestricted(action);
-    else fn();
+  const share = async () => {
+    const url = window.location.href.split("?")[0];
+    try {
+      if (navigator.share) await navigator.share({ title: property.title, url });
+      else {
+        await navigator.clipboard.writeText(url);
+        toast.success("Link copied");
+      }
+    } catch (cause) {
+      if (!(cause instanceof DOMException && cause.name === "AbortError")) toast.error("Could not share this link.");
+    }
   };
 
   return (
     <>
-      <div className="page">
-        {/* Gallery */}
-        <div className="gallery" style={{ marginBottom: 22 }}>
-          {property.images.slice(0, 5).map((src, i) => (
-            <PropImage key={i} src={src} label={property.imageLabels[i]} className="h-full w-full" sizes="(max-width:720px) 100vw, 60vw" priority={i < 2} />
-          ))}
+      <div className="aw-wrap aw-detail">
+        <div className="aw-detail-top">
+          <Link href={backHref} className="aw-back">
+            <Icon name="arrowL" size={18} /> Back to homes
+          </Link>
+          <div className="aw-detail-tools">
+            <button type="button" className="aw-btn aw-btn-line aw-btn-sm" onClick={share}>
+              <Icon name="share" size={17} /> Share
+            </button>
+            <SaveButton propertyId={property.id} onGuest={() => setRestricted("save homes")} />
+          </div>
         </div>
 
-        <div className="detail-grid">
-          {/* Main */}
-          <div className="col gap-5">
-            <div>
-              <div className="row gap-2 wrap" style={{ marginBottom: 8 }}>
-                <span className="tag tag-navy">{property.type}</span>
-                {property.available ? (
-                  <span className="tag tag-ok">Available now</span>
-                ) : (
-                  <span className="tag tag-lock">Occupied{property.nextFree ? ` · free ${property.nextFree}` : ""}</span>
-                )}
-                {property.badge === "Premium" && <span className="tag tag-gold">Premium</span>}
-              </div>
-              <h1 style={{ fontSize: 30 }}>{property.title}</h1>
-              <div className="row gap-3 wrap" style={{ color: "var(--muted)", marginTop: 8, fontSize: 14.5 }}>
-                <span className="row gap-2"><Icon name="pin" size={16} /> {property.area} · Near {property.landmark}</span>
-                <span className="row gap-2"><Icon name="bed" size={16} /> {property.beds} bed</span>
-                <span className="row gap-2"><Icon name="bath" size={16} /> {property.baths} bath</span>
-              </div>
-            </div>
+        <PropertyGallery images={property.images} title={property.title} />
 
-            <p style={{ fontSize: 15, lineHeight: 1.65, color: "var(--ink-2)" }}>{property.description}</p>
+        <div className="aw-detail-grid">
+          <div className="aw-detail-main">
+            <header className="aw-detail-head">
+              <p className="aw-detail-place">
+                <span>{property.area || "Area not listed"}</span>
+                {property.landmark && <> · near {property.landmark}</>}
+              </p>
+              <h1 className="aw-h1">{property.title}</h1>
+              <ul className="aw-facts">
+                <li>{property.type}</li>
+                {property.beds > 0 && <li>{bedLabel(property.beds)}</li>}
+                {property.baths > 0 && <li>{bathLabel(property.baths)}</li>}
+                <li className={property.available ? "is-ok" : undefined}>
+                  {property.available ? "Taking inspection requests" : "Not taking inspections"}
+                </li>
+              </ul>
+            </header>
 
-            {/* Amenities */}
-            <div>
-              <h3 style={{ fontSize: 17, marginBottom: 12 }}>What this place offers</h3>
-              <div className="row wrap gap-2">
-                {property.amenities.map((a) => (
-                  <span key={a} className="chip"><Icon name="check" size={14} strokeWidth={2.2} color="var(--ok)" /> {a}</span>
-                ))}
-              </div>
-            </div>
+            {property.description && (
+              <section className="aw-detail-section" aria-labelledby="about-heading">
+                <h2 id="about-heading">About this home</h2>
+                <p className="aw-prose">{property.description}</p>
+              </section>
+            )}
 
-            {/* Address privacy gate */}
-            <div className="card card-pad">
-              <div className="row between" style={{ marginBottom: 12 }}>
-                <h3 style={{ fontSize: 17 }}>Location</h3>
-                <span className={`tag ${unlocked ? "tag-ok" : "tag-lock"}`}>
-                  <Icon name={unlocked ? "pin" : "lock"} size={13} strokeWidth={2} /> {unlocked ? "Unlocked" : "Hidden until inspection"}
-                </span>
-              </div>
-              <LocationPanel unlocked={unlocked} landmark={property.landmark} address={unlockedAddress} />
-              {unlocked ? (
-                <div className="col gap-3" style={{ marginTop: 14 }}>
-                  <div className="row gap-2"><Icon name="pin" size={16} color="var(--gold-600)" /> <strong style={{ fontSize: 14.5 }}>{unlockedAddress}</strong></div>
-                  <div className="card" style={{ background: "var(--ok-bg)", border: "none", padding: "12px 14px" }}>
-                    <strong className="row gap-2" style={{ color: "var(--ok)", fontSize: 13.5 }}><Icon name="shieldCheck" size={15} strokeWidth={2} /> Safety tips</strong>
-                    <ul style={{ margin: "8px 0 0 18px", color: "var(--ink-2)", fontSize: 13, lineHeight: 1.7 }}>
-                      <li>Inspect during daylight and tell someone where you&apos;re going.</li>
-                      <li>Never pay any &ldquo;viewing fee&rdquo; - it&apos;s illegal on AwaAgent.</li>
-                      <li>Only share your OTP with the verified agent, in person.</li>
-                    </ul>
-                  </div>
-                </div>
-              ) : (
-                <p style={{ marginTop: 12, color: "var(--muted)", fontSize: 13.5 }}>
-                  For everyone&apos;s safety, the exact address unlocks after the agent verifies your inspection code.
-                </p>
-              )}
-            </div>
+            {property.amenities.length > 0 && (
+              <section className="aw-detail-section" aria-labelledby="amenities-heading">
+                <h2 id="amenities-heading">What&apos;s included</h2>
+                <ul className="aw-amenities">
+                  {property.amenities.map((amenity) => (
+                    <li key={amenity}>
+                      <Icon name="check" size={18} /> {amenity}
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )}
 
-            {/* Agent */}
+            <section className="aw-detail-section" aria-labelledby="location-heading">
+              <h2 id="location-heading">Location</h2>
+              <LocationPanel unlocked={Boolean(unlockedAddress)} address={unlockedAddress} area={property.area} landmark={property.landmark} />
+            </section>
+
             {property.agentName && (
-              <div className="card card-pad row between wrap gap-3">
-                <div className="row gap-3">
-                  <Avatar name={property.agentName} size={52} gold />
-                  <div className="col" style={{ gap: 2 }}>
-                    <strong style={{ fontSize: 15 }}>{property.agentName}</strong>
-                    {property.agentKycStatus === "VERIFIED" && <span className="row gap-2" style={{ fontSize: 12.5, color: "var(--ok)", fontWeight: 600 }}>
-                      <Icon name="shieldCheck" size={14} strokeWidth={2} /> NIN-verified agent
-                    </span>}
-                  </div>
-                </div>
-                {property.agentTrustScore !== undefined && <TrustBadge score={property.agentTrustScore} />}
-              </div>
+              <section className="aw-detail-section" aria-labelledby="agent-heading">
+                <h2 id="agent-heading">Who you&apos;ll meet</h2>
+                <AgentCard name={property.agentName} kycStatus={property.agentKycStatus} trustScore={property.agentTrustScore} />
+              </section>
             )}
           </div>
 
-          {/* Aside */}
-          <aside className="detail-aside">
-            <div className="card card-pad col gap-4">
-              <div className="col" style={{ gap: 2 }}>
-                <span style={{ fontSize: 12.5, color: "var(--muted)", fontWeight: 600 }}>Total first-year price</span>
-                <Naira value={property.baseRent} size={30} />
-              </div>
-              <div className="col gap-2">
-                <button className="btn btn-ghost btn-block" onClick={guard("book an inspection", () => setBooking(true))}>
-                  <Icon name="calendar" size={17} /> Request inspection
-                </button>
-                {role === "tenant" && <button className="btn btn-quiet btn-block" onClick={toggleSaved} disabled={saving || savedHomes.isPending}>
-                  {isSaved ? "Remove from saved homes" : "Save this home"}
-                </button>}
-                {saveError && <p role="alert" style={{ color: "var(--danger)", fontSize: 13 }}>{saveError}</p>}
-                <p style={{ color: "var(--muted)", fontSize: 13 }}>Online payment is currently unavailable.</p>
-              </div>
-            </div>
+          <aside className="aw-detail-aside" aria-label="Rent and inspection">
+            <InspectionPanel property={property} onRequest={requestInspection} />
           </aside>
         </div>
       </div>
 
-      <BookingSheet property={property} open={booking} onClose={() => setBooking(false)} />
-      <RestrictedPrompt open={restricted !== null} onClose={() => setRestricted(null)} action={restricted ?? undefined} />
+      <div className="aw-actionbar">
+        <div>
+          <strong className="num">{formatCurrency(property.baseRent)}</strong>
+          <span>first-year rent</span>
+        </div>
+        <button type="button" className="aw-btn aw-btn-clay" onClick={requestInspection} disabled={!property.available || isPartner}>
+          {property.available ? "Request inspection" : "Not taking inspections"}
+        </button>
+      </div>
 
-      <Footer />
+      <BookingSheet property={property} open={booking} onClose={closeBooking} />
+      <RestrictedPrompt open={restricted !== null} onClose={closeRestricted} action={restricted ?? undefined} />
     </>
+  );
+}
+
+export default function PropertyDetailPage() {
+  return (
+    <Suspense fallback={<div className="aw-wrap aw-detail" aria-busy="true" />}>
+      <PropertyDetail />
+    </Suspense>
   );
 }

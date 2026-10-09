@@ -66,6 +66,11 @@ import {
   CancelCircleIcon,
   DollarCircleIcon,
   ArrowUpRight01Icon,
+  Share08Icon,
+  Image01Icon,
+  BookmarkCheck01Icon,
+  CheckmarkCircle02Icon,
+  UserCheck01Icon,
 } from "@hugeicons/core-free-icons";
 
 // Hugeicons icon objects are arrays of svg child tuples.
@@ -134,6 +139,11 @@ export const ICONS = {
   ban: CancelCircleIcon,
   dollar: DollarCircleIcon,
   trend: ArrowUpRight01Icon,
+  share: Share08Icon,
+  image: Image01Icon,
+  bookmarked: BookmarkCheck01Icon,
+  checkCircle: CheckmarkCircle02Icon,
+  userCheck: UserCheck01Icon,
 } as const;
 
 export type IconName = keyof typeof ICONS;
