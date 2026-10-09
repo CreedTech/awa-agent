@@ -4,18 +4,28 @@ interface LocationPanelProps {
   unlocked?: boolean;
   landmark?: string;
   address?: string;
+  area?: string;
 }
 
-export function LocationPanel({ unlocked, landmark, address }: LocationPanelProps) {
+export function LocationPanel({ unlocked, landmark, address, area }: LocationPanelProps) {
+  const open = Boolean(unlocked && address);
   return (
-    <div className="card card-pad col gap-2" style={{ background: "var(--surface-2)" }}>
-      <strong className="row gap-2" style={{ fontSize: 14 }}>
-        <Icon name={unlocked ? "pin" : "lock"} size={16} />
-        {unlocked && address ? address : landmark ? `Near ${landmark}` : "Exact address hidden"}
-      </strong>
-      <span style={{ fontSize: 13, color: "var(--muted)" }}>
-        {unlocked && address ? "Address released after inspection verification." : "The exact address is released after the agent verifies your inspection code."}
-      </span>
+    <div className="aw-location">
+      <div className="aw-location-public">
+        {area && <span className="aw-location-area">{area}</span>}
+        <span>{landmark ? `Near ${landmark}` : "Landmark not listed"}</span>
+      </div>
+      <div className={open ? "aw-location-street is-open" : "aw-location-street"}>
+        <Icon name={open ? "pin" : "lock"} size={18} />
+        <div>
+          <strong>{open ? address : "Street address"}</strong>
+          <span>
+            {open
+              ? "Shared with you after the agent confirmed your inspection code."
+              : "Shared in your account once the agent enters your inspection code at the property."}
+          </span>
+        </div>
+      </div>
     </div>
   );
 }
