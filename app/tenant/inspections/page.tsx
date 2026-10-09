@@ -6,15 +6,15 @@ import { EmptyState } from "@/components/shared/empty-state";
 import { PropImage } from "@/components/shared/prop-image";
 import { InspectionBadge } from "@/components/shared/status-badge";
 import { Icon } from "@/components/ui/icon";
-import { useAppStore } from "@/store/app-store";
 import { useQuery } from "@tanstack/react-query";
 import { inspectionService } from "@/services/inspection-service";
+import { useListings } from "@/hooks/use-listings";
 
 export default function TenantInspectionsPage() {
   const liveInspections = useQuery({ queryKey: ["tenant-inspections"], queryFn: inspectionService.list });
   const inspections = liveInspections.data ?? [];
   const items = inspections;
-  const properties = useAppStore((s) => s.properties);
+  const properties = useListings().properties ?? [];
 
   return (
     <div className="page page-narrow">

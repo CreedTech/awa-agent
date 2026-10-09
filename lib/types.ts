@@ -127,7 +127,14 @@ export interface Property {
   location?: GeoPoint;
   beds: number;
   baths: number;
+  /** First-year price: the all-in amount charged at checkout. */
   baseRent: number;
+  /** Rent from year two onwards, without agent commission or platform fee. */
+  year2Rent?: number;
+  securityDeposit?: number;
+  serviceCharge?: number;
+  furnished?: boolean;
+  availableFrom?: string;
   agentId: string;
   agentTrustScore?: number;
   agentName?: string;

@@ -11,6 +11,11 @@ export interface BackendListing {
   bedrooms: number | null;
   bathrooms: number | null;
   year_1_rent_naira: number;
+  year_2_rent_naira?: number | null;
+  security_deposit?: number | null;
+  service_charge?: number | null;
+  is_furnished?: boolean | null;
+  available_from?: string | null;
   agent_id: string;
   agent_trust_score?: number | null;
   agent?: { name: string; trustScore: number; kycStatus: KycStatus } | null;
@@ -33,6 +38,8 @@ const amenityLabels: Record<string, string> = {
   solar: "Solar",
 };
 
+const positive = (value: number | null | undefined) => (value != null && Number(value) > 0 ? Number(value) : undefined);
+
 export function toProperty(listing: BackendListing): Property {
   const type = propertyTypes.find((value) => value.toLowerCase() === listing.property_type?.toLowerCase()) ?? "Flat";
   const images = Array.isArray(listing.photos) ? listing.photos : [];
@@ -46,8 +53,13 @@ export function toProperty(listing: BackendListing): Property {
     beds: listing.bedrooms ?? 0,
     baths: listing.bathrooms ?? 0,
     baseRent: Number(listing.year_1_rent_naira),
+    year2Rent: positive(listing.year_2_rent_naira),
+    securityDeposit: positive(listing.security_deposit),
+    serviceCharge: positive(listing.service_charge),
+    furnished: listing.is_furnished ?? undefined,
+    availableFrom: listing.available_from ?? undefined,
     agentId: listing.agent_id,
-    agentTrustScore: listing.agent_trust_score ?? undefined,
+    agentTrustScore: listing.agent?.trustScore ?? listing.agent_trust_score ?? undefined,
     agentName: listing.agent?.name,
     agentKycStatus: listing.agent?.kycStatus,
     amenities: Array.isArray(listing.amenities) ? listing.amenities.map((item) => amenityLabels[item] ?? item) : [],

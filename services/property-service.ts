@@ -49,8 +49,12 @@ export const propertyService = {
     await apiFetch(`/properties/${encodeURIComponent(id)}/save`, { method: "DELETE" });
   },
   async list(): Promise<Property[]> {
-    const response = await apiFetch<{ data: BackendListing[] }>("/properties");
-    return response.data.map(toProperty);
+    return (await this.browse()).properties;
+  },
+  /** Guests and tenants without inspection access only receive the newest few listings. */
+  async browse(): Promise<{ properties: Property[]; isGuestView: boolean }> {
+    const response = await apiFetch<{ data: BackendListing[]; isGuestView?: boolean }>("/properties");
+    return { properties: response.data.map(toProperty), isGuestView: response.isGuestView === true };
   },
 
   async get(id: string): Promise<Property> {
