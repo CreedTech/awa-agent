@@ -8,6 +8,10 @@ export interface AgentAuthorization {
   agentName: string;
   agentKycStatus: string;
   agentTrustScore: number;
+  listingCount: number;
+  completedInspections: number;
+  settledRentCount: number;
+  paidCommissionNaira: string;
 }
 
 export interface LandlordAuthorization {
