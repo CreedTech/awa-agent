@@ -19,7 +19,7 @@ export interface ReconciliationCase {
   notes: Array<{ note: string; at: string; actor: string }>;
 }
 export interface FailedNotificationEmail {
-  id: number; title: string; emailStatus: "FAILED"; emailAttempts: number;
+  id: number; title: string; emailStatus: "FAILED" | "BOUNCED" | "COMPLAINED" | "SUPPRESSED"; emailAttempts: number;
   emailLastError: string | null; createdAt: string; retryable: boolean; recipientName: string; recipientEmail: string;
 }
 

@@ -29,7 +29,7 @@ export const env = {
   maxInspectionsPerDay: num(process.env.NEXT_PUBLIC_MAX_INSPECTIONS_PER_DAY, 4),
   otpResendSeconds: num(process.env.NEXT_PUBLIC_OTP_RESEND_SECONDS, 30),
 
-  apiBaseUrl: str(process.env.NEXT_PUBLIC_API_BASE_URL, "https://api.awaagent.b2686bbc.sslip.io/api/v1"),
+  apiBaseUrl: str(process.env.NEXT_PUBLIC_API_BASE_URL, "https://api.awaagent.ng/api/v1"),
 
 } as const;
 

@@ -8,10 +8,11 @@ The frontend is deployed on Vercel. The Express API and PostgreSQL run on the ba
 | --- | --- | --- |
 | `RESEND_API_KEY` | Resend API Keys | Signup verification and password recovery |
 | `RESEND_FROM_EMAIL` | An address on a verified Resend sending domain, such as `AwaAgent <hello@your-domain>` | Outbound email |
-| `FRONTEND_ORIGIN` | Final frontend HTTPS origin, currently `https://awa-agent.vercel.app` | Email links |
+| `RESEND_WEBHOOK_SECRET` | Signing secret from the Resend webhook details page | Authenticate delivery event callbacks |
+| `FRONTEND_ORIGIN` | `https://awaagent.ng` | Email links |
 | `PAYSTACK_SECRET_KEY` | Paystack live secret key; keep server side | Subscription and rent checkout, verification, transfers and refunds |
-| `PAYSTACK_CALLBACK_URL` | `https://awa-agent.vercel.app/tenant/escrow` or the final custom domain equivalent | Rent checkout return |
-| `PAYSTACK_SUBSCRIPTION_CALLBACK_URL` | `https://awa-agent.vercel.app/tenant/subscription` or the final custom domain equivalent | Subscription checkout return |
+| `PAYSTACK_CALLBACK_URL` | `https://awaagent.ng/tenant/escrow` | Rent checkout return |
+| `PAYSTACK_SUBSCRIPTION_CALLBACK_URL` | `https://awaagent.ng/tenant/subscription` | Subscription checkout return |
 | `PAYSTACK_PAYMENTS_ENABLED` | Set `true` only after the account and transaction acceptance checks below | Enables real collection; defaults to `false` |
 | `R2_ACCOUNT_ID` | Cloudflare R2 account | Object uploads |
 | `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY` | R2 API token scoped to the two buckets with object read/write | Signed uploads and private evidence reads |
@@ -27,9 +28,9 @@ Resend also sends new account notifications after the credentials are configured
 
 ## Provider dashboard steps
 
-1. Verify the sending domain in Resend and add its DNS records. Set `RESEND_FROM_EMAIL` to that domain, then test registration and recovery to a real inbox.
+1. Verify the sending domain in Resend and add its DNS records. Set `RESEND_FROM_EMAIL` to that domain. Add a Resend webhook for sent, delivered, delayed, bounced, complained, failed, and suppressed email events at `https://api.awaagent.ng/api/v1/webhooks/resend`; copy its signing secret to the backend's `RESEND_WEBHOOK_SECRET`. Test registration and recovery to a real inbox, then inspect the webhook delivery result in Resend.
 2. Create two R2 buckets. Make only the listing bucket public through an HTTPS custom domain. Configure bucket CORS for the frontend origin with `PUT` and `Content-Type`. Keep the identity bucket private. Test a listing upload and a KYC upload/review before inviting users.
-3. In Paystack, configure the webhook URL as `https://api.awaagent.b2686bbc.sslip.io/api/v1/escrow/webhooks/paystack` (substitute the final API domain if changed). The backend validates Paystack's signature using the secret key. Enable transfers and confirm the merchant account's settlement and transfer rules.
+3. In Paystack, configure the webhook URL as `https://api.awaagent.ng/api/v1/escrow/webhooks/paystack`. The backend validates Paystack's signature using the secret key. Enable transfers and confirm the merchant account's settlement and transfer rules.
 4. Promote an existing active account to admin on the backend host with `npm run admin:promote -- admin@example.com`. Admin role is never granted by signup. Use that account to review KYC and listings.
 5. Keep `PAYSTACK_PAYMENTS_ENABLED=false` until a live subscription payment, rent checkout, webhook, landlord and agent transfer, dispute and refund have been checked with the merchant account. Reconcile the merchant balance and processing fees. No payment should be inferred solely from a browser redirect.
 
@@ -39,7 +40,7 @@ Private KYC evidence remains in the R2 private bucket after an admin decision. T
 
 Vercel Production already has `NEXT_PUBLIC_API_BASE_URL`, `NEXT_PUBLIC_DEFAULT_CITY`, `NEXT_PUBLIC_APP_URL`, `NEXT_PUBLIC_APP_NAME`, `NEXT_PUBLIC_SUPPORT_EMAIL`, `NEXT_PUBLIC_SUPPORT_PHONE` and `NEXT_PUBLIC_CURRENCY`. Change `NEXT_PUBLIC_APP_URL` and the backend origins/callbacks together when using a custom domain. `NEXT_PUBLIC_API_BASE_URL` must end in `/api/v1`. No `USE_MOCKS` variable is used.
 
-Vercel lists `awaagent.ng` and `www.awaagent.ng` as production aliases, but DNS lookups for both returned no records on 9 October 2026. Add the DNS records Vercel specifies in the project's Domains settings, then verify HTTPS on both names. Until DNS resolves, use `https://awa-agent.vercel.app`. Once the custom domain works, update `NEXT_PUBLIC_APP_URL`, `FRONTEND_ORIGIN`, `CORS_ORIGINS`, and both Paystack callback URLs to the chosen canonical origin together.
+Use `https://awaagent.ng` as the canonical frontend origin. Set Vercel Production `NEXT_PUBLIC_APP_URL=https://awaagent.ng` and `NEXT_PUBLIC_API_BASE_URL=https://api.awaagent.ng/api/v1`, then redeploy so the browser bundle includes them. Set the backend `FRONTEND_ORIGIN=https://awaagent.ng`, `CORS_ORIGINS=https://awaagent.ng,https://www.awaagent.ng`, and both Paystack callback URLs to the same canonical origin. Cloudflare DNS must have an `api` A record pointing to the shared Hetzner VPS; the Farm Management Caddy project's `AWAGENT_API_DOMAIN` and the AwaAgent backend host's `AWAGENT_API_DOMAIN` must both be `api.awaagent.ng`. Recreate only the shared Caddy service after updating its environment, preserving its other site routes. Verify `https://api.awaagent.ng/api/health` before switching the frontend's API variable.
 
 The subscription price, platform fee and agent share now come from authenticated backend settings. Operators can change them in `/admin/settings`; the price page reads the live backend value. Existing transactions keep the amounts recorded at checkout. Old frontend fee variables in `.env.example` are historical and must not be used to set live financial rules.
 
