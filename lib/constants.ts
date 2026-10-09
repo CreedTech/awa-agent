@@ -199,10 +199,9 @@ export interface NavItem {
 }
 
 export const PUBLIC_NAV: NavItem[] = [
-  { label: "Explore", href: "/explore", icon: "explore" },
+  { label: "Find a home", href: "/explore", icon: "explore" },
   { label: "How it works", href: "/how-it-works", icon: "info" },
-  { label: "Pricing", href: "/pricing", icon: "cash" },
-  { label: "Trust & Safety", href: "/trust-safety", icon: "shield" },
+  { label: "Safety", href: "/trust-safety", icon: "shield" },
 ];
 
 export const TENANT_NAV: NavItem[] = [

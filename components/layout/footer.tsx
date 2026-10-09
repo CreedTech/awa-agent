@@ -1,73 +1,53 @@
 import Link from "next/link";
 import { Logo } from "@/components/shared/logo";
-import { Icon } from "@/components/ui/icon";
 import { env } from "@/lib/env";
 
 const COLUMNS = [
   {
-    title: "Product",
+    title: "Renting",
     links: [
-      { label: "Explore", href: "/explore" },
+      { label: "Find a home", href: "/explore" },
       { label: "How it works", href: "/how-it-works" },
       { label: "Pricing", href: "/pricing" },
-      { label: "Trust & Safety", href: "/trust-safety" },
+      { label: "Safety rules", href: "/trust-safety" },
     ],
   },
   {
-    title: "For partners",
+    title: "Landlords and agents",
     links: [
-      { label: "Agent access", href: "/auth/login" },
-      { label: "Landlord access", href: "/auth/login" },
-    ],
-  },
-  {
-    title: "Company",
-    links: [
-      { label: "About", href: "/how-it-works" },
-      { label: "Trust & Safety", href: "/trust-safety" },
-      { label: "Contact", href: "/trust-safety" },
+      { label: "List as a landlord", href: "/auth/signup?role=landlord" },
+      { label: "Join as an agent", href: "/auth/signup?role=agent" },
+      { label: "Partner sign in", href: "/auth/login" },
     ],
   },
 ];
 
 export function Footer() {
+  const phone = env.supportPhone.replace(/\s+/g, "");
   return (
-    <footer style={{ background: "var(--navy-900)", color: "rgba(255,255,255,.7)", marginTop: 48 }}>
-      <div className="page" style={{ paddingTop: 48, paddingBottom: 36 }}>
-        <div className="row between wrap gap-6" style={{ alignItems: "flex-start" }}>
-          <div className="col gap-4" style={{ maxWidth: 320 }}>
-            <Logo light />
-            <p style={{ fontSize: 14, lineHeight: 1.6 }}>
-              Browse rental listings in Ibadan, arrange in-person inspections and manage your rental journey in one place.
-            </p>
-            <div className="row gap-2" style={{ fontSize: 13 }}>
-              <Icon name="shieldCheck" size={16} color="var(--gold-400)" /> Inspection codes verified in person
-            </div>
-          </div>
-          <div className="row wrap gap-6">
-            {COLUMNS.map((col) => (
-              <div key={col.title} className="col gap-3" style={{ minWidth: 150 }}>
-                <strong style={{ color: "#fff", fontSize: 14 }}>{col.title}</strong>
-                {col.links.map((l) => (
-                  <Link key={l.label} href={l.href} style={{ fontSize: 13.5, color: "rgba(255,255,255,.65)" }}>
-                    {l.label}
-                  </Link>
-                ))}
-              </div>
+    <footer className="aw-footer">
+      <div className="aw-wrap aw-footer-grid">
+        <div className="aw-footer-brand">
+          <Logo light size={30} />
+          <p>Rentals you inspect in person before you commit. The exact address is shared only after your visit is verified.</p>
+        </div>
+        {COLUMNS.map((column) => (
+          <nav key={column.title} className="aw-footer-col" aria-label={column.title}>
+            <h2>{column.title}</h2>
+            {column.links.map((link) => (
+              <Link key={link.href} href={link.href}>{link.label}</Link>
             ))}
-          </div>
+          </nav>
+        ))}
+        <div className="aw-footer-col">
+          <h2>Contact</h2>
+          <a href={`mailto:${env.supportEmail}`}>{env.supportEmail}</a>
+          <a href={`tel:${phone}`}>{env.supportPhone}</a>
         </div>
-        <div
-          className="row between wrap gap-3"
-          style={{ marginTop: 36, paddingTop: 20, borderTop: "1px solid rgba(255,255,255,.1)", fontSize: 13 }}
-        >
-          <span>© {new Date().getFullYear()} {env.appName}. All rights reserved.</span>
-          <span className="row gap-3">
-            <a href={`mailto:${env.supportEmail}`} className="row gap-2">
-              <Icon name="mail" size={15} /> {env.supportEmail}
-            </a>
-          </span>
-        </div>
+      </div>
+      <div className="aw-wrap aw-footer-base">
+        <span>© {new Date().getFullYear()} {env.appName}</span>
+        <span>Pay only through your AwaAgent account. Never transfer rent to an agent or landlord directly.</span>
       </div>
     </footer>
   );
