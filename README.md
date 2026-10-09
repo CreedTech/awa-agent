@@ -1,6 +1,22 @@
-# AwaAgent frontend
+# AwaAgent
 
-Next.js 16 frontend for the [AwaAgent backend](https://github.com/AwaAgent/awaagent-backend).
+**A web app for finding, listing, and renting property.**
+
+Tenants, agents, landlords, and admins use one connected platform for listings, inspections, identity review, and payments.
+
+[Website](https://awaagent.ng) · [Backend repository](https://github.com/AwaAgent/awaagent-backend)
+
+## What is here
+
+| Area | What it covers |
+| --- | --- |
+| Property | Search, saved homes, listing creation and review |
+| Inspections | Booking, availability, visit codes and address access |
+| Accounts | Email verification, profiles and manual identity review |
+| Payments | Subscriptions, rent checkout, receipts, disputes and payouts |
+| Operations | Admin queues, notifications, settings and audit history |
+
+The frontend is built with **Next.js 16**, **React 19**, and **TypeScript**. It uses the [AwaAgent backend](https://github.com/AwaAgent/awaagent-backend) for data and actions; email, payments, and file uploads depend on the backend's configured providers.
 
 ## Run locally
 
@@ -10,20 +26,20 @@ cp .env.example .env.local
 bun run dev
 ```
 
-The frontend uses the backend API at `NEXT_PUBLIC_API_BASE_URL`. It defaults to the production API URL. Set it to `http://localhost:5000/api/v1` to use a local backend.
+Open <http://localhost:3000>. The example configuration points to the deployed API. To work against a local backend, set `NEXT_PUBLIC_API_BASE_URL=http://localhost:5000/api/v1` in `.env.local`.
 
-## Integration work in this checkout
+| Command | Purpose |
+| --- | --- |
+| `bun run dev` | Start the development server |
+| `bun run build` | Check the production build |
+| `bun run start` | Serve the production build |
 
-- Login, Resend-backed email signup and password recovery, account profiles, and manual KYC review.
-- Public listings, landlord-agent authorization, managed listings, saved homes, and inspections.
-- Paystack-backed subscription checkout, rent checkout, transaction verification, payout account setup, dispute review, and payment records.
+## Project guide
 
-The backend mounts inspection routes at `/api/v1/inspection` (singular). The frontend uses the backend's `{ status, data }` response format and displays backend error messages.
+| Path | Contents |
+| --- | --- |
+| [`app/`](app/) | Pages and layouts |
+| [`services/`](services/) | Backend API clients |
+| [`lib/`](lib/) | Shared helpers and public configuration |
 
-The new screens require the matching backend branch and database migration. They are not evidence that the production backend is already running these routes. Resend and Paystack credentials are not in this repository. Checkout and email actions fail closed until the backend is configured.
-
-## Remaining product work
-
-Some dashboard pages still display an unavailable state while their data contracts are built. [The feature inventory](docs/feature-inventory.md) records the former screens and the current implementation status so those planned features are not lost.
-
-The backend operator must configure Resend, a live transfer-enabled Paystack account, callback URLs and webhook URL, and an admin account, then verify the migration and payment lifecycle before launch.
+> **Secrets stay on the backend.** Only public `NEXT_PUBLIC_*` configuration belongs in this frontend. Do not commit `.env.local` or provider credentials.
