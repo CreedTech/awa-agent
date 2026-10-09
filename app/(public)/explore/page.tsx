@@ -1,291 +1,165 @@
 "use client";
 
-import { Suspense, useMemo, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { Suspense, useCallback, useMemo, useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Icon } from "@/components/ui/icon";
 import { PropertyCard } from "@/components/property/property-card";
-import { EmptyState } from "@/components/shared/empty-state";
-import { BottomSheet } from "@/components/shared/bottom-sheet";
-import { Footer } from "@/components/layout/footer";
+import { ListingSkeleton } from "@/components/property/listing-skeleton";
+import { LoadError } from "@/components/property/load-error";
+import { NoInventory } from "@/components/property/no-inventory";
+import { SearchBox } from "@/components/explore/search-box";
+import { ActiveFilters } from "@/components/explore/active-filters";
+import { FilterSheet } from "@/components/explore/filter-sheet";
+import { GuestViewNotice } from "@/components/property/guest-view-notice";
+import { useListings } from "@/hooks/use-listings";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { useAppStore } from "@/store/app-store";
-import { useQuery } from "@tanstack/react-query";
-import { propertyService } from "@/services/property-service";
-import { formatCurrency, cn } from "@/lib/utils";
-import { PROPERTY_TYPES, AREAS, AMENITIES } from "@/lib/constants";
-import type { Property } from "@/lib/types";
+  EMPTY_FILTERS,
+  activeFilterCount,
+  applyFilters,
+  filtersToQuery,
+  formatBudget,
+  parseFilters,
+  type ListingFilters,
+  type ListingSort,
+} from "@/lib/listings";
 
-type SortKey = "newest" | "price-asc" | "price-desc" | "trust";
-
-interface Filters {
-  type: string;
-  area: string;
-  maxPrice: number;
-  beds: number;
-  amenities: string[];
-  availableNow: boolean;
-  verifiedOnly: boolean;
-}
-
-const DEFAULT_FILTERS: Filters = {
-  type: "All",
-  area: "All",
-  maxPrice: 2500000,
-  beds: 0,
-  amenities: [],
-  availableNow: false,
-  verifiedOnly: false,
+const SORT_LABELS: Record<ListingSort, string> = {
+  recent: "Newest first",
+  "price-asc": "Rent: low to high",
+  "price-desc": "Rent: high to low",
 };
-
-function priceOf(p: Property) {
-  return p.baseRent;
-}
-
-function FiltersPanel({
-  filters,
-  setFilters,
-}: {
-  filters: Filters;
-  setFilters: (f: Filters) => void;
-}) {
-  const patch = (p: Partial<Filters>) => setFilters({ ...filters, ...p });
-
-  return (
-    <div className="col gap-5">
-      <div className="field">
-        <span className="label">Property type</span>
-        <div className="row wrap gap-2">
-          {["All", ...PROPERTY_TYPES].map((t) => (
-            <button key={t} className={cn("chip", filters.type === t && "is-active")} onClick={() => patch({ type: t })}>
-              {t}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div className="field">
-        <span className="label">Area</span>
-        <div className="row wrap gap-2">
-          {["All", ...AREAS.slice(0, 6)].map((a) => (
-            <button key={a} className={cn("chip", filters.area === a && "is-active")} onClick={() => patch({ area: a })}>
-              {a}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div className="field">
-        <span className="label row between">
-          <span>Max total price</span>
-          <span className="num" style={{ color: "var(--navy-700)" }}>{formatCurrency(filters.maxPrice)}</span>
-        </span>
-        <input
-          type="range"
-          className="range"
-          min={250000}
-          max={2500000}
-          step={50000}
-          value={filters.maxPrice}
-          onChange={(e) => patch({ maxPrice: Number(e.target.value) })}
-        />
-      </div>
-
-      <div className="field">
-        <span className="label">Bedrooms (min)</span>
-        <div className="row wrap gap-2">
-          {[0, 1, 2, 3, 4].map((b) => (
-            <button key={b} className={cn("chip", filters.beds === b && "is-active")} onClick={() => patch({ beds: b })}>
-              {b === 0 ? "Any" : `${b}+`}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div className="field">
-        <span className="label">Amenities</span>
-        <div className="col">
-          {AMENITIES.slice(0, 6).map((a) => {
-            const on = filters.amenities.includes(a);
-            return (
-              <button
-                key={a}
-                className={cn("check", on && "is-on")}
-                onClick={() => patch({ amenities: on ? filters.amenities.filter((x) => x !== a) : [...filters.amenities, a] })}
-              >
-                <span className="check-box">{on && <Icon name="check" size={13} strokeWidth={2.6} />}</span>
-                {a}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      <button className={cn("check", filters.availableNow && "is-on")} onClick={() => patch({ availableNow: !filters.availableNow })}>
-        <span className="check-box">{filters.availableNow && <Icon name="check" size={13} strokeWidth={2.6} />}</span>
-        Available now
-      </button>
-    </div>
-  );
-}
 
 function ExploreContent() {
   const params = useSearchParams();
-  const query = params.get("q")?.toLowerCase() ?? "";
-  const properties = useAppStore((s) => s.properties);
-  const listings = useQuery({ queryKey: ["properties"], queryFn: propertyService.list });
-  const liveProperties = listings.data ?? properties;
+  const router = useRouter();
+  const pathname = usePathname();
+  const { listings, properties, isGuestView, coverage } = useListings();
+  const query = params.toString();
+  const filters = useMemo(() => parseFilters(new URLSearchParams(query)), [query]);
+  const results = useMemo(() => applyFilters(properties ?? [], filters), [properties, filters]);
+  const [draft, setDraft] = useState<ListingFilters | null>(null);
+  const draftMatches = useMemo(() => (draft ? applyFilters(properties ?? [], draft).length : 0), [properties, draft]);
 
-  const [filters, setFilters] = useState<Filters>(DEFAULT_FILTERS);
-  const [sort, setSort] = useState<SortKey>("newest");
-  const [sheetOpen, setSheetOpen] = useState(false);
-
-  const results = useMemo(() => {
-    let list = liveProperties.filter((p) => p.status === "LIVE");
-    if (query)
-      list = list.filter(
-        (p) =>
-          p.title.toLowerCase().includes(query) ||
-          p.area.toLowerCase().includes(query) ||
-          p.landmark.toLowerCase().includes(query) ||
-          p.type.toLowerCase().includes(query),
-      );
-    if (filters.type !== "All") list = list.filter((p) => p.type === filters.type);
-    if (filters.area !== "All") list = list.filter((p) => p.area === filters.area);
-    list = list.filter((p) => priceOf(p) <= filters.maxPrice);
-    if (filters.beds > 0) list = list.filter((p) => p.beds >= filters.beds);
-    if (filters.amenities.length) list = list.filter((p) => filters.amenities.every((a) => p.amenities.includes(a)));
-    if (filters.availableNow) list = list.filter((p) => p.available);
-
-    const sorted = [...list];
-    if (sort === "price-asc") sorted.sort((a, b) => priceOf(a) - priceOf(b));
-    else if (sort === "price-desc") sorted.sort((a, b) => priceOf(b) - priceOf(a));
-    else if (sort === "trust") sorted.sort((a, b) => (b.agentTrustScore ?? 0) - (a.agentTrustScore ?? 0));
-    return sorted;
-  }, [liveProperties, query, filters, sort]);
+  const update = useCallback(
+    (next: ListingFilters) => router.push(`${pathname}${filtersToQuery(next)}`, { scroll: false }),
+    [router, pathname],
+  );
+  const closeSheet = useCallback(() => setDraft(null), []);
+  const filterCount = activeFilterCount(filters);
+  const backQuery = filtersToQuery(filters);
+  const heading = filters.area ? `Homes in ${filters.area}` : "Homes for rent";
 
   return (
-    <>
-      {/* Trust banner */}
-   {/* Trust banner - UPGRADED */}
-<div className="explore-hero">
-  <div className="explore-hero-glow explore-hero-glow-1" />
-  <div className="explore-hero-glow explore-hero-glow-2" />
-  <div className="page" style={{ paddingBottom: 0, position: "relative", zIndex: 2 }}>
-    <div className="explore-hero-inner">
-      <div className="col gap-3">
-        <span className="tag tag-gold" style={{ width: "fit-content" }}>
-          <Icon name="shieldCheck" size={13} /> Live listings
-        </span>
-        <h1 style={{ color: "#fff", fontSize: 32, maxWidth: 460, lineHeight: 1.15 }}>
-          Explore rentals in Ibadan
-        </h1>
-        <p style={{ color: "rgba(255,255,255,.75)", fontSize: 15 }}>
-          Browse current listings and see the first-year price supplied by the backend.
+    <div className="aw-explore">
+      <div className="aw-wrap aw-explore-head">
+        <h1 className="aw-h1">{heading}</h1>
+        <p className="aw-explore-meta" aria-live="polite">
+          {listings.isSuccess && coverage.total > 0 && !isGuestView
+            ? `${results.length} of ${coverage.total} ${coverage.total === 1 ? "home" : "homes"} open for inspection`
+            : listings.isSuccess
+              ? "Showing homes that are open for inspection"
+              : ""}
         </p>
       </div>
-      <div className="explore-hero-stats">
-        {[["Live", "Property listings"], ["Price", "First-year total"], ["Code", "In-person inspections"]].map(([v, l]) => (
-          <div key={l} className="explore-stat-card">
-            <span className="explore-stat-value">{v}</span>
-            <span className="explore-stat-label">{l}</span>
+
+      <div className="aw-toolbar">
+        <div className="aw-wrap aw-toolbar-inner">
+          <SearchBox key={filters.q} initial={filters.q} placeholder="Search by area, landmark or home type" onSubmit={(q) => update({ ...filters, q })} />
+          <div className="aw-quick">
+            <label>
+              <span className="sr-only">Area</span>
+              <select value={filters.area ?? ""} onChange={(event) => update({ ...filters, area: event.target.value || null })}>
+                <option value="">All areas</option>
+                {coverage.areas.map((area) => (
+                  <option key={area.name} value={area.name}>{area.name}</option>
+                ))}
+                {filters.area && !coverage.areas.some((area) => area.name === filters.area) && <option value={filters.area}>{filters.area}</option>}
+              </select>
+            </label>
+            <label>
+              <span className="sr-only">Home type</span>
+              <select value={filters.type ?? ""} onChange={(event) => update({ ...filters, type: parseFilters({ get: () => event.target.value }).type })}>
+                <option value="">Any type</option>
+                {coverage.types.map((type) => (
+                  <option key={type} value={type}>{type}</option>
+                ))}
+              </select>
+            </label>
+            <label>
+              <span className="sr-only">First-year rent up to</span>
+              <select value={filters.max ?? ""} onChange={(event) => update({ ...filters, max: event.target.value ? Number(event.target.value) : null })}>
+                <option value="">Any rent</option>
+                {coverage.budgets.map((budget) => (
+                  <option key={budget} value={budget}>Up to {formatBudget(budget)}</option>
+                ))}
+                {filters.max && !coverage.budgets.includes(filters.max) && <option value={filters.max}>Up to {formatBudget(filters.max)}</option>}
+              </select>
+            </label>
           </div>
-        ))}
-      </div>
-    </div>
-  </div>
-</div>
-
-     <div className="page">
-  <div className="feed-layout">
-    <aside className="filter-rail">
-      <div className="card card-pad explore-filter-card">
-        <div className="explore-filter-header">
-          <Icon name="filter" size={16} />
-          <span>Filters</span>
-        </div>
-        <FiltersPanel filters={filters} setFilters={setFilters} />
-        {/* Reset */}
-        <button
-          className="btn btn-ghost btn-sm btn-block"
-          style={{ marginTop: 16 }}
-          onClick={() => setFilters(DEFAULT_FILTERS)}
-        >
-          Reset filters
-        </button>
-      </div>
-    </aside>
-
-    <div className="col gap-4">
-      <div className="row between wrap gap-3 explore-results-bar">
-        <div className="row gap-3">
-          <button
-            className="chip filter-mobile"
-            style={{ display: "none" }}
-            onClick={() => setSheetOpen(true)}
-          >
-            <Icon name="filter" size={15} /> Filters
+          <button type="button" className="aw-btn aw-btn-line aw-filter-btn" onClick={() => setDraft(filters)}>
+            <Icon name="filter" size={18} /> Filters
+            {filterCount > 0 && <span className="aw-badge-count">{filterCount}</span>}
           </button>
-          <span className="explore-results-count">
-            <span className="explore-results-num">{results.length}</span>
-            {" "}{results.length === 1 ? "home" : "homes"}
-            {query && <> for <em>&ldquo;{query}&rdquo;</em></>}
-          </span>
+          <label className="aw-sort">
+            <span className="sr-only">Sort</span>
+            <select value={filters.sort} onChange={(event) => update({ ...filters, sort: parseFilters({ get: () => event.target.value }).sort })}>
+              {Object.entries(SORT_LABELS).map(([value, label]) => (
+                <option key={value} value={value}>{label}</option>
+              ))}
+            </select>
+          </label>
         </div>
-        <Select value={sort} onValueChange={(v) => setSort(v as SortKey)}>
-          <SelectTrigger className="w-[200px]">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="newest">Newest</SelectItem>
-            <SelectItem value="price-asc">Price: low to high</SelectItem>
-            <SelectItem value="price-desc">Price: high to low</SelectItem>
-            <SelectItem value="trust">Most trusted agent</SelectItem>
-          </SelectContent>
-        </Select>
       </div>
 
-      {listings.isPending ? <p>Loading properties...</p> : listings.isError ? <p role="alert">Could not load properties. Please try again.</p> : results.length === 0 ? (
-        <EmptyState
-          icon="explore"
-          title="No properties match"
-          description="Try widening your budget or clearing some filters."
-          action={{ label: "Clear filters", onClick: () => setFilters(DEFAULT_FILTERS) }}
-        />
-      ) : (
-        <div className="prop-grid-premium">
-          {results.map((p, i) => (
-            <div key={p.id} className="prop-card-wrapper" style={{ animationDelay: `${Math.min(i * 0.07, 0.5)}s` }}>
-              <PropertyCard property={p} priority={i === 0} />
+      <div className="aw-wrap aw-results">
+        {listings.isSuccess && isGuestView && coverage.total > 0 && <GuestViewNotice />}
+        <ActiveFilters filters={filters} onChange={update} />
+        {listings.isPending ? (
+          <ListingSkeleton count={6} />
+        ) : listings.isError ? (
+          <LoadError title="We couldn't load homes just now" onRetry={() => listings.refetch()} retrying={listings.isFetching} />
+        ) : coverage.total === 0 ? (
+          <NoInventory />
+        ) : results.length === 0 ? (
+          <div className="aw-state aw-state-quiet">
+            <Icon name="search" size={22} />
+            <div>
+              <h3>No homes match these filters</h3>
+              <p>{coverage.total === 1 ? "1 home is" : `${coverage.total} homes are`} open for inspection. Remove a filter to see more.</p>
             </div>
-          ))}
-        </div>
+            <button type="button" className="aw-btn aw-btn-ink aw-btn-sm" onClick={() => update({ ...EMPTY_FILTERS, sort: filters.sort })}>
+              Clear filters
+            </button>
+          </div>
+        ) : (
+          <div className="aw-grid">
+            {results.map((property, index) => (
+              <PropertyCard key={property.id} property={property} priority={index === 0} backQuery={backQuery} />
+            ))}
+          </div>
+        )}
+      </div>
+
+      {draft && (
+        <FilterSheet
+          draft={draft}
+          coverage={coverage}
+          matches={draftMatches}
+          onDraftChange={setDraft}
+          onApply={() => {
+            update(draft);
+            setDraft(null);
+          }}
+          onClose={closeSheet}
+        />
       )}
     </div>
-  </div>
-</div>
-      <BottomSheet open={sheetOpen} onClose={() => setSheetOpen(false)} title="Filters" maxWidth={460}>
-        <div style={{ padding: "8px 20px 24px" }}>
-          <FiltersPanel filters={filters} setFilters={setFilters} />
-          <button className="btn btn-primary btn-block" style={{ marginTop: 18 }} onClick={() => setSheetOpen(false)}>
-            Show {results.length} homes
-          </button>
-        </div>
-      </BottomSheet>
-
-      <Footer />
-    </>
   );
 }
 
 export default function ExplorePage() {
   return (
-    <Suspense fallback={<div className="page" style={{ paddingTop: 48 }}><div className="spinner" /></div>}>
+    <Suspense fallback={<div className="aw-wrap aw-explore-head"><ListingSkeleton count={6} /></div>}>
       <ExploreContent />
     </Suspense>
   );
