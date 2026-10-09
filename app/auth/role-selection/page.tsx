@@ -1,5 +1,5 @@
-import { LiveFeatureUnavailable } from "@/components/shared/live-feature-unavailable";
+import { redirect } from "next/navigation";
 
 export default function RoleSelectionPage() {
-  return <LiveFeatureUnavailable feature="Account signup" />;
+  redirect("/auth/signup");
 }

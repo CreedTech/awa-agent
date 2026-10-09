@@ -82,4 +82,14 @@ export const inspectionService = {
   async cancel(id: string): Promise<void> {
     await apiFetch(`/inspection/${encodeURIComponent(id)}/cancel`, { method: "POST" });
   },
+  async unavailableDates(): Promise<string[]> {
+    const response = await apiFetch<{ data: string[] }>("/inspection/agent/unavailable-dates");
+    return response.data;
+  },
+  async blockDate(date: string): Promise<void> {
+    await apiFetch("/inspection/agent/unavailable-dates", { method: "POST", json: { date } });
+  },
+  async unblockDate(date: string): Promise<void> {
+    await apiFetch(`/inspection/agent/unavailable-dates/${encodeURIComponent(date)}`, { method: "DELETE" });
+  },
 };

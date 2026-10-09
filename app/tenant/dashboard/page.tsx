@@ -22,5 +22,6 @@ export default function Page() {
         <Link className="card card-pad col gap-2" href="/tenant/receipts"><strong>{payments.data.filter((item) => Boolean(item.fundsLockedAt)).length}</strong><span>Verified receipts</span></Link>
       </div>}
     <Link className="btn btn-primary" href="/explore">Explore properties</Link>
+    <Link className="btn btn-ghost" href="/tenant/loyalty">View rental history</Link>
   </div>;
 }
