@@ -31,6 +31,8 @@ Use the backend repository's `.env.production.example` for the complete host con
 4. Promote an existing active account to admin on the backend host with `npm run admin:promote -- admin@example.com`. Admin role is never granted by signup. Use that account to review KYC and listings.
 5. Keep `PAYSTACK_PAYMENTS_ENABLED=false` until a live subscription payment, rent checkout, webhook, landlord and agent transfer, dispute and refund have been checked with the merchant account. Reconcile the merchant balance and processing fees. No payment should be inferred solely from a browser redirect.
 
+Private KYC evidence remains in the R2 private bucket after an admin decision. There is currently no automatic deletion job or retention environment variable. The owner asked to leave these documents in place for now; revisit retention and deletion before adopting a timed policy.
+
 ## Frontend values
 
 Vercel Production already has `NEXT_PUBLIC_API_BASE_URL`, `NEXT_PUBLIC_DEFAULT_CITY`, `NEXT_PUBLIC_APP_URL`, `NEXT_PUBLIC_APP_NAME`, `NEXT_PUBLIC_SUPPORT_EMAIL`, `NEXT_PUBLIC_SUPPORT_PHONE` and `NEXT_PUBLIC_CURRENCY`. Change `NEXT_PUBLIC_APP_URL` and the backend origins/callbacks together when using a custom domain. `NEXT_PUBLIC_API_BASE_URL` must end in `/api/v1`. No `USE_MOCKS` variable is used.
