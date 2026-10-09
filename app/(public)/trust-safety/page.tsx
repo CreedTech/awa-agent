@@ -9,7 +9,7 @@ const guidance = [
   "Inspect properties during daylight and tell someone where you are going.",
   "Read your inspection code to the assigned agent only when you meet in person.",
   "The public listing hides the street address. It is returned to the tenant after the code is verified.",
-  "Online checkout is not available. Do not transfer rent to an agent or landlord on the promise of escrow protection.",
+  "Start rent payments only from your AwaAgent account. Do not transfer money directly to an agent or landlord.",
 ];
 
 export default function TrustSafetyPage() {
@@ -17,7 +17,7 @@ export default function TrustSafetyPage() {
     <section className="ts-hero"><div className="page page-narrow" style={{ paddingTop: 72, paddingBottom: 72 }}>
       <span className="tag tag-gold"><Icon name="shieldCheck" size={13} /> Trust &amp; Safety</span>
       <h1 className="ts-hero-title" style={{ marginTop: 16 }}>Inspect safely</h1>
-      <p className="ts-hero-sub">What the connected inspection flow does today, and what to watch for while payment is unavailable.</p>
+      <p className="ts-hero-sub">How to inspect safely and protect your payment.</p>
     </div></section>
     <section className="page page-narrow"><div className="col gap-4">
       {guidance.map((item) => <div key={item} className="card card-pad row gap-3"><Icon name="shieldCheck" size={20} /><p>{item}</p></div>)}

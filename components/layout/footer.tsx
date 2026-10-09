@@ -38,8 +38,7 @@ export function Footer() {
           <div className="col gap-4" style={{ maxWidth: 320 }}>
             <Logo light />
             <p style={{ fontSize: 14, lineHeight: 1.6 }}>
-              Browse current rental listings in Ibadan and arrange in-person inspections.
-              Online payments and new account registration are not available yet.
+              Browse rental listings in Ibadan, arrange in-person inspections and manage your rental journey in one place.
             </p>
             <div className="row gap-2" style={{ fontSize: 13 }}>
               <Icon name="shieldCheck" size={16} color="var(--gold-400)" /> Inspection codes verified in person

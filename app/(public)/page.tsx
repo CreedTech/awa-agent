@@ -37,10 +37,10 @@ const STATS = [
 ];
 
 const FAQ = [
-  { q: "Can I pay through AwaAgent now?", a: "Not yet. Paystack checkout will open after the live account and payment flow pass launch checks." },
-  { q: "Why can't I see the exact address?", a: "The backend hides the street address on public listings. It is returned to a tenant after their inspection code is verified." },
-  { q: "What price is shown?", a: "Listings show the first-year amount supplied by the backend. Payment is not currently available." },
-  { q: "What is the inspection code for?", a: "Read the code to your assigned agent in person. The backend records the inspection as completed after the agent verifies it." },
+  { q: "How do I pay?", a: "After a verified inspection, start checkout from your AwaAgent account. Never transfer rent directly to an agent or landlord." },
+  { q: "Why can't I see the exact address?", a: "The street address is shared with you after your in-person inspection code is verified." },
+  { q: "What price is shown?", a: "Listings show the first-year rent amount supplied by the property owner." },
+  { q: "What is the inspection code for?", a: "Read the code to your assigned agent in person so they can confirm your visit." },
 ];
 
 export default function HomePage() {
@@ -129,18 +129,18 @@ export default function HomePage() {
           <div className="escrow-content">
             <div className="escrow-left">
               <span className="tag tag-gold" style={{ width: "fit-content", marginBottom: 16 }}>
-                <Icon name="lock" size={13} strokeWidth={2} /> Payment status
+                <Icon name="lock" size={13} strokeWidth={2} /> Pay securely
               </span>
-              <h2 className="escrow-title">Online checkout is not available yet.</h2>
+              <h2 className="escrow-title">Keep your rent payment in the app.</h2>
               <p className="escrow-description">
-                Paystack is integrated, but live checkout stays off until account credentials, webhooks, transfers and refunds pass launch checks.
+                After an in-person inspection, use AwaAgent&apos;s Paystack checkout. Never transfer rent directly to an agent or landlord.
               </p>
               <Link href="/trust-safety" className="btn btn-gold btn-sm" style={{ width: "fit-content", marginTop: 20 }}>
                 See safety guidance
               </Link>
             </div>
             <div className="escrow-right">
-              {["Browse current listings", "Request an inspection", "Verify the meeting code", "Checkout opens after launch checks"].map((t, i) => (
+              {["Browse current listings", "Request an inspection", "Verify the meeting code", "Pay through the app"].map((t, i) => (
                 <div key={t} className="escrow-step" style={{ animationDelay: `${i * 0.1}s` }}>
                   <span className="escrow-step-number">{i + 1}</span>
                   <span className="escrow-step-text">{t}</span>

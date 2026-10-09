@@ -3,17 +3,16 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AuthShell } from "@/components/auth/auth-shell";
 import { Field } from "@/components/shared/field";
 import { signupSchema, type SignupValues } from "@/lib/validations";
 import { authService } from "@/services/auth-service";
+import { ApiError } from "@/lib/api";
 
 export default function SignupPage() {
   const router = useRouter();
-  const capability = useQuery({ queryKey: ["auth-capabilities"], queryFn: authService.capabilities });
   const [error, setError] = useState<string | null>(null);
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<SignupValues>({
     resolver: zodResolver(signupSchema), defaultValues: { role: "tenant" },
@@ -25,15 +24,13 @@ export default function SignupPage() {
       await authService.signup(values);
       router.push(`/auth/verify-otp?email=${encodeURIComponent(values.email)}`);
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Could not create account.");
+      setError(cause instanceof ApiError && cause.status >= 500 ? "We couldn't create your account right now. Please try again later." : cause instanceof Error ? cause.message : "Could not create account.");
     }
   };
 
-  return <AuthShell title="Create your account" subtitle="Verification codes are sent to your email through Resend."
+  return <AuthShell title="Create your account" subtitle="We'll email you a verification code."
     footer={<Link href="/auth/login" className="btn btn-quiet btn-block">Already have an account? Log in</Link>}>
-    {capability.isPending ? <p>Checking registration availability...</p> : !capability.data?.signupAvailable ? (
-      <p role="status">Registration is temporarily unavailable while email delivery is being configured.</p>
-    ) : <form className="col gap-4" onSubmit={handleSubmit(submit)} noValidate>
+    <form className="col gap-4" onSubmit={handleSubmit(submit)} noValidate>
       {error && <p role="alert" style={{ color: "var(--danger)" }}>{error}</p>}
       <Field label="Full name" error={errors.name?.message}><input className="input" autoComplete="name" {...register("name")} /></Field>
       <Field label="Phone number" error={errors.phone?.message}><input className="input" type="tel" autoComplete="tel" {...register("phone")} /></Field>
@@ -45,6 +42,6 @@ export default function SignupPage() {
       </Field>
       <Field label="Password" error={errors.password?.message}><input className="input" type="password" autoComplete="new-password" {...register("password")} /></Field>
       <button className="btn btn-primary btn-block btn-lg" type="submit" disabled={isSubmitting}>{isSubmitting ? "Creating account..." : "Create account"}</button>
-    </form>}
+    </form>
   </AuthShell>;
 }
