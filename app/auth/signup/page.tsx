@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AuthShell } from "@/components/auth/auth-shell";
@@ -11,11 +11,15 @@ import { signupSchema, type SignupValues } from "@/lib/validations";
 import { authService } from "@/services/auth-service";
 import { ApiError } from "@/lib/api";
 
-export default function SignupPage() {
+const ROLES = ["tenant", "agent", "landlord"] as const;
+
+function SignupForm() {
   const router = useRouter();
+  const requested = useSearchParams().get("role");
+  const initialRole = ROLES.find((role) => role === requested) ?? "tenant";
   const [error, setError] = useState<string | null>(null);
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<SignupValues>({
-    resolver: zodResolver(signupSchema), defaultValues: { role: "tenant" },
+    resolver: zodResolver(signupSchema), defaultValues: { role: initialRole },
   });
 
   const submit = async (values: SignupValues) => {
@@ -44,4 +48,12 @@ export default function SignupPage() {
       <button className="btn btn-primary btn-block btn-lg" type="submit" disabled={isSubmitting}>{isSubmitting ? "Creating account..." : "Create account"}</button>
     </form>
   </AuthShell>;
+}
+
+export default function SignupPage() {
+  return (
+    <Suspense>
+      <SignupForm />
+    </Suspense>
+  );
 }
