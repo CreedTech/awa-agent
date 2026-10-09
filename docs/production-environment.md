@@ -39,6 +39,8 @@ Private KYC evidence remains in the R2 private bucket after an admin decision. T
 
 Vercel Production already has `NEXT_PUBLIC_API_BASE_URL`, `NEXT_PUBLIC_DEFAULT_CITY`, `NEXT_PUBLIC_APP_URL`, `NEXT_PUBLIC_APP_NAME`, `NEXT_PUBLIC_SUPPORT_EMAIL`, `NEXT_PUBLIC_SUPPORT_PHONE` and `NEXT_PUBLIC_CURRENCY`. Change `NEXT_PUBLIC_APP_URL` and the backend origins/callbacks together when using a custom domain. `NEXT_PUBLIC_API_BASE_URL` must end in `/api/v1`. No `USE_MOCKS` variable is used.
 
+Vercel lists `awaagent.ng` and `www.awaagent.ng` as production aliases, but DNS lookups for both returned no records on 9 October 2026. Add the DNS records Vercel specifies in the project's Domains settings, then verify HTTPS on both names. Until DNS resolves, use `https://awa-agent.vercel.app`. Once the custom domain works, update `NEXT_PUBLIC_APP_URL`, `FRONTEND_ORIGIN`, `CORS_ORIGINS`, and both Paystack callback URLs to the chosen canonical origin together.
+
 The subscription price, platform fee and agent share now come from authenticated backend settings. Operators can change them in `/admin/settings`; the price page reads the live backend value. Existing transactions keep the amounts recorded at checkout. Old frontend fee variables in `.env.example` are historical and must not be used to set live financial rules.
 
 ## External dependencies still needed
