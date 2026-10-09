@@ -31,6 +31,9 @@ export const env = {
 
   apiBaseUrl: str(process.env.NEXT_PUBLIC_API_BASE_URL, "https://api.awaagent.ng/api/v1"),
 
+  /** Set to "true" only after live Paystack rent checkout has passed acceptance checks. */
+  rentCheckoutLive: process.env.NEXT_PUBLIC_RENT_CHECKOUT_LIVE === "true",
+
 } as const;
 
 export type Env = typeof env;

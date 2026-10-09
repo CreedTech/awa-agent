@@ -4,46 +4,31 @@ interface LogoProps {
   size?: number;
   light?: boolean;
   className?: string;
-  /** Hide the wordmark, show only the shield mark. */
   markOnly?: boolean;
 }
 
-/** AwaAgent lettermark: navy shield tile + gold "A", with wordmark. */
 export function Logo({ size = 30, light = false, className, markOnly = false }: LogoProps) {
+  const ink = light ? "#fffdf8" : "var(--navy-800)";
   return (
-    <span className={cn("inline-flex items-center gap-[9px]", className)}>
-      <span
-        className="grid place-items-center"
-        style={{
-          width: size,
-          height: size,
-          borderRadius: 9,
-          background: "linear-gradient(150deg,var(--navy-700),var(--navy-900))",
-          boxShadow: "0 2px 6px rgba(0,31,63,.3)",
-        }}
-      >
-        <svg width={size * 0.62} height={size * 0.62} viewBox="0 0 24 24" fill="none" aria-hidden>
-          <path
-            d="M12 3 5 6v5c0 4.5 3 7.5 7 9 4-1.5 7-4.5 7-9V6l-7-3Z"
-            fill="none"
-            stroke="var(--gold-500)"
-            strokeWidth="1.8"
-            strokeLinejoin="round"
-          />
-          <path d="M12 8.5 9.8 14h4.4L12 8.5Z" fill="var(--gold-500)" />
-        </svg>
-      </span>
+    <span className={cn("inline-flex items-center", className)} style={{ gap: size * 0.3 }}>
+      <svg width={size * 0.8} height={size} viewBox="0 0 24 30" fill="none" aria-hidden>
+        <path d="M2 29V12C2 6.5 6.5 2 12 2s10 4.5 10 10v17H2Z" fill={ink} />
+        <circle cx="12" cy="16" r="2.6" fill="var(--gold-500)" />
+        <path d="M10.9 17.6h2.2l.7 5.4h-3.6l.7-5.4Z" fill="var(--gold-500)" />
+      </svg>
       {!markOnly && (
         <span
           style={{
             fontFamily: "var(--font-display)",
-            fontWeight: 800,
-            fontSize: size * 0.62,
+            fontWeight: 600,
+            fontSize: size * 0.7,
             letterSpacing: "-.02em",
-            color: light ? "#fff" : "var(--navy-800)",
+            fontVariationSettings: "'SOFT' 100, 'opsz' 48",
+            color: light ? "#fffdf8" : "var(--ink)",
+            lineHeight: 1,
           }}
         >
-          Awa<span style={{ color: "var(--gold-600)" }}>Agent</span>
+          AwaAgent
         </span>
       )}
     </span>
